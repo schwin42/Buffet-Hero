@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour {
 
 	//Configurable
 	public Restaurant activeRestaurant;
-	public int trials = 1;
+	public int numberOfTrials = 1;
 
 	//Status
 	public Food activeFood;
@@ -32,10 +32,11 @@ public class GameController : MonoBehaviour {
 	
 		NextPrompt();
 
-//		for(int i = 0; i < trials; i++)
-//		{
-//			Player.Instance.Eat();
-//		}
+		for(int i = 0; i < numberOfTrials; i++)
+		{
+			Player.Instance.Eat();
+		}
+		Debug.Log ("Average score: "+Player.Instance.score / numberOfTrials);
 
 //		Dictionary<string, int> trialLog = new Dictionary<string, int>();
 //		for(int i = 0; i < trials; i++)
@@ -53,8 +54,6 @@ public class GameController : MonoBehaviour {
 //		{
 //			Debug.Log (pair.Key + " appeared "+pair.Value+" times");
 //		}
-
-		//Unit test to compare statistical data with literal percentages
 
 	}
 	
