@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{D995F227-04B4-44DB-1C7F-C7B7E6DD35E2}</ProjectGuid>
+	<ProjectGuid>{F0E92AF2-9468-221C-7A90-4B3A00291640}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -46,15 +46,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Database.cs" />
-     <Compile Include="Assets\GameController.cs" />
-     <Compile Include="Assets\GoogleFu\Resources\ComponentBase.cs" />
-     <Compile Include="Assets\GoogleFu\Samples\Scripts\ItemSample.cs" />
-     <Compile Include="Assets\GoogleFu\Samples\Scripts\MonsterFactorySample.cs" />
-     <Compile Include="Assets\GoogleFu\Samples\Scripts\MonsterSample.cs" />
-     <Compile Include="Assets\GoogleFu\Samples\Scripts\Resources\CharacterStatsSample.cs" />
-     <Compile Include="Assets\GoogleFu\Samples\Scripts\Resources\ItemsSample.cs" />
-     <Compile Include="Assets\InterfaceController.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipItems.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipRandomItem.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UICursor.cs" />
@@ -189,13 +180,11 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UITexture.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
-     <Compile Include="Assets\Player.cs" />
-     <Compile Include="Assets\Reporter\Reporter.cs" />
-     <Compile Include="Assets\Reporter\ReporterGUI.cs" />
-     <Compile Include="Assets\Reporter\ReporterMessageReceiver.cs" />
-     <Compile Include="Assets\Reporter\Rotate.cs" />
-     <Compile Include="Assets\Reporter\TestReporter.cs" />
-     <Compile Include="Assets\Restaurant.cs" />
+     <Compile Include="Assets\Scripts\Database.cs" />
+     <Compile Include="Assets\Scripts\GameController.cs" />
+     <Compile Include="Assets\Scripts\InterfaceController.cs" />
+     <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\Restaurant.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.6.8.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text 2.shader" />
@@ -228,16 +217,15 @@
      <None Include="Assets\NGUI\Examples\Shaders\Refractive.shader" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Normal.txt" />
-     <None Include="Assets\GoogleFuGen\XML\BuffetHero.xml" />
      <None Include="Assets\NGUI\Examples\Models\Orc Armor\Orc Armor.shader" />
      <None Include="Assets\NGUI\Examples\Resources\Localization.txt" />
  <Reference Include="Assembly-UnityScript-firstpass">
- <HintPath>/Users/schwin42/Buffet Hero/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
+ <HintPath>/Users/schwin42/Documents/ActiveProjects/Buffet-Hero/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass-vs.csproj">
-      <Project>{6E223C86-5050-CFE0-E7A2-10A9612DF1B9}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
+      <Project>{31D646F5-C3BE-4E0E-B5DC-20BD115B29C9}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
