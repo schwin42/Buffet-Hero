@@ -87,65 +87,85 @@ public class GameController : MonoBehaviour {
 		return Rank.None;
 	}
 
-	public Quality GetRandomQuality (Rank rank)
+
+	public FoodAttribute GetRandomAttribute (AttributeType attributeType, Rank rank)
 	{
-			var query = from quality in Database.Instance.qualities
-				where quality.rank == rank
-					select quality;
-			Quality[] possibleQualities = query.ToArray();
-		if(possibleQualities.Length > 0)
+		IEnumerable<FoodAttribute> query = null;
+		switch(attributeType)
 		{
-		return possibleQualities[(int)Mathf.Floor (Random.value * possibleQualities.Length)];
+		case AttributeType.Quality:
+			query = from attribute in Database.Instance.foodAttributes
+				where attribute.rank == rank && attribute.attributeType == AttributeType.Quality
+					select attribute;
+			break;
+		case AttributeType.Ingredient:
+			query = from attribute in Database.Instance.foodAttributes
+				where attribute.rank == rank && attribute.attributeType == AttributeType.Ingredient
+					select attribute;
+			break;
+		case AttributeType.Form:
+			query = from attribute in Database.Instance.foodAttributes
+				where attribute.rank == rank && attribute.attributeType == AttributeType.Form
+					select attribute;
+			break;
+		default:
+			Debug.LogError ("Invalid attribute type: "+attributeType);
+			break;
+		}
+
+		FoodAttribute[] possibleAttributes = query.ToArray();
+		if(possibleAttributes.Length > 0)
+		{
+		return possibleAttributes[(int)Mathf.Floor (Random.value * possibleAttributes.Length)];
 		} else {
-			Debug.LogError("No qualities of rank "+rank+" found.");
-			return new Quality();
+		Debug.LogError("No "+attributeType+"s of Rank "+rank+" found.");
+		return new FoodAttribute();
 		}
 	}
 
-	public Ingredient GetRandomIngredient (Rank rank)
-	{
-		//Debug.Log (rank);
-		var query = from ingredient in Database.Instance.ingredients
-			where ingredient.rank == rank
-				select ingredient;
-		Ingredient[] possibleIngredients = query.ToArray();
-		//Debug.Log (possibleIngredients.Length);
-		if(possibleIngredients.Length > 0)
-		{
-		return possibleIngredients[(int)Mathf.Floor (Random.value * possibleIngredients.Length)];
-	} else {
-		Debug.LogError("No ingredients of rank "+rank+" found.");
-		return new Ingredient();
-	}
-	}
-
-	public Form GetRandomForm (Rank rank)
-	{
-		var query = from form in Database.Instance.forms
-			where form.rank == rank
-				select form;
-		Form[] possibleForms = query.ToArray();
-		if(possibleForms.Length > 0)
-		{
-		return possibleForms[(int)Mathf.Floor (Random.value * possibleForms.Length)];
-} else {
-	Debug.LogError("No forms of rank "+rank+" found.");
-	return new Form();
-}
-	}
+	//	public Quality GetRandomQuality (Rank rank)
+	//	{
+	//			var query = from quality in Database.Instance.qualities
+	//				where quality.rank == rank
+	//					select quality;
+	//			Quality[] possibleQualities = query.ToArray();
+	//		if(possibleQualities.Length > 0)
+	//		{
+	//		return possibleQualities[(int)Mathf.Floor (Random.value * possibleQualities.Length)];
+	//		} else {
+	//			Debug.LogError("No qualities of rank "+rank+" found.");
+	//			return new Quality();
+	//		}
+	//	}
+	//
+//
+//	public Form GetRandomForm (Rank rank)
+//	{
+//		var query = from form in Database.Instance.forms
+//			where form.rank == rank
+//				select form;
+//		Form[] possibleForms = query.ToArray();
+//		if(possibleForms.Length > 0)
+//		{
+//		return possibleForms[(int)Mathf.Floor (Random.value * possibleForms.Length)];
+//} else {
+//	Debug.LogError("No forms of rank "+rank+" found.");
+//	return new Form();
+//}
+//	}
 
 	public Food GetRandomFood()
 	{
 		Food food = new Food();
 
 		Rank qualityRank = GetRandomRank();
-		food.quality = GetRandomQuality(qualityRank);
+		food.quality = GetRandomAttribute(AttributeType.Quality, qualityRank);
 		food.quality.multiplier = GetQualityMultipler(qualityRank);
 		Rank ingredientRank = GetRandomRank();
-		food.ingredient = GetRandomIngredient(ingredientRank);
+		food.ingredient = GetRandomAttribute(AttributeType.Ingredient, ingredientRank);
 		food.ingredient.multiplier = GetIngredientMultipler(ingredientRank);
 		Rank formRank = GetRandomRank();
-		food.form = GetRandomForm(formRank);
+		food.form = GetRandomAttribute(AttributeType.Form, formRank);
 		food.form.modifier = GetFormModifier(formRank);
 
 		return food;
