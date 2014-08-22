@@ -1,115 +1,120 @@
-Name ID,Attribute Type,Subtype,Tags,Temperature,Rank,Multiplier,Modifier,Spice,Special
-antiseptic,ingredient,,bitter,,E,,,,
-aoili,form,condiment,,,A,,,,
-bacon,ingredient,,savory,,A,,,,
-banana,form,,sweet,,D,,,,
-barbeque,quality,,savory,,B,,,,
-bitter,quality,,bitter,,D,,,,
-bland,quality,,,,D,,-0.10,,
-botched,quality,,,,E,,-0.5,,
-buffalo,ingredient,,,,D,,,,
-burger,form,,savory,hot,B,,,,
-burnt,quality,,temperature,hot,D,,,,
-carp,ingredient,,fish; cooked,hot,D,,,,
-cassarole,form,,,hot,D,,,,
-chocolate,ingredient,,sweet,,B,,,,
-chocolatey,quality,,sweet,,B,,,,
-churro,form,,sweet,,B,,,,
-coffee,form,,bitter,,C,,,,
-croissant,form,,,,A,,,,
-donut,form,,sweet,,C,,,,
-dragon,ingredient,,savory,,S,,,,
-dry,quality,,,,D,,,,
-egg,ingredient,,cooked,hot,C,,,,
-electrifying,quality,,,,A,,0.5,,
-electrocuting,quality,,toxic,,F,,,,
-excrement,ingredient,,toxic,,F,-0.50,,,
-expired,quality,freshness,toxic,,E,,,,
-extra spicy,quality,,,,C,0.25,,1,
-fatback,ingredient,,savory,hot,D,,,,
-frankfurter,form,,savory,hot,B,,,,
-french fries,form,,salty,hot,B,,,,
-fresh,quality,freshness,,,B,,,,
-frittata,form,,,hot,A,,,,
-froyo,form,,,cold,B,,,,
-gamey,quality,,savory,,C,,,,
-gelato,form,,sweet,cold,A,,,,
-goat cheese,ingredient,,,,A,,,,
-habanero,ingredient,,,,B,,,2,
-hot pocket,form,,,hot,E,,,,
-human,ingredient,,savory; cooked; meat,,A,,,,
-hypnotic,quality,,,,E,,,,
-ice-cold,quality,temperature,,cold,D,,,,
-jelly,form,condiment,sweet,,C,,,,
-jerky,form,,savory; salty,,D,,,,
-juicy,quality,,,,A,,,,
-kabob,form,,,hot,C,,,,
-ketchup,form,condiment,salty,,C,,,,
-knuckle,ingredient,,,,D,,,,
-lard,ingredient,,,,E,,,,
-lead,ingredient,,toxic,,F,,,,
-loaf,form,,,,D,,,,
-marshmallow,quality,,sweet,,B,,,,
-mayo-grade,ingredient,,bitter,,E,,,,
-melange,form,,,,A,,,,
-mushroom,ingredient,,,,C,,,,
-mustard,form,condiment,salty,,C,,,,
-mystery,ingredient,,,,D,,,,Randomly selects other ingredient
-noodles,form,,,,C,,,,
-pancake,form,,sweet,hot,B,,,,
-pandimensional,quality,,,,S,2.00,,,
-pickle,ingredient,,salty,,D,,,,
-pickled,quality,,,,B,,,,
-pie,form,,sweet,,B,,,,
-piping hot,quality,temperature,,hot,B,,,,
-pork,ingredient,,savory,hot,C,,,,
-prosciutto,ingredient,,savory,,A,,,,
-pungent,quality,,,,B,1.25,,,
-putrid,quality,,toxic,,F,,-150,,
-radioactive,quality,,toxic,,F,,,,
-ranch,ingredient,,salty,,B,,,,
-rancid,quality,,toxic,,E,,-75,,
-raw,quality,temperature,,cold,D,,,,"Adds ""toxic"" attribute to meat"
-reduction,form,condiment,,,A,,,,
-refried,quality,,,hot,D,,,,
-relish,form,condiment,salty,,C,,,,
-roadkill,ingredient,,savory; cooked,hot,D,,,,
-salad,form,,,,C,,,,
-salty,quality,,salty,,B,,,,
-sandwich,form,,,,B,,,,
-sasquatch,ingredient,,savory; cooked,hot,S,,,,
-sauce,form,condiment,,,C,,,,
-sausage,form,,savory,hot,B,,,,
-shnozzberry,ingredient,,sweet,,S,,,,
-shrimp,ingredient,,savory,,A,,,,
-smoothie,form,,sweet,cold,C,,,,
-soggy,quality,,,,D,,,,
-sour,quality,,sour,,B,0.25,,,
-spam,ingredient,,savory,hot,D,,,,
-spinach,ingredient,,,,C,,,,
-squirming,quality,,,,E,,,,
-stale,quality,freshness,,,D,,,,
-strawberry,ingredient,,sweet,,B,,,,
-sundae,form,,sweet,cold,B,,,,
-surprise,form,,,,E,,,,
-sushi,form,,,cold,A,,,,
-suspect,quality,,,,D,,,,
-syrup,form,condiment,sweet,,C,,,,
-taco,form,,,hot,C,,,,
-tentacle,ingredient,,,,D,,,,
-turkey,ingredient,,savory; meat; cooked,hot,B,,,,
-undercooked,quality,,temperature,hot,D,,,,
-unicorn,ingredient,,savory; meat; cooked,hot,S,,,,
-vanilla,ingredient,,sweet,,B,,,,
-vegan,quality,,,,D,,,,
-vegetable,ingredient,,,,C,,,,
-velvety,quality,,,,A,,,,
-venison,ingredient,,meat; cooked; savory,hot,A,,,,
-waffle,form,,sweet,hot,B,,,,
-watermelon,ingredient,,sweet,,B,,,,
-whipped,quality,,sweet,,C,,,,
-whiskey,ingredient,,bitter,,C,,,,Adds Alcoholic
-whole fat,quality,,,,B,,,,
-zero-calorie,quality,,,,E,,,,
-panini,form,,,hot,A,,,,
-soup,form,,,hot,C,,,,
+Name ID,Attribute Type,Subtype,Tags,Rank
+aged,descriptor,,aged,E
+antiseptic,ingredient,,bitter; non-food,E
+aoili,form,condiment,,A
+bacon,ingredient,,savory; awesome,A
+banana,form,,sweet; firm,D
+barbeque,descriptor,,savory,B
+beer,form,,alcholic; cold,B
+botched,descriptor,,ruined,E
+buffalo,ingredient,,,D
+burger,form,,savory; hot,B
+burnt,descriptor,temperature,ruined; hot,D
+butterfinger,ingredient,,crispy; sweet,A
+carp,ingredient,,fish; cooked; hot,D
+cassarole,form,,gooey; salty; hot,D
+chocolate,ingredient,,sweet,B
+chocolatey,descriptor,,sweet,B
+churro,form,,sweet,B
+coffee,form,,bitter; liquid,C
+croissant,form,,,A
+day-old,descriptor,freshness,stale,D
+deep-fried,descriptor,,crispy; awesome; cheap,A
+donut,form,,sweet,C
+dragon,ingredient,,savory,S
+dry,descriptor,,,D
+egg,ingredient,,cooked; hot,C
+electrocuting,descriptor,,dangerous,F
+excrement,ingredient,,non-food; disgusting,F
+expired,descriptor,freshness,spoiled,E
+extra-spicy,descriptor,,very spicy,C
+fatback,ingredient,,savory; hot,D
+feta,descriptor,,upscale; greek,B
+fetid,descriptor,,gross,D
+frankfurter,form,,savory; hot,B
+french fries,form,,salty;  hot,B
+frittata,form,,hot; fancy,A
+froyo,form,,cold; creamy,B
+gamey,descriptor,,savory; tough,D
+gelato,form,,sweet; cold; fancy,A
+ghost-chili,ingredient,,extreme spice,E
+goat cheese,ingredient,,,A
+habanero,ingredient,,very spicy,B
+hot pocket,form,,cheap; hot; crummy,E
+human,ingredient,,savory; cooked; meat,A
+ice-cold,descriptor,temperature,cold; fresh,D
+jalapeno,ingredient,,mild spice,B
+jelly,form,condiment,sweet,C
+jerky,form,,savory; salty; chewy,D
+juice,form,,liquid; cold,C
+kabob,form,,hot,C
+ketchup,form,condiment,salty; sweet,C
+knuckle,ingredient,,non-food; tough,D
+lard,ingredient,,bland,E
+lead,ingredient,,toxic; non-food,F
+loaf,form,,firm; hot,D
+made-to-order,descriptor,,fresh,B
+marshmallow,descriptor,,sweet,B
+mayo-grade,ingredient,,bitter,E
+melange,form,,fancy,A
+mushroom,ingredient,,firm; hot,C
+mustard,form,condiment,salty,C
+mystery,ingredient,,random,D
+noodles,form,,,C
+pancake,form,,sweet; hot,B
+pandimensional,descriptor,,awesome; dangerous; psychotropic; impossible,S
+panini,form,,hot; crispy,A
+pickle,ingredient,,tangy,D
+pickled,descriptor,,,B
+pie,form,,sweet; smooth,B
+piping hot,descriptor,,hot; fresh,B
+pork,ingredient,,savory; hot,C
+prosciutto,ingredient,,savory,A
+pungent,descriptor,,potent,B
+putrid,descriptor,,spoiled,F
+radioactive,descriptor,,dangerous,F
+ranch,ingredient,,salty; creamy,B
+rancid,descriptor,,spoiled,E
+raw,descriptor,temperature,raw,D
+reduction,form,condiment,sticky; fancy,A
+refried,descriptor,,cheap; crummy; hot,D
+relish,form,condiment,salty,C
+roadkill,ingredient,,savory; cooked; hot,D
+salad,form,,boring; cold,C
+sandwich,form,,,B
+sasquatch,ingredient,,savory; meat; hot,S
+sauce,form,condiment,creamy,C
+sausage,form,,savory; hot,B
+shnozzberry,ingredient,,sweet; juicy; impossible,S
+shrimp,ingredient,,savory,A
+smoothie,form,,sweet; creamy; cold,C
+soggy,descriptor,,liquid; crummy,D
+soup,form,,creamy; hot,C
+sour,descriptor,,potent,B
+spam,ingredient,,savory; hot; cheap; crummy,D
+spinach,ingredient,,cold,C
+squirming,descriptor,,disgusting,E
+strawberry,ingredient,,sweet; juicy,B
+sundae,form,,sweet; creamy; cold,B
+surprise,form,,,E
+sushi,form,,cold,A
+suspect,descriptor,,unenticing,D
+syrup,form,condiment,sweet; sticky,C
+taco,form,,crispy; hot,C
+tea,form,,liquid,B
+tentacle,ingredient,,disgusting,D
+turgid,descriptor,,gross,E
+turkey,ingredient,,savory; meat; cooked; hot,B
+undercooked,descriptor,temperature,hot; ruined,D
+unicorn,ingredient,,savory; meat; impossible; hot,S
+vanilla,ingredient,,sweet,B
+vegan,descriptor,,vegan,D
+vegetable,ingredient,,,C
+velvety,descriptor,,creamy; decadent,A
+venison,ingredient,,meat; cooked; savory; hot; fancy,A
+waffle,form,,sweet; spongy,B
+watermelon,ingredient,,sweet,B
+whipped,descriptor,,sweet; creamy; cold,C
+whiskey,ingredient,,bitter; alcoholic,C
+whole fat,descriptor,,,B
+zero-calorie,descriptor,,bland,E

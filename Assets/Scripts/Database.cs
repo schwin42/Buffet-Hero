@@ -23,7 +23,7 @@ public enum Rank
 public enum AttributeType
 {
 	None = 0,
-	Quality = 1,
+	Descriptor = 1,
 	Ingredient = 2,
 	Form = 3,
 }
@@ -55,30 +55,30 @@ public class Food
 	{
 		get
 		{
-			return quality.name + " " + ingredient.name + " " + form.name;
+			return descriptor.name + " " + ingredient.name + " " + form.name;
 		}
 	}
 
-	public float Value
-	{
-		get
-		{
-			float value = form.modifier * ingredient.multiplier;
-			if(value < 0)
-			{
-				if(quality.multiplier <= 1)
-				{
-					return value * Mathf.Abs (quality.multiplier);
-				} else {
-					return value * (2 - quality.multiplier);
-				}
-			} else {
-				return value * quality.multiplier;
-			}
-		}
-	}
+//	public float Value
+//	{
+//		get
+//		{
+//			float value = form.modifier * ingredient.multiplier;
+//			if(value < 0)
+//			{
+//				if(quality.multiplier <= 1)
+//				{
+//					return value * Mathf.Abs (quality.multiplier);
+//				} else {
+//					return value * (2 - quality.multiplier);
+//				}
+//			} else {
+//				return value * quality.multiplier;
+//			}
+//		}
+//	}
 	
-		public FoodAttribute quality;
+		public FoodAttribute descriptor;
 		public FoodAttribute ingredient;
 		public FoodAttribute form;
 	
@@ -91,12 +91,28 @@ public class FoodAttribute
 	public Rank rank = Rank.None;
 	public AttributeType attributeType;
 	public string attributeSubtype;
-	public float multiplier = 1f;
-	public float modifier = 0f;
+//	public float multiplier = 1f;
+//	public float modifier = 0f;
 	public string[] tags = new string[0];
-	public Temperature temperature = Temperature.None;
-	public float spice = 0f;
-	public string special = "";
+//	public Temperature temperature = Temperature.None;
+//	public float spice = 0f;
+//	public string special = "";
+}
+
+[System.Serializable]
+public class Tag
+{
+	public string name = "";
+	public string tagType = "";
+	public float value = 0f;
+	public float magnitude = 0f;
+	public float price = 0f;
+	public float spiciness = 0f;
+	public float nausea = 0f;
+	public float anticipation = 0f;
+	public string description = "";
+	public string combinesWellWith = "";
+	public string combinesPoorlyWith = "";
 }
 
 //[System.Serializable]
@@ -122,7 +138,8 @@ public class FoodAttribute
 
 public class Database : MonoBehaviour {
 
-	public string fileName = "";
+	public string attributesFile = "";
+	public string tagsFile = "Buffet Hero - Tags";
 
 	public static Database Instance;
 
@@ -131,6 +148,7 @@ public class Database : MonoBehaviour {
 //	public List<Form> forms;
 
 	public List<FoodAttribute> foodAttributes;
+	public List<Tag> tags;
 
 	public void Awake()
 	{
@@ -139,36 +157,41 @@ public class Database : MonoBehaviour {
 
 	public void Start()
 	{
-		LoadData();
+		//LoadData();
+		LoadTags (Application.dataPath + "/Data/" + tagsFile);
+		LoadAttributes(Application.dataPath + "/Data/" + attributesFile);
 	}
 
 	public void LoadData()
 	{
-		string loadPath = Application.dataPath + "/Data/" + fileName;
-		string[] dataLines = File.ReadAllLines(loadPath);
+		string loadPath = Application.dataPath + "/Data/" + attributesFile;
+		LoadAttributes(loadPath);
+		loadPath = Application.dataPath + "/Data/" + tagsFile;
+		LoadTags(loadPath);
+	}
+
+	public void LoadAttributes(string filePath)
+	{
+		Debug.Log ("Load attributes");
+		string[] dataLines = File.ReadAllLines(filePath);
 		Dictionary<int, string> fieldLookup = new Dictionary<int, string>();
 		for(int i = 0; i < dataLines.Length; i++)
 		{
 			if(i == 0)
 			{
 				string [] fieldStrings = dataLines[0].Split(',');
-
+				
 				for(int j = 0; j < fieldStrings.Length; j++)
-				//foreach(string fieldName in fieldStrings)
 				{
 					fieldLookup.Add (j, fieldStrings[j]);
 				}
 			} else {
-//				foreach(KeyValuePair<int, string> entry in fieldLookup)
-//				{
-//					Debug.Log (entry);
-//				} 
+
 
 				FoodAttribute recordAttribute = new FoodAttribute(); 
 				string[] recordStrings = dataLines[i].Split(',');
 				for (int j = 0; j < fieldLookup.Count; j++)
 				{
-					//Debug.Log (j);
 					switch(fieldLookup[j])
 					{
 					case "Name ID":
@@ -182,35 +205,87 @@ public class Database : MonoBehaviour {
 						break;
 					case "Tags":
 						recordAttribute.tags = Regex.Split(recordStrings[j], "; ");
-							//recordStrings[j].Split('; ');
 						break;
 					case "Rank":
 						recordAttribute.rank = StringToRank(recordStrings[j]);
-						break;
-					case "Multiplier":
-						recordAttribute.multiplier = StringToFloat(recordStrings[j]);
-						break;
-					case "Modifier":
-						recordAttribute.modifier = StringToFloat(recordStrings[j]);
-						break;
-					case "Spice":
-						recordAttribute.spice = StringToFloat(recordStrings[j]);
-						break;
-					case "Special":
-						recordAttribute.special = recordStrings[j];
-						break;
-					case "Temperature":
-						recordAttribute.temperature = StringToTemperature(recordStrings[j]);
 						break;
 					default:
 						Debug.LogError ("Unhandled field name: "+fieldLookup[j]);
 						break;
 					}
-
+					
 				}
 				foodAttributes.Add (recordAttribute);
 			}
+			
+		}
+	}
 
+	public void LoadTags(string filePath)
+	{
+		Debug.Log ("Load tags");
+		string[] dataLines = File.ReadAllLines(filePath);
+		Dictionary<int, string> fieldLookup = new Dictionary<int, string>();
+		for(int i = 0; i < dataLines.Length; i++)
+		{
+			if(i == 0)
+			{
+				string [] fieldStrings = dataLines[0].Split(',');
+				
+				for(int j = 0; j < fieldStrings.Length; j++)
+				{
+					fieldLookup.Add (j, fieldStrings[j]);
+				}
+			} else {
+				
+				Tag recordTag = new Tag(); 
+				string[] recordStrings = dataLines[i].Split(',');
+				for (int j = 0; j < fieldLookup.Count; j++)
+				{
+					switch(fieldLookup[j])
+					{
+					case "Tag ID":
+						recordTag.name = recordStrings[j];
+						break;
+					case "Type":
+						recordTag.tagType = recordStrings[j];
+						break;
+					case "Value":
+						recordTag.value = StringToFloat(recordStrings[j]);
+						break;
+					case "Magnitude":
+						recordTag.magnitude = StringToFloat(recordStrings[j]);
+						break;
+					case "Price":
+						recordTag.price = StringToFloat(recordStrings[j]);
+						break;
+					case "Spiciness":
+						recordTag.spiciness = StringToFloat(recordStrings[j]);
+						break;
+					case "Nausea":
+						recordTag.nausea = StringToFloat(recordStrings[j]);
+						break;
+					case "Anticipation":
+						recordTag.anticipation = StringToFloat(recordStrings[j]);
+						break;
+					case "Description":
+						recordTag.description = recordStrings[j];
+						break;
+					case "Combines Well With":
+						recordTag.combinesWellWith = recordStrings[j];
+						break;
+					case "Combines Poorly With":
+						recordTag.combinesPoorlyWith = recordStrings[j];
+						break;
+					default:
+						Debug.LogError ("Unhandled tag name: "+fieldLookup[j]);
+						break;
+					}
+					
+				}
+				tags.Add (recordTag);
+			}
+			
 		}
 	}
 
@@ -252,8 +327,8 @@ public class Database : MonoBehaviour {
 	{
 		switch (s)
 		{
-		case "quality":
-				return AttributeType.Quality;
+		case "descriptor":
+				return AttributeType.Descriptor;
 		case "ingredient":
 				return AttributeType.Ingredient;
 		case "form":

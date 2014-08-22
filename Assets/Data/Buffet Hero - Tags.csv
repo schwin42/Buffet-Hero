@@ -1,0 +1,59 @@
+Tag ID,Type,Value,Magnitude,Price,Spiciness,Nausea,Anticipation,Description,Combines Well With,Combines Poorly With
+sweet,flavor,,,,,,,,other flavors,other flavors
+cold,temperature,,,,,,,,,hot
+savory,flavor,,,,,,,,other flavors,other flavors
+bitter,flavor,,,,,,,,other flavors,other flavors
+sour,flavor,,,,,,,,other flavors,other flavors
+salty,flavor,,,,,,,,other flavors,other flavors
+hot,temperature,,,,,,,,,cold
+creamy,texture,,,,,,,,sweet,liquid
+spongy,texture,,,,,,,,sweet,liquid
+liquid,texture,,,,,,,,,
+crispy,texture,,,,,,,,creamy; chewy,liquid; spongy
+chewy,texture,,,,,,,,crispy,liquid; spongy
+sticky,texture,,,,,,,,,
+fancy,execution,1,,2,,,,,,
+cheap,price,-1,,-2,,,,,,
+disaster,execution,,,,,,,,,
+impossible,novelty,,4,,,,4,,,
+boring,novelty,,-2,,,,-2,,,
+spoiled,freshness,-2,,,,,,Causes food poisoning,,
+non-food,flavor,-4,,,,,,,,
+enticing,novelty,,2,,,,2,,,
+awesome,taste,,3,,,,,,,
+fresh,freshness,1,,,,,,,,
+upscale,price,,,1,,,,,,
+greek,nationality,,,,,,,Selected by restaurant,,
+chinese,nationality,,,,,,,Selected by restaurant,,
+mexican,nationality,,,,,,,Selected by restaurant,,
+japanese,nationality,,,,,,,Selected by restaurant,,
+american,nationality,,,,,,,Selected by restaurant,,
+thai,nationality,,,,,,,Selected by restaurant,,
+indian,nationality,,,,,,,Selected by restaurant,,
+juicy,texture,,1,,,,,,other textures,other textures
+meat,substance,,,,,,,Toxic unless cooked,,
+seafood,substance,,,,,,,May be served raw,,
+cooked,,,,,,,,Toxic unless cooked,,
+tough,texture,-1,,,,,,,,
+tangy,flavor,,1,,,,,,,
+disgusting,taste,-3,,,,,,,,
+bland,taste,,-1,,,,,,,
+alcoholic,effect,,,,,1,1,,,
+random,wildcard,,,,,,,,,
+decadent,taste,2,,,,,,,,
+potent,,1,,,,,,,,
+ruined,execution,-2,,,,,,,,
+crummy,execution,-1,,,,,,,,
+stale,freshness,-1,,,,,,,,
+aged,freshness,,,,,,,"If alcoholic, +Value. Else, Spoiled",,
+unenticing,novelty,,-1,,,,,,,
+raw,temperature,,,,,,,Cold; Makes meat Toxic,,
+vegan,substance,-1,,,,,,,,
+toxic,effect,,,,,2,,May add adverse effects,,
+dangerous,effect,,,,,,,May add harm or adverse effects,,
+psychotropic,effect,,,,,,,May cause harm or other adverse effects,,
+gross,taste,-2,,,,,,,,
+mild spicy,spiciness,,,,1,,,,,
+moderate spice,spiciness,,,,2,,,,,
+hot spice,spiciness,,,,3,,,,,
+extreme spice,spiciness,,,,4,,,,,

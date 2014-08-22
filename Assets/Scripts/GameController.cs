@@ -93,9 +93,9 @@ public class GameController : MonoBehaviour {
 		IEnumerable<FoodAttribute> query = null;
 		switch(attributeType)
 		{
-		case AttributeType.Quality:
+		case AttributeType.Descriptor:
 			query = from attribute in Database.Instance.foodAttributes
-				where attribute.rank == rank && attribute.attributeType == AttributeType.Quality
+				where attribute.rank == rank && attribute.attributeType == AttributeType.Descriptor
 					select attribute;
 			break;
 		case AttributeType.Ingredient:
@@ -159,14 +159,14 @@ public class GameController : MonoBehaviour {
 		Food food = new Food();
 
 		Rank qualityRank = GetRandomRank();
-		food.quality = GetRandomAttribute(AttributeType.Quality, qualityRank);
-		food.quality.multiplier = GetQualityMultipler(qualityRank);
+		food.descriptor = GetRandomAttribute(AttributeType.Descriptor, qualityRank);
+		//food.quality.multiplier = GetQualityMultipler(qualityRank);
 		Rank ingredientRank = GetRandomRank();
 		food.ingredient = GetRandomAttribute(AttributeType.Ingredient, ingredientRank);
-		food.ingredient.multiplier = GetIngredientMultipler(ingredientRank);
+		//food.ingredient.multiplier = GetIngredientMultipler(ingredientRank);
 		Rank formRank = GetRandomRank();
 		food.form = GetRandomAttribute(AttributeType.Form, formRank);
-		food.form.modifier = GetFormModifier(formRank);
+		//food.form.modifier = GetFormModifier(formRank);
 
 		return food;
 	}
