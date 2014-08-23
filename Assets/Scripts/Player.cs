@@ -5,7 +5,10 @@ public class Player : MonoBehaviour {
 
 	public static Player Instance;
 
+	public float constitution = 0f;
+
 	public float score = 0F;
+
 
 	void Awake()
 	{
@@ -17,34 +20,47 @@ public class Player : MonoBehaviour {
 	{
 		Food food = GameController.Instance.activeFood;
 		//float foodValue = GameController.Instance.activeFood.Value;
-		//score += food.Value;
+		float foodQuality = food.Quality;
+		score += foodQuality;
 
-//		string commentary = "";
-//		if(food.Value < -100f)
-//		{
-//			commentary = "That was god awful.";
-//		} else if(food.Value >= -100f && food.Value < -50f)
-//		{
-//			commentary = "So disgusting.";
-//		} else if(food.Value >= -50f && food.Value < 0f)
-//		{
-//			commentary = "Kinda gross.";
-//		} else if(food.Value >= 0f && food.Value < 50f)
-//		{
-//			commentary = "You've had better";
-//		} else if(food.Value >= 50f && food.Value < 100f)
-//		{
-//			commentary = "Not bad.";
-//		} else if(food.Value >= 100f && food.Value < 200f)
-//		{
-//			commentary = "Mmm, delicious!";
-//		} else if(food.Value >= 200)
-//		{
-//			commentary = "That was way better than sex.";
-//		}
-//		InterfaceController.Instance.WriteToOutcome(food.form.modifier + " * " + food.ingredient.multiplier + " * " + food.quality.multiplier + " = " + food.Value
-//		                                            + "\n"+commentary );
-//		InterfaceController.Instance.WriteToScore(score);
+		string commentary = "";
+		if(foodQuality < -100f) {
+			commentary = "You're going to be sick"; 
+		} 
+		else if(foodQuality >= -100f && foodQuality < -75f) {
+			commentary = "God awful"; 
+		} 
+		else if(foodQuality >= -75 && foodQuality < -50f){
+			commentary = "Absolutely disgusting";
+		} 
+		else if(foodQuality >= -50f && foodQuality < -25f) {
+			commentary = "Really bad"; 
+		} 
+		else if(foodQuality >= -25f && foodQuality < -0f) {
+			commentary = "Kinda gross"; 
+		} 
+		else if(foodQuality >= 0f && foodQuality < 25f){
+			commentary = "You've had better"; 
+		}
+		else if(foodQuality >= 25f && foodQuality < 50f) {
+			commentary = "Not bad."; 
+		} 
+		else if(foodQuality >= 50f && foodQuality < 75f) //A
+		{
+			commentary = "Quite good"; 
+		}
+		else if(foodQuality >= 75f && foodQuality < 100f) //A
+		{
+			commentary = "Mmm, delicious"; 
+		} 
+		else if(foodQuality >= 100) {
+			commentary = "Amazing!"; 
+		}
+		InterfaceController.Instance.WriteToOutcome(
+			//food.attributes + " * " + food.ingredient.multiplier + " * " + food.quality.multiplier + " = " + foodQuality
+		     //                                       + "\n"+
+			foodQuality + ": "+commentary );
+		InterfaceController.Instance.WriteToScore(score);
 		                                     
 		GameController.Instance.NextPrompt();
 	}

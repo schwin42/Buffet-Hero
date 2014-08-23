@@ -37,6 +37,6 @@ public class InterfaceController : MonoBehaviour {
 
 	public void WriteToScore(float f)
 	{
-		scoreLabel.text = f.ToString("F2");
+		scoreLabel.text = "Score: "+f.ToString();
 	}
 }

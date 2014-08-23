@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +21,7 @@ public class GameController : MonoBehaviour {
 
 	//Status
 	public Food activeFood;
+	public Food previousFood;
 
 	void Awake()
 	{
@@ -94,17 +95,17 @@ public class GameController : MonoBehaviour {
 		switch(attributeType)
 		{
 		case AttributeType.Descriptor:
-			query = from attribute in Database.Instance.foodAttributes
+			query = from attribute in Database.Instance.attributeData
 				where attribute.rank == rank && attribute.attributeType == AttributeType.Descriptor
 					select attribute;
 			break;
 		case AttributeType.Ingredient:
-			query = from attribute in Database.Instance.foodAttributes
+			query = from attribute in Database.Instance.attributeData
 				where attribute.rank == rank && attribute.attributeType == AttributeType.Ingredient
 					select attribute;
 			break;
 		case AttributeType.Form:
-			query = from attribute in Database.Instance.foodAttributes
+			query = from attribute in Database.Instance.attributeData
 				where attribute.rank == rank && attribute.attributeType == AttributeType.Form
 					select attribute;
 			break;
@@ -119,7 +120,7 @@ public class GameController : MonoBehaviour {
 		return possibleAttributes[(int)Mathf.Floor (Random.value * possibleAttributes.Length)];
 		} else {
 		Debug.LogError("No "+attributeType+"s of Rank "+rank+" found.");
-		return new FoodAttribute();
+		return null;
 		}
 	}
 
@@ -158,93 +159,92 @@ public class GameController : MonoBehaviour {
 	{
 		Food food = new Food();
 
-		Rank qualityRank = GetRandomRank();
-		food.descriptor = GetRandomAttribute(AttributeType.Descriptor, qualityRank);
-		//food.quality.multiplier = GetQualityMultipler(qualityRank);
-		Rank ingredientRank = GetRandomRank();
-		food.ingredient = GetRandomAttribute(AttributeType.Ingredient, ingredientRank);
-		//food.ingredient.multiplier = GetIngredientMultipler(ingredientRank);
-		Rank formRank = GetRandomRank();
-		food.form = GetRandomAttribute(AttributeType.Form, formRank);
-		//food.form.modifier = GetFormModifier(formRank);
+		food.attributes.Add (GetRandomAttribute(AttributeType.Form, GetRandomRank()));
+		food.attributes.Add (GetRandomAttribute(AttributeType.Ingredient, GetRandomRank()));
+		food.attributes.Add (GetRandomAttribute(AttributeType.Descriptor, GetRandomRank()));
+		food.Realize(true);
 
 		return food;
 	}
 
-	public float GetQualityMultipler(Rank rank)
-	{
-		switch(rank)
-		{
-		case Rank.S:
-			return 1.5f;
-		case Rank.A:
-			return 1.25f;
-		case Rank.B:
-			return 1.1f;
-		case Rank.C:
-			return 1f;
-		case Rank.D:
-			return .5f;
-		case Rank.E:
-			return -.25f;
-		case Rank.F:
-			return -.5f;
-		default:
-			Debug.LogError ("Invalid rank: "+rank);
-			return 1f;
-		}
-	}
+//	public float GetQualityMultipler(Rank rank)
+//	{
+//		switch(rank)
+//		{
+//		case Rank.S:
+//			return 1.5f;
+//		case Rank.A:
+//			return 1.25f;
+//		case Rank.B:
+//			return 1.1f;
+//		case Rank.C:
+//			return 1f;
+//		case Rank.D:
+//			return .5f;
+//		case Rank.E:
+//			return -.25f;
+//		case Rank.F:
+//			return -.5f;
+//		default:
+//			Debug.LogError ("Invalid rank: "+rank);
+//			return 1f;
+//		}
+//	}
 
-	public float GetIngredientMultipler(Rank rank)
-	{
-		switch(rank)
-		{
-		case Rank.S:
-			return 2f;
-		case Rank.A:
-			return 1.5f;
-		case Rank.B:
-			return 1.25f;
-		case Rank.C:
-			return 1f;
-		case Rank.D:
-			return .5f;
-		case Rank.E:
-			return -.5f;
-		case Rank.F:
-			return -1f;
-		default:
-			Debug.LogError ("Invalid rank: "+rank);
-			return 1f;
-		}
-	}
+//	public float GetIngredientMultipler(Rank rank)
+//	{
+//		switch(rank)
+//		{
+//		case Rank.S:
+//			return 2f;
+//		case Rank.A:
+//			return 1.5f;
+//		case Rank.B:
+//			return 1.25f;
+//		case Rank.C:
+//			return 1f;
+//		case Rank.D:
+//			return .5f;
+//		case Rank.E:
+//			return -.5f;
+//		case Rank.F:
+//			return -1f;
+//		default:
+//			Debug.LogError ("Invalid rank: "+rank);
+//			return 1f;
+//		}
+//	}
 
-	public float GetFormModifier(Rank rank)
-	{
-		switch(rank)
-		{
-		case Rank.S:
-			return 150f;
-		case Rank.A:
-			return 133f;
-		case Rank.B:
-			return 116f;
-		case Rank.C:
-			return 100f;
-		case Rank.D:
-			return 84f;
-		case Rank.E:
-			return 67f;
-		case Rank.F:
-			return 50f;
-		default:
-			Debug.LogError ("Invalid rank: "+rank);
-			return 10f;
-		}
-	}
+//	public float GetFormModifier(Rank rank)
+//	{
+//		switch(rank)
+//		{
+//		case Rank.S:
+//			return 150f;
+//		case Rank.A:
+//			return 133f;
+//		case Rank.B:
+//			return 116f;
+//		case Rank.C:
+//			return 100f;
+//		case Rank.D:
+//			return 84f;
+//		case Rank.E:
+//			return 67f;
+//		case Rank.F:
+//			return 50f;
+//		default:
+//			Debug.LogError ("Invalid rank: "+rank);
+//			return 10f;
+//		}
+//	}
 
 	public void NextPrompt()
 	{
+		if(activeFood != null)
+		{
+			previousFood = activeFood;
+		}
 		activeFood = GetRandomFood();
 		InterfaceController.Instance.WriteToPrompt("You encounter: "+
 		                                           "\n "+activeFood.Name);

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 #region Enums
 
@@ -55,32 +56,117 @@ public class Food
 	{
 		get
 		{
-			return descriptor.name + " " + ingredient.name + " " + form.name;
+			string returnString = "";
+				for (int i = attributes.Count - 1; i >= 0; i--)
+			{
+				Debug.Log (i);
+				returnString += attributes[i].name;
+				if(i > 0)
+				{
+					returnString += " ";
+				}
+			}
+			return returnString;
+			//return descriptor.name + " " + ingredient.name + " " + form.name;
+		}
+	}
+	
+
+	public float Quality
+	{
+		get
+		{
+			float netValue = 0f;
+			float netMagnitude = 0f;
+			foreach(Tag tag in Tags)
+			{
+				netValue += tag.value;
+				netMagnitude += tag.magnitude;
+			}
+			//Debug.Log ("Net value, magnitude"+netValue + ", "+ netMagnitude);
+			return (netValue >= 0 ? netValue + 1 : netValue) * ((netMagnitude / 4) + 1) * Database.Instance.scoreConstant;
+
 		}
 	}
 
-//	public float Value
-//	{
-//		get
-//		{
-//			float value = form.modifier * ingredient.multiplier;
-//			if(value < 0)
-//			{
-//				if(quality.multiplier <= 1)
+	public List<Tag> Tags
+	{
+		get
+		{
+			List<Tag> tags = new List<Tag>();
+			foreach (FoodAttribute attribute in attributes)
+			{
+				tags.AddRange (attribute.tags);
+//				foreach(Tag tag in attribute.tags)
 //				{
-//					return value * Mathf.Abs (quality.multiplier);
-//				} else {
-//					return value * (2 - quality.multiplier);
+//					tags.Add (tag);
 //				}
-//			} else {
-//				return value * quality.multiplier;
-//			}
-//		}
-//	}
-	
-		public FoodAttribute descriptor;
-		public FoodAttribute ingredient;
-		public FoodAttribute form;
+
+			}
+			tags.AddRange (virtualTags);
+			return tags; 
+		}
+	}
+
+	public void Realize(bool b)
+	{
+		if(b)
+		{
+//			Tag _virtualTag = new Tag();
+//			_virtualTag.name = "combination";
+			foreach(Tag tag in Tags)
+			{
+				//Database.Instance.testTag = tag;
+				if(tag.combinesPoorlyWith != null){
+				foreach(string tagString in tag.combinesPoorlyWith)
+				{
+					int hits = tag.GetHitsInFood(this, tagString);
+						if(hits > 0)
+						{
+					Tag virtualTag = new Tag();
+					virtualTag.value -= hits;
+					virtualTag.name = tag.name+ " combines poorly with "+tagString+" x"+hits;
+					virtualTags.Add (virtualTag);
+						}
+				}
+				}
+				if(tag.combinesWellWith != null){
+				foreach(string tagString in tag.combinesWellWith)
+				{
+					int hits = tag.GetHitsInFood(this, tagString);
+						if(hits > 0)
+						{
+					Tag virtualTag = new Tag();
+					virtualTag.value += hits;
+					virtualTag.name = tag.name+ " combines well with "+tagString+" x"+hits;
+					virtualTags.Add (virtualTag);
+						}
+				}
+				}
+				if(tag.combinesDramaticallyWith != null){
+				foreach(string tagString in tag.combinesDramaticallyWith)
+				{
+					int hits = tag.GetHitsInFood(this, tagString);
+						if(hits > 0)
+						{
+					Tag virtualTag = new Tag();
+					virtualTag.magnitude += hits;
+					virtualTag.name = tag.name+ " combines dramatically with "+tagString+" x"+hits;
+					virtualTags.Add (virtualTag);
+						}
+				}
+				}
+			}
+			//virtualTag.Add = _virtualTag;
+		} else {
+			virtualTags = new List<Tag>();
+		}
+	}
+
+
+
+	public List<FoodAttribute> attributes = new List<FoodAttribute>();
+	public List<Tag> virtualTags = new List<Tag>();
 	
 }
 
@@ -93,7 +179,7 @@ public class FoodAttribute
 	public string attributeSubtype;
 //	public float multiplier = 1f;
 //	public float modifier = 0f;
-	public string[] tags = new string[0];
+	public List<Tag> tags = new List<Tag>();
 //	public Temperature temperature = Temperature.None;
 //	public float spice = 0f;
 //	public string special = "";
@@ -107,12 +193,38 @@ public class Tag
 	public float value = 0f;
 	public float magnitude = 0f;
 	public float price = 0f;
+	public float calories = 0f;
 	public float spiciness = 0f;
 	public float nausea = 0f;
 	public float anticipation = 0f;
 	public string description = "";
-	public string combinesWellWith = "";
-	public string combinesPoorlyWith = "";
+	public string[] combinesWellWith;
+	public string[] combinesPoorlyWith;
+	public string[] combinesDramaticallyWith;
+
+	public int GetHitsInFood(Food food, string tagString)
+	{
+		var dataQuery = from dataTag in Database.Instance.tagData
+			where dataTag.name == tagString
+				select dataTag;
+		Tag[] matchingTagsInData = dataQuery.ToArray();
+		if(matchingTagsInData.Length == 0)
+		{
+			//Handle references and types
+			return 0;
+		} else {
+			var foodQuery = from foodTag in food.Tags
+				where foodTag.name == tagString && foodTag != this
+					select foodTag;
+			Tag[] matchingTagsInFood = foodQuery.ToArray();
+			int hits = 0;
+			foreach(Tag foodTag in matchingTagsInFood)
+			{
+				hits++;
+			}
+			return hits;
+		}
+	}
 }
 
 //[System.Serializable]
@@ -138,17 +250,21 @@ public class Tag
 
 public class Database : MonoBehaviour {
 
+	public static Database Instance;
+
+	//Configurable
+
+	public float scoreConstant = 25f;
 	public string attributesFile = "";
 	public string tagsFile = "Buffet Hero - Tags";
 
-	public static Database Instance;
+	//Data
+	public List<Tag> tagData;
+	public List<FoodAttribute> attributeData;
 
-//	public List<Quality> qualities;
-//	public List<Ingredient> ingredients;
-//	public List<Form> forms;
+	//Debug
+	public Tag testTag;
 
-	public List<FoodAttribute> foodAttributes;
-	public List<Tag> tags;
 
 	public void Awake()
 	{
@@ -204,7 +320,12 @@ public class Database : MonoBehaviour {
 						recordAttribute.attributeSubtype = recordStrings[j];
 						break;
 					case "Tags":
-						recordAttribute.tags = Regex.Split(recordStrings[j], "; ");
+						string[] tagArray = Regex.Split(recordStrings[j], "; ");
+						List<string> tagList = new List<string>(tagArray);
+						var query = from tag in tagData
+							where tagList.Contains(tag.name)
+								select tag;
+						recordAttribute.tags = query.ToList();
 						break;
 					case "Rank":
 						recordAttribute.rank = StringToRank(recordStrings[j]);
@@ -215,7 +336,7 @@ public class Database : MonoBehaviour {
 					}
 					
 				}
-				foodAttributes.Add (recordAttribute);
+				attributeData.Add (recordAttribute);
 			}
 			
 		}
@@ -253,6 +374,9 @@ public class Database : MonoBehaviour {
 					case "Value":
 						recordTag.value = StringToFloat(recordStrings[j]);
 						break;
+					case "Calories":
+						recordTag.calories = StringToFloat(recordStrings[j]);
+						break;
 					case "Magnitude":
 						recordTag.magnitude = StringToFloat(recordStrings[j]);
 						break;
@@ -272,10 +396,17 @@ public class Database : MonoBehaviour {
 						recordTag.description = recordStrings[j];
 						break;
 					case "Combines Well With":
-						recordTag.combinesWellWith = recordStrings[j];
+					//	Debug.Log (recordStrings[j]);
+						string[] tagArray = Regex.Split(recordStrings[j], "; ");
+							//Debug.Log (tagArray[0]);
+							recordTag.combinesWellWith = tagArray;
+							Debug.Log (recordTag.combinesWellWith[0]);
 						break;
 					case "Combines Poorly With":
-						recordTag.combinesPoorlyWith = recordStrings[j];
+						recordTag.combinesPoorlyWith = Regex.Split(recordStrings[j], "; ");
+							break;
+					case "Combines Dramatically With":
+						recordTag.combinesDramaticallyWith = Regex.Split(recordStrings[j], "; ");
 						break;
 					default:
 						Debug.LogError ("Unhandled tag name: "+fieldLookup[j]);
@@ -283,7 +414,7 @@ public class Database : MonoBehaviour {
 					}
 					
 				}
-				tags.Add (recordTag);
+				tagData.Add (recordTag);
 			}
 			
 		}
@@ -339,19 +470,22 @@ public class Database : MonoBehaviour {
 		}
 	}
 
-	public Temperature StringToTemperature(string s)
-	{
-		switch(s)
-		{
-		case "hot":
-			return Temperature.Hot;
-		case "cold":
-			return Temperature.Cold;
-		case "":
-			return Temperature.None;
-		default:
-			Debug.LogError("Invalid temperature: "+s);
-			return Temperature.None;
-		}
-	}
+//	public Temperature StringToTemperature(string s)
+//	{
+//		switch(s)
+//		{
+//		case "hot":
+//			return Temperature.Hot;
+//		case "cold":
+//			return Temperature.Cold;
+//		case "":
+//			return Temperature.None;
+//		default:
+//			Debug.LogError("Invalid temperature: "+s);
+//			return Temperature.None;
+//		}
+//	}
+
+
+
 }

@@ -3,12 +3,12 @@ aged,descriptor,,aged,E
 antiseptic,ingredient,,bitter; non-food,E
 aoili,form,condiment,,A
 bacon,ingredient,,savory; awesome,A
-banana,form,,sweet; firm,D
+banana,ingredient,,sweet; firm,D
 barbeque,descriptor,,savory,B
 beer,form,,alcholic; cold,B
 botched,descriptor,,ruined,E
 buffalo,ingredient,,,D
-burger,form,,savory; hot,B
+burger,form,,savory; hot; american,B
 burnt,descriptor,temperature,ruined; hot,D
 butterfinger,ingredient,,crispy; sweet,A
 carp,ingredient,,fish; cooked; hot,D
@@ -27,7 +27,7 @@ egg,ingredient,,cooked; hot,C
 electrocuting,descriptor,,dangerous,F
 excrement,ingredient,,non-food; disgusting,F
 expired,descriptor,freshness,spoiled,E
-extra-spicy,descriptor,,very spicy,C
+extra-spicy,descriptor,,hot spice,C
 fatback,ingredient,,savory; hot,D
 feta,descriptor,,upscale; greek,B
 fetid,descriptor,,gross,D
@@ -52,7 +52,7 @@ ketchup,form,condiment,salty; sweet,C
 knuckle,ingredient,,non-food; tough,D
 lard,ingredient,,bland,E
 lead,ingredient,,toxic; non-food,F
-loaf,form,,firm; hot,D
+loaf,form,,firm; hot; american,D
 made-to-order,descriptor,,fresh,B
 marshmallow,descriptor,,sweet,B
 mayo-grade,ingredient,,bitter,E
@@ -60,12 +60,12 @@ melange,form,,fancy,A
 mushroom,ingredient,,firm; hot,C
 mustard,form,condiment,salty,C
 mystery,ingredient,,random,D
-noodles,form,,,C
+noodles,form,,asian,C
 pancake,form,,sweet; hot,B
 pandimensional,descriptor,,awesome; dangerous; psychotropic; impossible,S
 panini,form,,hot; crispy,A
 pickle,ingredient,,tangy,D
-pickled,descriptor,,,B
+pickled,descriptor,,crunchy; sour,B
 pie,form,,sweet; smooth,B
 piping hot,descriptor,,hot; fresh,B
 pork,ingredient,,savory; hot,C
@@ -96,7 +96,7 @@ spinach,ingredient,,cold,C
 squirming,descriptor,,disgusting,E
 strawberry,ingredient,,sweet; juicy,B
 sundae,form,,sweet; creamy; cold,B
-surprise,form,,,E
+surprise,form,,risky; random,E
 sushi,form,,cold,A
 suspect,descriptor,,unenticing,D
 syrup,form,condiment,sweet; sticky,C
@@ -109,12 +109,22 @@ undercooked,descriptor,temperature,hot; ruined,D
 unicorn,ingredient,,savory; meat; impossible; hot,S
 vanilla,ingredient,,sweet,B
 vegan,descriptor,,vegan,D
-vegetable,ingredient,,,C
+vegetable,ingredient,,vegan,C
 velvety,descriptor,,creamy; decadent,A
 venison,ingredient,,meat; cooked; savory; hot; fancy,A
 waffle,form,,sweet; spongy,B
 watermelon,ingredient,,sweet,B
 whipped,descriptor,,sweet; creamy; cold,C
 whiskey,ingredient,,bitter; alcoholic,C
-whole fat,descriptor,,,B
 zero-calorie,descriptor,,bland,E
+cheesecake,form,,sweet; cold; creamy; awesome,A
+oyster,ingredient,,risky,A
+stir-fry,form,,hot; asian,C
+tofu,ingredient,,vegan; boring,D
+chimichanga,form,,mexican; hot; awesome; savory,B
+burrito,form,,mexican; hot; savory,C
+daiquiri,form,,fancy; alcoholic; sweet; cold,A
+microwaved,descriptor,,crummy; hot,D
+pretzel,form,,doughy; salty,B
+gnocchi,form,,italian; fancy,A
+toothpaste,ingredient,,gross; mint,E
