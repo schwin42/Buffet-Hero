@@ -246,8 +246,10 @@ public class GameController : MonoBehaviour {
 			previousFood = activeFood;
 		}
 		activeFood = GetRandomFood();
-		InterfaceController.Instance.WriteToPrompt("You encounter: "+
-		                                           "\n "+activeFood.Name);
+		InterfaceController.Instance.WriteToPrompt(
+			//"You encounter: "+
+		                                           //"\n "+
+		                                           activeFood.Name);
 		//InterfaceController.Instance.WriteToOutcome("");
 		InterfaceController.Instance.WriteToScore(Player.Instance.score);
 	}
