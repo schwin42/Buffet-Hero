@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+public enum Phase
+{
+	Uninitialized = 0,
+	Choose = 1,
+	Evaluate = 2,
+	FinalScoring = 3
+}
+
 //public enum FoodAttributeType
 //{
 //	None = 0,
@@ -19,9 +27,15 @@ public class GameController : MonoBehaviour {
 	public Restaurant activeRestaurant;
 	public int numberOfTrials = 1;
 
+	//Cached
+	public Player[] players = new Player[4];
+
 	//Status
+	//public int confirmedPlayers = 0;
+	public Phase currentPhase = Phase.Uninitialized;
 	public Food activeFood;
 	public Food previousFood;
+	public Dictionary<int, bool> playerChoices = new Dictionary<int, bool>(); //True indicates "eat"
 
 	void Awake()
 	{
@@ -31,13 +45,21 @@ public class GameController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
+	//	players = 
+		GameObject camera = GameObject.Find ("UI Root/Camera");
+	players = camera.GetComponentsInChildren<Player>();
+	//	foreach(GameObject playerGo in playerGos)
+	//	{
+	//		players.Add (playerGo.GetComponent<Player>());
+	//	}
+
 		NextPrompt();
 
-		for(int i = 0; i < numberOfTrials; i++)
-		{
-			Player.Instance.Eat();
-		}
-		Debug.Log ("Average score: "+Player.Instance.score / numberOfTrials);
+//		for(int i = 0; i < numberOfTrials; i++)
+//		{
+//			Player.Instance.Eat();
+//		}
+//		Debug.Log ("Average score: "+Player.Instance.score / numberOfTrials);
 
 //		Dictionary<string, int> trialLog = new Dictionary<string, int>();
 //		for(int i = 0; i < trials; i++)
@@ -61,6 +83,14 @@ public class GameController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+		//bool allPlayersConfirmed = true;
+		if(currentPhase == Phase.Choose)
+		{
+if(playerChoices.Count >= 4)
+		{
+				EvaluateRound();
+		}
+		}
 	}
 
 	public Rank GetRandomRank()
@@ -167,80 +197,24 @@ public class GameController : MonoBehaviour {
 		return food;
 	}
 
-//	public float GetQualityMultipler(Rank rank)
-//	{
-//		switch(rank)
-//		{
-//		case Rank.S:
-//			return 1.5f;
-//		case Rank.A:
-//			return 1.25f;
-//		case Rank.B:
-//			return 1.1f;
-//		case Rank.C:
-//			return 1f;
-//		case Rank.D:
-//			return .5f;
-//		case Rank.E:
-//			return -.25f;
-//		case Rank.F:
-//			return -.5f;
-//		default:
-//			Debug.LogError ("Invalid rank: "+rank);
-//			return 1f;
-//		}
-//	}
-
-//	public float GetIngredientMultipler(Rank rank)
-//	{
-//		switch(rank)
-//		{
-//		case Rank.S:
-//			return 2f;
-//		case Rank.A:
-//			return 1.5f;
-//		case Rank.B:
-//			return 1.25f;
-//		case Rank.C:
-//			return 1f;
-//		case Rank.D:
-//			return .5f;
-//		case Rank.E:
-//			return -.5f;
-//		case Rank.F:
-//			return -1f;
-//		default:
-//			Debug.LogError ("Invalid rank: "+rank);
-//			return 1f;
-//		}
-//	}
-
-//	public float GetFormModifier(Rank rank)
-//	{
-//		switch(rank)
-//		{
-//		case Rank.S:
-//			return 150f;
-//		case Rank.A:
-//			return 133f;
-//		case Rank.B:
-//			return 116f;
-//		case Rank.C:
-//			return 100f;
-//		case Rank.D:
-//			return 84f;
-//		case Rank.E:
-//			return 67f;
-//		case Rank.F:
-//			return 50f;
-//		default:
-//			Debug.LogError ("Invalid rank: "+rank);
-//			return 10f;
-//		}
-//	}
-
 	public void NextPrompt()
 	{
+		if(currentPhase == Phase.Evaluate || currentPhase == Phase.Uninitialized)
+		{
+		foreach(Player player in players)
+		{
+			player.updateScoreLabel.text = "";
+			player.Score += player.pendingScore;
+				player.pendingScore = 0f;
+		}
+
+		currentPhase = Phase.Choose;
+		playerChoices = new Dictionary<int, bool>();
+		foreach(Player player in players)
+		{
+			player.EnableButtons(true);
+		}
+
 		if(activeFood != null)
 		{
 			previousFood = activeFood;
@@ -251,7 +225,24 @@ public class GameController : MonoBehaviour {
 		                                           //"\n "+
 		                                           activeFood.Name);
 		//InterfaceController.Instance.WriteToOutcome("");
-		InterfaceController.Instance.WriteToScore(Player.Instance.score);
+		//InterfaceController.Instance.WriteToScore(Player.Instance.score);
+		//EvaluateRound();
+		}
+	}
+
+	public void EvaluateRound()
+	{
+		currentPhase = Phase.Evaluate;
+		foreach(Player player in players)
+		{
+			if(playerChoices[player.playerId]) //if player chose to eat
+			{
+				float qualityFloat = activeFood.Quality;
+				string qualityString = qualityFloat >= 0 ? "+" + qualityFloat.ToString ("F0"): qualityFloat.ToString("F0");
+				player.updateScoreLabel.text = qualityString;
+				player.pendingScore = qualityFloat;
+			}
+		}
 	}
 	
 }
