@@ -11,6 +11,9 @@ public class InterfaceController : MonoBehaviour {
 	public UILabel[] promptLabels;
 	//public UILabel outcomeLabel;
 	//public UILabel scoreLabel;
+	public Color[] colors; 
+
+	public UIPanel[] playerPanels;
 
 
 	void Awake()

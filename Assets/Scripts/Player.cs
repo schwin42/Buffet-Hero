@@ -4,8 +4,17 @@ using System.Collections;
 public enum ControlType
 {
 	None = 0,
-	Player = 1,
+	Human = 1,
 	Computer = 2
+}
+
+public enum PlayerColor
+{
+	None = -1,
+	Red,
+	Blue,
+	Yellow,
+	Green
 }
 
 public class Player : MonoBehaviour {
@@ -14,7 +23,9 @@ public class Player : MonoBehaviour {
 
 	public int playerId;
 
-	public ControlType controlType = ControlType.Player;
+	public PlayerColor playerColor = PlayerColor.None;
+
+	public ControlType controlType = ControlType.Human;
 
 	public float constitution = 0f;
 	public float pendingConstitution = 0f;
@@ -36,6 +47,9 @@ public class Player : MonoBehaviour {
 
 	public string status = "";
 
+
+
+	//UI
 	public UIButton eatButton;
 	public UIButton passButtton;
 
@@ -44,6 +58,8 @@ public class Player : MonoBehaviour {
 
 	public UILabel updateScoreLabel;
 	public UILabel updateHpLabel;
+
+
 
 	//public bool isConfirmed = false;
 
@@ -56,6 +72,30 @@ public class Player : MonoBehaviour {
 	{
 		eatButton = transform.FindChild("Eat").GetComponent<UIButton>();
 		passButtton = transform.FindChild("Pass").GetComponent<UIButton>();
+	}
+
+	void Update()
+	{
+		Debug.Log ("Updating");
+		//Computer choice
+		if(GameController.Instance.currentPhase == Phase.Choose && controlType == ControlType.Computer)
+		{
+			Debug.Log ("AI controlled during control phase");
+			if(GameController.Instance.playerChoices.Count >= GameController.Instance.humanPlayers.Count && !GameController.Instance.humanPlayers.Contains(this))
+			{
+				Debug.Log ("Human players gone?");
+				//Choose whether to eat
+				if(Random.value >= .5f)
+				{
+
+					Eat ();
+				} else 
+				{
+					Pass ();
+				}
+				Debug.Log ("Chose");
+			}
+		}
 	}
 
 	public void Eat()
@@ -124,4 +164,6 @@ public class Player : MonoBehaviour {
 			InterfaceController.Instance.EnableButton(passButtton, b);
 
 	}
+
+
 }

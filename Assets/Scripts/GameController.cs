@@ -32,6 +32,7 @@ public class GameController : MonoBehaviour {
 
 	//Status
 	//public int confirmedPlayers = 0;
+	public List<Player> humanPlayers = new List<Player>();
 	public Phase currentPhase = Phase.Uninitialized;
 	public Food activeFood;
 	public Food previousFood;
@@ -46,21 +47,26 @@ public class GameController : MonoBehaviour {
 	void Start () {
 	
 	//	players = 
+
+		//Acquire objects
 		GameObject camera = GameObject.Find ("UI Root/Camera");
 	players = camera.GetComponentsInChildren<Player>();
-	//	foreach(GameObject playerGo in playerGos)
-	//	{
-	//		players.Add (playerGo.GetComponent<Player>());
-	//	}
 
+
+		//Register players
+		RegisterPlayers();
+
+		//Initialize game
 		NextPrompt();
 
+		//GET AVERAGE SCORE
 //		for(int i = 0; i < numberOfTrials; i++)
 //		{
 //			Player.Instance.Eat();
 //		}
 //		Debug.Log ("Average score: "+Player.Instance.score / numberOfTrials);
 
+		//GET RANDOM FOOD N TIMES
 //		Dictionary<string, int> trialLog = new Dictionary<string, int>();
 //		for(int i = 0; i < trials; i++)
 //		{
@@ -150,7 +156,7 @@ if(playerChoices.Count >= 4)
 		return possibleAttributes[(int)Mathf.Floor (Random.value * possibleAttributes.Length)];
 		} else {
 		Debug.LogError("No "+attributeType+"s of Rank "+rank+" found.");
-		return null;
+			return GetRandomAttribute(attributeType, rank);
 		}
 	}
 
@@ -199,8 +205,8 @@ if(playerChoices.Count >= 4)
 
 	public void NextPrompt()
 	{
-		if(currentPhase == Phase.Evaluate || currentPhase == Phase.Uninitialized)
-		{
+		currentPhase = Phase.Choose;
+
 		foreach(Player player in players)
 		{
 			player.updateScoreLabel.text = "";
@@ -208,7 +214,7 @@ if(playerChoices.Count >= 4)
 				player.pendingScore = 0f;
 		}
 
-		currentPhase = Phase.Choose;
+
 		playerChoices = new Dictionary<int, bool>();
 		foreach(Player player in players)
 		{
@@ -227,7 +233,6 @@ if(playerChoices.Count >= 4)
 		//InterfaceController.Instance.WriteToOutcome("");
 		//InterfaceController.Instance.WriteToScore(Player.Instance.score);
 		//EvaluateRound();
-		}
 	}
 
 	public void EvaluateRound()
@@ -242,6 +247,30 @@ if(playerChoices.Count >= 4)
 				player.updateScoreLabel.text = qualityString;
 				player.pendingScore = qualityFloat;
 			}
+		}
+	}
+
+	void RegisterPlayers()
+	{
+		//Log human players
+
+		for(int i = 0; i < players.Count (); i++)
+		{
+			//Log as human 
+			if(players[i].controlType == ControlType.Human)
+			{
+				humanPlayers.Add(players[i]);
+			}
+
+			//Set identification
+			players[i].name = "Player "+i;
+			players[i].playerId = i;
+
+
+			
+			//Set color
+			players[i].playerColor = (PlayerColor)i;
+
 		}
 	}
 	
