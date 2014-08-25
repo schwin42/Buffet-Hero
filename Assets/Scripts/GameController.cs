@@ -41,6 +41,9 @@ public class GameController : MonoBehaviour {
 	public Food previousFood;
 	public Dictionary<int, bool> playerChoices = new Dictionary<int, bool>(); //True indicates "eat"
 
+	//Debug
+	public int trials = 1000;
+
 	void Awake()
 	{
 		Instance = this;
@@ -57,10 +60,10 @@ public class GameController : MonoBehaviour {
 
 
 		//Register players
-		RegisterPlayers();
+		//RegisterPlayers();
 
 		//Initialize game
-		BeginRound();
+		//BeginRound();
 
 		//GET AVERAGE SCORE
 //		for(int i = 0; i < numberOfTrials; i++)
@@ -69,29 +72,18 @@ public class GameController : MonoBehaviour {
 //		}
 //		Debug.Log ("Average score: "+Player.Instance.score / numberOfTrials);
 
-		//GET RANDOM FOOD N TIMES
-//		Dictionary<string, int> trialLog = new Dictionary<string, int>();
-//		for(int i = 0; i < trials; i++)
-//		{
-//			Food food = GetRandomFood();
-//			if(trialLog.ContainsKey(food.Name))
-//			{
-//				trialLog[food.Name] += 1;
-//			} else {
-//				trialLog.Add (food.Name, 1);
-//			}
-//		}
-//		Dictionary<string, int> orderedLog = trialLog.OrderByDescending(trial => trial.Value).ToDictionary(trial => trial.Key, trial => trial.Value);
-//		foreach(KeyValuePair<string, int> pair in orderedLog)
-//		{
-//			Debug.Log (pair.Key + " appeared "+pair.Value+" times");
-//		}
+		//RunFoodTrials ();
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+		//Debug
+		if (Input.GetKeyUp (KeyCode.Alpha1)) {
+			RunFoodTrials();
+				}
+
 		//bool allPlayersConfirmed = true;
 		if(currentPhase == Phase.Choose)
 		{
@@ -160,8 +152,10 @@ if(playerChoices.Count >= 4)
 		{
 		return possibleAttributes[(int)Mathf.Floor (Random.value * possibleAttributes.Length)];
 		} else {
-		Debug.LogError("No "+attributeType+"s of Rank "+rank+" found.");
-			return GetRandomAttribute(attributeType, rank);
+			Rank substituteRank = GetRandomRank();
+		Debug.LogError("No "+attributeType+"s of Rank "+rank+" found, used "+substituteRank+" instead.");
+			return GetRandomAttribute(attributeType, substituteRank);
+			//return new FoodAttribute();
 		}
 	}
 
@@ -201,10 +195,10 @@ if(playerChoices.Count >= 4)
 		Debug.Log ("Get random food @" + currentRound);
 		Food food = new Food();
 
-//		food.attributes.Add (GetRandomAttribute(AttributeType.Form, GetRandomRank()));
-//		food.attributes.Add (GetRandomAttribute(AttributeType.Ingredient, GetRandomRank()));
-//		food.attributes.Add (GetRandomAttribute(AttributeType.Descriptor, GetRandomRank()));
-//		food.Realize(true);
+		food.attributes.Add (GetRandomAttribute(AttributeType.Form, GetRandomRank()));
+		food.attributes.Add (GetRandomAttribute(AttributeType.Ingredient, GetRandomRank()));
+		food.attributes.Add (GetRandomAttribute(AttributeType.Descriptor, GetRandomRank()));
+		food.Realize(true);
 //
 		return food;
 	}
@@ -307,6 +301,27 @@ if(playerChoices.Count >= 4)
 				} else {
 			currentPhase = Phase.GameOver;
 				}
+	}
+
+	public void RunFoodTrials()
+	{
+		//GET RANDOM FOOD N TIMES
+		Dictionary<string, int> trialLog = new Dictionary<string, int>();
+		for(int i = 0; i < trials; i++)
+		{
+			Food food = GetRandomFood();
+			if(trialLog.ContainsKey(food.Name))
+			{
+				trialLog[food.Name] += 1;
+			} else {
+				trialLog.Add (food.Name, 1);
+			}
+		}
+		Dictionary<string, int> orderedLog = trialLog.OrderByDescending(trial => trial.Value).ToDictionary(trial => trial.Key, trial => trial.Value);
+		foreach(KeyValuePair<string, int> pair in orderedLog)
+		{
+			Debug.Log (pair.Key + " appeared "+pair.Value+" times");
+		}
 	}
 	
 }
