@@ -52,7 +52,7 @@ public class InterfaceController : MonoBehaviour {
 
 	public void EnableButton(UIButton uiButton, bool b)
 	{
-		Debug.Log("Enable button: "+uiButton.gameObject.transform.parent.gameObject);
+		//Debug.Log("Enable button: "+uiButton.gameObject.transform.parent.gameObject);
 		UILabel uiLabel = uiButton.GetComponentInChildren<UILabel>();
 
 		if(b)

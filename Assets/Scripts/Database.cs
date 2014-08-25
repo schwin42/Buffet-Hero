@@ -59,13 +59,14 @@ public class Food
 			string returnString = "";
 				for (int i = attributes.Count - 1; i >= 0; i--)
 			{
-				Debug.Log (i);
+
 				returnString += attributes[i].name;
 				if(i > 0)
 				{
 					returnString += " ";
 				}
 			}
+			Debug.Log ("Food = "+returnString);
 			return returnString;
 			//return descriptor.name + " " + ingredient.name + " " + form.name;
 		}
@@ -400,7 +401,7 @@ public class Database : MonoBehaviour {
 						string[] tagArray = Regex.Split(recordStrings[j], "; ");
 							//Debug.Log (tagArray[0]);
 							recordTag.combinesWellWith = tagArray;
-							Debug.Log (recordTag.combinesWellWith[0]);
+							//Debug.Log (recordTag.combinesWellWith[0]);
 						break;
 					case "Combines Poorly With":
 						recordTag.combinesPoorlyWith = Regex.Split(recordStrings[j], "; ");

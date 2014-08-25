@@ -34,7 +34,7 @@ public class AudioController : MonoBehaviour {
 	
 	}
 
-	public void PlaySound(SoundEffect soundEffect = SoundEffect.Click)
+	public void PlaySound(SoundEffect soundEffect)
 	{
 		AudioSource.PlayClipAtPoint(audioClips[(int)soundEffect], transform.position);
 	}

@@ -76,14 +76,14 @@ public class Player : MonoBehaviour {
 
 	void Update()
 	{
-		Debug.Log ("Updating");
+		//Debug.Log ("Updating");
 		//Computer choice
 		if(GameController.Instance.currentPhase == Phase.Choose && controlType == ControlType.Computer)
 		{
 			Debug.Log ("AI controlled during control phase");
 			if(GameController.Instance.playerChoices.Count >= GameController.Instance.humanPlayers.Count && !GameController.Instance.humanPlayers.Contains(this))
 			{
-				Debug.Log ("Human players gone?");
+				Debug.Log ("Human players gone");
 				//Choose whether to eat
 				if(Random.value >= .5f)
 				{
@@ -159,7 +159,7 @@ public class Player : MonoBehaviour {
 
 	public void EnableButtons(bool b)
 	{
-		Debug.Log ("EnableButtons: "+b);
+	//S	Debug.Log ("EnableButtons: "+b);
 			InterfaceController.Instance.EnableButton(eatButton, b);
 			InterfaceController.Instance.EnableButton(passButtton, b);
 

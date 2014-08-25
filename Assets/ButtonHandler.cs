@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class ButtonHandler : MonoBehaviour {
@@ -24,8 +24,9 @@ public class ButtonHandler : MonoBehaviour {
 
 	public void OnClick()
 	{
+		Debug.Log ("Click @" + GameController.Instance.currentRound);
 		if(buttonFunction != "NEXT"){
-		AudioController.Instance.PlaySound();
+		AudioController.Instance.PlaySound(SoundEffect.Click);
 		}
 
 		switch(buttonFunction)
@@ -37,10 +38,13 @@ public class ButtonHandler : MonoBehaviour {
 			player.Pass();
 			break;
 		case "NEXT":
+			Debug.Log ("Next");
 			if(GameController.Instance.currentPhase == Phase.Evaluate)
 			{
-				AudioController.Instance.PlaySound();
-				GameController.Instance.NextPrompt();
+				Debug.Log ("Current phase is evaluation");
+				AudioController.Instance.PlaySound(SoundEffect.Click);
+				Debug.Log ("About to end round.");
+				GameController.Instance.EndRound();
 			}
 			break;
 		default:

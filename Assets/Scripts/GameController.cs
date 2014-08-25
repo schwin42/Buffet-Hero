@@ -8,7 +8,8 @@ public enum Phase
 	Uninitialized = 0,
 	Choose = 1,
 	Evaluate = 2,
-	FinalScoring = 3
+	FinalScoring = 3,
+	GameOver = 4
 }
 
 //public enum FoodAttributeType
@@ -25,12 +26,14 @@ public class GameController : MonoBehaviour {
 
 	//Configurable
 	public Restaurant activeRestaurant;
-	public int numberOfTrials = 1;
+	public int numberOfRounds = 1;
 
 	//Cached
 	public Player[] players = new Player[4];
 
 	//Status
+	public int currentRound = -1;
+
 	//public int confirmedPlayers = 0;
 	public List<Player> humanPlayers = new List<Player>();
 	public Phase currentPhase = Phase.Uninitialized;
@@ -57,7 +60,7 @@ public class GameController : MonoBehaviour {
 		RegisterPlayers();
 
 		//Initialize game
-		NextPrompt();
+		BeginRound();
 
 		//GET AVERAGE SCORE
 //		for(int i = 0; i < numberOfTrials; i++)
@@ -101,6 +104,7 @@ if(playerChoices.Count >= 4)
 
 	public Rank GetRandomRank()
 	{
+		Debug.Log ("Get random rank @" + currentRound);
 		Restaurant restaurant = activeRestaurant;
 
 		Dictionary<Rank, float> probabilityTable = new Dictionary<Rank, float>();
@@ -127,6 +131,7 @@ if(playerChoices.Count >= 4)
 
 	public FoodAttribute GetRandomAttribute (AttributeType attributeType, Rank rank)
 	{
+		Debug.Log ("GetAttribute, rank, type, round: " + rank + ", " + attributeType + ", " + currentRound);
 		IEnumerable<FoodAttribute> query = null;
 		switch(attributeType)
 		{
@@ -193,34 +198,42 @@ if(playerChoices.Count >= 4)
 
 	public Food GetRandomFood()
 	{
+		Debug.Log ("Get random food @" + currentRound);
 		Food food = new Food();
 
-		food.attributes.Add (GetRandomAttribute(AttributeType.Form, GetRandomRank()));
-		food.attributes.Add (GetRandomAttribute(AttributeType.Ingredient, GetRandomRank()));
-		food.attributes.Add (GetRandomAttribute(AttributeType.Descriptor, GetRandomRank()));
-		food.Realize(true);
-
+//		food.attributes.Add (GetRandomAttribute(AttributeType.Form, GetRandomRank()));
+//		food.attributes.Add (GetRandomAttribute(AttributeType.Ingredient, GetRandomRank()));
+//		food.attributes.Add (GetRandomAttribute(AttributeType.Descriptor, GetRandomRank()));
+//		food.Realize(true);
+//
 		return food;
 	}
 
-	public void NextPrompt()
+	public void BeginRound()
 	{
-		currentPhase = Phase.Choose;
+		currentRound ++;
+		Debug.Log ("Begin round: " + currentRound);
+		//Increment round
 
+
+		//Update score
 		foreach(Player player in players)
 		{
 			player.updateScoreLabel.text = "";
 			player.Score += player.pendingScore;
-				player.pendingScore = 0f;
+			player.pendingScore = 0f;
 		}
 
-
+		//Reset choices
 		playerChoices = new Dictionary<int, bool>();
-		foreach(Player player in players)
-		{
-			player.EnableButtons(true);
-		}
 
+
+		NextFood ();
+	}
+
+	public void NextFood()
+	{
+		Debug.Log ("Next food for: " + currentRound);	
 		if(activeFood != null)
 		{
 			previousFood = activeFood;
@@ -233,10 +246,17 @@ if(playerChoices.Count >= 4)
 		//InterfaceController.Instance.WriteToOutcome("");
 		//InterfaceController.Instance.WriteToScore(Player.Instance.score);
 		//EvaluateRound();
+		currentPhase = Phase.Choose;
+
+		foreach(Player player in players)
+		{
+			player.EnableButtons(true);
+		}
 	}
 
 	public void EvaluateRound()
 	{
+		Debug.Log ("Evaluate round: " + currentRound);
 		currentPhase = Phase.Evaluate;
 		foreach(Player player in players)
 		{
@@ -248,10 +268,15 @@ if(playerChoices.Count >= 4)
 				player.pendingScore = qualityFloat;
 			}
 		}
+		Debug.Log ("Evaluation ended @"+currentRound);
+
+		//Debug
+		EndRound ();
 	}
 
 	void RegisterPlayers()
 	{
+		Debug.Log ("Register players");
 		//Log human players
 
 		for(int i = 0; i < players.Count (); i++)
@@ -272,6 +297,16 @@ if(playerChoices.Count >= 4)
 			players[i].playerColor = (PlayerColor)i;
 
 		}
+	}
+
+	public void EndRound()
+	{
+		Debug.Log ("Ending round " + currentRound);
+		if (currentRound < numberOfRounds - 1) {
+						BeginRound ();
+				} else {
+			currentPhase = Phase.GameOver;
+				}
 	}
 	
 }
