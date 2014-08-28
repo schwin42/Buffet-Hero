@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System;
 
 #region Enums
 
@@ -24,7 +25,7 @@ public enum Rank
 public enum AttributeType
 {
 	None = 0,
-	Descriptor = 1,
+	Qualifier = 1,
 	Ingredient = 2,
 	Form = 3,
 }
@@ -71,7 +72,7 @@ public class Food
 			//return descriptor.name + " " + ingredient.name + " " + form.name;
 		}
 	}
-	
+		
 
 	public float Quality
 	{
@@ -164,6 +165,14 @@ public class Food
 		}
 	}
 
+	public Food (){}
+
+	public Food (Food food)
+	{
+		attributes = food.attributes;
+		virtualTags = food.virtualTags;
+	}
+
 
 
 	public List<FoodAttribute> attributes = new List<FoodAttribute>();
@@ -176,6 +185,7 @@ public class FoodAttribute
 {
 	public string name = "";
 	public Rank rank = Rank.None;
+	public string rarity = "";
 	public AttributeType attributeType;
 	public string attributeSubtype;
 //	public float multiplier = 1f;
@@ -253,11 +263,13 @@ public class Database : MonoBehaviour {
 
 	public static Database Instance;
 
+	static System.Random _random = new System.Random();
+
 	//Configurable
 
 	public float scoreConstant = 25f;
-	public string attributesFile = "";
-	public string tagsFile = "Buffet Hero - Tags";
+	public static string attributesFile = "Buffet Hero - Food Attributes.csv";
+	public static string tagsFile = "Buffet Hero - Tags.csv";
 
 	//Data
 	public List<Tag> tagData;
@@ -275,23 +287,25 @@ public class Database : MonoBehaviour {
 	public void Start()
 	{
 		//LoadData();
-		LoadTags (Application.dataPath + "/Data/" + tagsFile);
-		LoadAttributes(Application.dataPath + "/Data/" + attributesFile);
+		//LoadTags (Application.dataPath + "/Data/" + tagsFile);
+		//LoadAttributes(Application.dataPath + "/Data/" + attributesFile);
 	}
 
-	public void LoadData()
-	{
-		string loadPath = Application.dataPath + "/Data/" + attributesFile;
-		LoadAttributes(loadPath);
-		loadPath = Application.dataPath + "/Data/" + tagsFile;
-		LoadTags(loadPath);
-	}
+//	public void LoadData()
+//	{
+//		string loadPath = Application.dataPath + "/Data/" + attributesFile;
+//		LoadAttributes(loadPath);
+//		loadPath = Application.dataPath + "/Data/" + tagsFile;
+//		LoadTags(loadPath);
+//	}
 
 	public void LoadAttributes(string filePath)
 	{
-		Debug.Log ("Load attributes");
+		Debug.Log ("Loading attributes from"+filePath);
 		string[] dataLines = File.ReadAllLines(filePath);
 		Dictionary<int, string> fieldLookup = new Dictionary<int, string>();
+
+		attributeData.Clear();
 		for(int i = 0; i < dataLines.Length; i++)
 		{
 			if(i == 0)
@@ -331,6 +345,9 @@ public class Database : MonoBehaviour {
 					case "Rank":
 						recordAttribute.rank = StringToRank(recordStrings[j]);
 						break;
+					case "Rarity":
+						recordAttribute.rarity = recordStrings[j];
+						break;
 					default:
 						Debug.LogError ("Unhandled field name: "+fieldLookup[j]);
 						break;
@@ -345,9 +362,11 @@ public class Database : MonoBehaviour {
 
 	public void LoadTags(string filePath)
 	{
-		Debug.Log ("Load tags");
+		Debug.Log ("Loading tags from"+filePath);
 		string[] dataLines = File.ReadAllLines(filePath);
 		Dictionary<int, string> fieldLookup = new Dictionary<int, string>();
+
+		tagData.Clear();
 		for(int i = 0; i < dataLines.Length; i++)
 		{
 			if(i == 0)
@@ -459,8 +478,8 @@ public class Database : MonoBehaviour {
 	{
 		switch (s)
 		{
-		case "descriptor":
-				return AttributeType.Descriptor;
+		case "qualifier":
+				return AttributeType.Qualifier;
 		case "ingredient":
 				return AttributeType.Ingredient;
 		case "form":
@@ -487,6 +506,54 @@ public class Database : MonoBehaviour {
 //		}
 //	}
 
+
+//	private void SerializeAndSaveToBinary()
+//	{
+//		BinaryWriter binaryWriter = new BinaryWriter();
+//		FileStream fileStream = File.Create (Application.persistentDataPath
+//	}
+		//	{
+		//#if !UNITY_WINRT
+		//		BinaryFormatter binaryFormatter = new BinaryFormatter();
+		//		//Debug.Log (dataPath + binaryFileName);
+		//		FileStream fileStream = File.Create (Application.dataPath+"/Data/" + binaryFileName);
+		//
+		//		binaryFormatter.Serialize(fileStream, masterInfo);
+		//		fileStream.Close ();
+		//
+		//		Debug.Log ("Saved to binary @"+Time.frameCount);
+		//#endif
+		//	}
+		
+		//	private void LoadAndDeserializeFromBinary()
+		//    {
+		//#if !UNITY_WINRT
+		//		string dataPath = Application.dataPath + "/Data/";
+		//        if(File.Exists (dataPath + binaryFileName))
+		//		{
+		//			BinaryFormatter binaryFormatter = new BinaryFormatter();
+		//			FileStream fileStream = File.Open (dataPath + binaryFileName, FileMode.Open);
+		//			masterInfo = (MasterInfo)binaryFormatter.Deserialize(fileStream);
+		//			fileStream.Close ();
+		//			Debug.Log ("Master info loaded from binary");
+		//		} else {
+		//			Debug.LogError ("Path not found: " + dataPath + binaryFileName);
+		//		}
+		//#endif
+		//    }
+	public static void Shuffle<T>(List<T> list)
+	{
+		var random = _random;
+		for (int i = list.Count; i > 1; i--)
+		{
+			// Pick random element to swap.
+			int j = random.Next(i); // 0 <= j <= i-1
+			// Swap.
+			T tmp = list[j];
+			list[j] = list[i - 1];
+			list[i - 1] = tmp;
+		}
+	}
 
 
 }

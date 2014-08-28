@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum ControlType
 {
@@ -17,6 +18,12 @@ public enum PlayerColor
 	Green
 }
 
+[System.Serializable]
+public class Plate
+{
+	public List<Food> foods = new List<Food>();
+}
+
 public class Player : MonoBehaviour {
 
 	public static Player Instance;
@@ -26,6 +33,8 @@ public class Player : MonoBehaviour {
 	public PlayerColor playerColor = PlayerColor.None;
 
 	public ControlType controlType = ControlType.Human;
+
+	public Plate plate;
 
 	public float constitution = 0f;
 	public float pendingConstitution = 0f;
@@ -101,6 +110,7 @@ public class Player : MonoBehaviour {
 	public void Eat()
 	{
 		GameController.Instance.playerChoices.Add(playerId, true);
+		plate.foods.Add (new Food(GameController.Instance.activeFood));
 		EnableButtons(false);
 //		Food food = GameController.Instance.activeFood;
 //		//float foodValue = GameController.Instance.activeFood.Value;

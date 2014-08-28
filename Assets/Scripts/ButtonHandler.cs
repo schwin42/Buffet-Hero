@@ -39,12 +39,13 @@ public class ButtonHandler : MonoBehaviour {
 			break;
 		case "NEXT":
 			Debug.Log ("Next");
-			if(GameController.Instance.currentPhase == Phase.Evaluate)
+			if(GameController.Instance.currentPhase == Phase.Uninitialized)
 			{
 				Debug.Log ("Current phase is evaluation");
 				AudioController.Instance.PlaySound(SoundEffect.Click);
 				Debug.Log ("About to end round.");
-				GameController.Instance.EndRound();
+				GameController.Instance.BeginRound();
+				//GameController.Instance.EndRound();
 			}
 			break;
 		default:

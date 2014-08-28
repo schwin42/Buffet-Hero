@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor;
+//using UnityEditor;
 
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class Restaurant : MonoBehaviour {
 
 	public string restaurantName;
@@ -17,25 +17,25 @@ public class Restaurant : MonoBehaviour {
 
 	[Range(0,1)] public float[] rankPercentages = new float[7]; //In descending order of quality from S to F
 
-	public float _aggregatePercentage;
-	public float aggregatePercentage
-	{
-		get
-		{
-			return _aggregatePercentage;
-		}
-	}
+//	public float _aggregatePercentage;
+//	public float aggregatePercentage
+//	{
+//		get
+//		{
+//			return _aggregatePercentage;
+//		}
+//	}
 
 	//public override void OnInspectorGUI()
-	public void OnGUI()
-	{
-		float percentageSum = 0F;
-		for(int i = 0; i < rankPercentages.Length; i++)
-		{
-			percentageSum += rankPercentages[i];
-		}
-
-		_aggregatePercentage = percentageSum;
-	}
+//	public void OnGUI()
+//	{
+//		float percentageSum = 0F;
+//		for(int i = 0; i < rankPercentages.Length; i++)
+//		{
+//			percentageSum += rankPercentages[i];
+//		}
+//
+//		_aggregatePercentage = percentageSum;
+//	}
 
 }

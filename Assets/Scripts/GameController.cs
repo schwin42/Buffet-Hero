@@ -30,6 +30,9 @@ public class GameController : MonoBehaviour {
 
 	//Cached
 	public Player[] players = new Player[4];
+	public List<FoodAttribute> qualifierQueue;
+	public List<FoodAttribute> ingredientQueue;
+	public List<FoodAttribute> formQueue;
 
 	//Status
 	public int currentRound = -1;
@@ -53,14 +56,19 @@ public class GameController : MonoBehaviour {
 	void Start () {
 	
 	//	players = 
+		qualifierQueue = GetShuffledAttributes(AttributeType.Qualifier);
+		ingredientQueue = GetShuffledAttributes(AttributeType.Ingredient);
+		formQueue = GetShuffledAttributes(AttributeType.Form);
 
-		//Acquire objects
+		//qualifierQueue
+
+		                        //Acquire objects
 		GameObject camera = GameObject.Find ("UI Root/Camera");
 	players = camera.GetComponentsInChildren<Player>();
 
 
 		//Register players
-		//RegisterPlayers();
+		RegisterPlayers();
 
 		//Initialize game
 		//BeginRound();
@@ -94,69 +102,87 @@ if(playerChoices.Count >= 4)
 		}
 	}
 
-	public Rank GetRandomRank()
+//	public Rank GetRandomRank()
+//	{
+//		Debug.Log ("Get random rank @" + currentRound);
+//		Restaurant restaurant = activeRestaurant;
+//
+//		Dictionary<Rank, float> probabilityTable = new Dictionary<Rank, float>();
+//		float rankCutoff = 0f;
+//		for(int i = 0; i < restaurant.rankPercentages.Length; i++)
+//		{
+//			probabilityTable.Add ((Rank)i+1, restaurant.rankPercentages[i] + rankCutoff);
+//			rankCutoff += restaurant.rankPercentages[i];
+//		}
+//
+//		float dieRoll = Random.value * rankCutoff;
+//		for(int i = 0; i < probabilityTable.Count; i++)
+//		{
+//			if(dieRoll <= probabilityTable[(Rank)i + 1])
+//			{
+//				return (Rank)i +1;
+//			}
+//		}
+
+//		Debug.LogError("Rank out of range");
+//		return Rank.None;
+//	}
+
+
+	public FoodAttribute GetRandomAttribute (AttributeType attributeType)
 	{
-		Debug.Log ("Get random rank @" + currentRound);
-		Restaurant restaurant = activeRestaurant;
-
-		Dictionary<Rank, float> probabilityTable = new Dictionary<Rank, float>();
-		float rankCutoff = 0f;
-		for(int i = 0; i < restaurant.rankPercentages.Length; i++)
-		{
-			probabilityTable.Add ((Rank)i+1, restaurant.rankPercentages[i] + rankCutoff);
-			rankCutoff += restaurant.rankPercentages[i];
-		}
-
-		float dieRoll = Random.value * rankCutoff;
-		for(int i = 0; i < probabilityTable.Count; i++)
-		{
-			if(dieRoll <= probabilityTable[(Rank)i + 1])
-			{
-				return (Rank)i +1;
-			}
-		}
-
-		Debug.LogError("Rank out of range");
-		return Rank.None;
-	}
-
-
-	public FoodAttribute GetRandomAttribute (AttributeType attributeType, Rank rank)
-	{
-		Debug.Log ("GetAttribute, rank, type, round: " + rank + ", " + attributeType + ", " + currentRound);
-		IEnumerable<FoodAttribute> query = null;
+		//Debug.Log ("GetAttribute, rank, type, round: " + rank + ", " + attributeType + ", " + currentRound);
+		//IEnumerable<FoodAttribute> query = null;
+		FoodAttribute attribute = null;
+		int newIndex;
 		switch(attributeType)
 		{
-		case AttributeType.Descriptor:
-			query = from attribute in Database.Instance.attributeData
-				where attribute.rank == rank && attribute.attributeType == AttributeType.Descriptor
-					select attribute;
+		case AttributeType.Qualifier:
+			 attribute = qualifierQueue[0];
+			newIndex = qualifierQueue.Count - 1;
+			qualifierQueue.RemoveAt(0);
+			if (newIndex > 0) newIndex--; 
+			qualifierQueue.Insert(newIndex, attribute);
+//			query = from attribute in Database.Instance.attributeData
+//				where attribute.rank == rank && attribute.attributeType == AttributeType.Qualifier
+//					select attribute;
 			break;
 		case AttributeType.Ingredient:
-			query = from attribute in Database.Instance.attributeData
-				where attribute.rank == rank && attribute.attributeType == AttributeType.Ingredient
-					select attribute;
+			attribute = ingredientQueue[0];
+			newIndex = ingredientQueue.Count - 1;
+			ingredientQueue.RemoveAt(0);
+			if (newIndex > 0) newIndex--; 
+			ingredientQueue.Insert(newIndex, attribute);
+//			query = from attribute in Database.Instance.attributeData
+//				where attribute.rank == rank && attribute.attributeType == AttributeType.Ingredient
+//					select attribute;
 			break;
 		case AttributeType.Form:
-			query = from attribute in Database.Instance.attributeData
-				where attribute.rank == rank && attribute.attributeType == AttributeType.Form
-					select attribute;
+			attribute = formQueue[0];
+			newIndex = formQueue.Count - 1;
+			formQueue.RemoveAt(0);
+			if (newIndex > 0) newIndex--; 
+			formQueue.Insert(newIndex, attribute);
+//			query = from attribute in Database.Instance.attributeData
+//				where attribute.rank == rank && attribute.attributeType == AttributeType.Form
+//					select attribute;
 			break;
 		default:
 			Debug.LogError ("Invalid attribute type: "+attributeType);
 			break;
 		}
+		return attribute;
 
-		FoodAttribute[] possibleAttributes = query.ToArray();
-		if(possibleAttributes.Length > 0)
-		{
-		return possibleAttributes[(int)Mathf.Floor (Random.value * possibleAttributes.Length)];
-		} else {
-			Rank substituteRank = GetRandomRank();
-		Debug.LogError("No "+attributeType+"s of Rank "+rank+" found, used "+substituteRank+" instead.");
-			return GetRandomAttribute(attributeType, substituteRank);
-			//return new FoodAttribute();
-		}
+//		FoodAttribute[] possibleAttributes = query.ToArray();
+//		if(possibleAttributes.Length > 0)
+//		{
+//		return possibleAttributes[(int)Mathf.Floor (Random.value * possibleAttributes.Length)];
+//		} else {
+//		Debug.Log("No "+attributeType+"s of Rank "+rank+" found.");
+//			FoodAttribute subAttribute = new FoodAttribute();
+//			subAttribute.name = "ERROR";
+//			return subAttribute;
+//		}
 	}
 
 	//	public Quality GetRandomQuality (Rank rank)
@@ -195,9 +221,9 @@ if(playerChoices.Count >= 4)
 		Debug.Log ("Get random food @" + currentRound);
 		Food food = new Food();
 
-		food.attributes.Add (GetRandomAttribute(AttributeType.Form, GetRandomRank()));
-		food.attributes.Add (GetRandomAttribute(AttributeType.Ingredient, GetRandomRank()));
-		food.attributes.Add (GetRandomAttribute(AttributeType.Descriptor, GetRandomRank()));
+		food.attributes.Add (GetRandomAttribute(AttributeType.Form));
+		food.attributes.Add (GetRandomAttribute(AttributeType.Ingredient));
+		food.attributes.Add (GetRandomAttribute(AttributeType.Qualifier));
 		food.Realize(true);
 //
 		return food;
@@ -322,6 +348,17 @@ if(playerChoices.Count >= 4)
 		{
 			Debug.Log (pair.Key + " appeared "+pair.Value+" times");
 		}
+	}
+
+	List<FoodAttribute> GetShuffledAttributes(AttributeType type)
+	{
+		
+		var query = from attribute in Database.Instance.attributeData
+			where attribute.attributeType == type
+				select attribute;
+		List <FoodAttribute> attributes = query.ToList();
+		Database.Shuffle(attributes);
+		return attributes;
 	}
 	
 }
