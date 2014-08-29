@@ -13,7 +13,9 @@ public class InterfaceController : MonoBehaviour {
 	//public UILabel scoreLabel;
 	public Color[] colors; 
 
-	public UIPanel[] playerPanels;
+	//public UIPanel[] playerPanels;
+
+	public UILabel[] roundLabels;
 
 
 	void Awake()
@@ -62,6 +64,14 @@ public class InterfaceController : MonoBehaviour {
 		} else {
 			uiButton.isEnabled = false;
 			uiLabel.color = disabledTextColor;
+		}
+	}
+
+	public void DisplayRound()
+	{
+		foreach(UILabel label in roundLabels)
+		{
+			label.text = (GameController.Instance.currentRound+1).ToString()+"/ "+GameController.Instance.numberOfRounds;
 		}
 	}
 

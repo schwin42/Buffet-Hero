@@ -28,6 +28,8 @@ public class GameController : MonoBehaviour {
 	public Restaurant activeRestaurant;
 	public int numberOfRounds = 1;
 	public int servingsPerFood = 2;
+	public int startingHp = 100;
+	public float damageConstant = 10f;
 
 	//Cached
 	public Player[] players = new Player[4];
@@ -72,7 +74,7 @@ public class GameController : MonoBehaviour {
 		RegisterPlayers();
 
 		//Initialize game
-		//BeginRound();
+		BeginRound();
 
 		//GET AVERAGE SCORE
 //		for(int i = 0; i < numberOfTrials; i++)
@@ -263,14 +265,22 @@ if(playerChoices.Count >= 4)
 		Debug.Log ("Begin round: " + currentRound);
 		//Increment round
 
+		InterfaceController.Instance.DisplayRound();
 
-		//Update score
+		//Update score and health
+		UpdatePlayerStats();
+
 		foreach(Player player in players)
 		{
 			player.updateScoreLabel.text = "";
 			player.Score += player.pendingScore;
 			player.pendingScore = 0f;
+			player.updateHpLabel.text = "";
+			player.Hp += player.pendingHp;
+			player.pendingHp = 0f;
 		}
+
+
 
 		//Set ranking
 		Player[] playersByScore = ((from player in players
@@ -313,6 +323,19 @@ if(playerChoices.Count >= 4)
 		NextFood ();
 	}
 
+	public void UpdatePlayerStats()
+	{
+		foreach(Player player in players)
+		{
+			player.updateScoreLabel.text = "";
+			player.Score += player.pendingScore;
+			player.pendingScore = 0f;
+			player.updateHpLabel.text = "";
+			player.Hp += player.pendingHp;
+			player.pendingHp = 0f;
+		}
+	}
+
 	public void NextFood()
 	{
 		Debug.Log ("Next food for: " + currentRound);	
@@ -344,11 +367,19 @@ if(playerChoices.Count >= 4)
 		{
 			if(playerChoices[player.playerId]) //if player chose to eat
 			{
+				//Score
 				Debug.Log ("Update score");
 				float qualityFloat = activeFood.Quality;
 				string qualityString = qualityFloat >= 0 ? "+" + qualityFloat.ToString ("F0"): qualityFloat.ToString("F0");
 				player.updateScoreLabel.text = qualityString;
 				player.pendingScore = qualityFloat;
+				//Health
+				float hpFloat = -activeFood.Damage;
+				string hpString = hpFloat < 0 ? hpFloat.ToString ("F0"): "";
+				player.updateHpLabel.text = hpString;
+				player.pendingHp = hpFloat;
+				Debug.Log ("Pending hp: "+player.pendingHp);
+
 			}
 		}
 		Debug.Log ("Evaluation ended @"+currentRound);
@@ -373,11 +404,13 @@ if(playerChoices.Count >= 4)
 			//Set identification
 			players[i].name = "Player "+i;
 			players[i].playerId = i;
-
-
 			
 			//Set color
 			players[i].playerColor = (PlayerColor)i;
+
+			//Set starting stats
+			players[i].Hp = startingHp;
+			players[i].Score = 0;
 
 		}
 	}
@@ -389,6 +422,7 @@ if(playerChoices.Count >= 4)
 						BeginRound ();
 				} else {
 			currentPhase = Phase.GameOver;
+			EndGame();
 				}
 	}
 
@@ -422,6 +456,11 @@ if(playerChoices.Count >= 4)
 		List <FoodAttribute> attributes = query.ToList();
 		Database.Shuffle(attributes);
 		return attributes;
+	}
+
+	public void EndGame()
+	{
+		UpdatePlayerStats();
 	}
 	
 }

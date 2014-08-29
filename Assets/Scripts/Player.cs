@@ -36,7 +36,20 @@ public class Player : MonoBehaviour {
 
 	public Plate plate;
 
-	public float hp = 0f;
+	private float _hp = 0f;
+	public float Hp
+	{
+		get
+		{
+			return _hp;
+		}
+		set
+		{
+			_hp = value;
+			hpLabel.text = _hp.ToString("F0");
+		}
+	}
+
 	public float pendingHp = 0f;
 
 	private float _score = 0f;
@@ -114,7 +127,7 @@ public class Player : MonoBehaviour {
 		eatButton = transform.FindChild("Eat").GetComponent<UIButton>();
 		passButtton = transform.FindChild("Pass").GetComponent<UIButton>();
 
-		hpLabel.text = hp.ToString();
+		hpLabel.text = Hp.ToString();
 		updateHpLabel.text = "";
 		scoreLabel.text = Score.ToString();
 		updateScoreLabel.text = "";

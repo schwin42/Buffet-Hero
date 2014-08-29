@@ -91,6 +91,32 @@ public class Food
 		}
 	}
 
+	private int _damage;
+	private bool _damageIsSet;
+	public float Damage
+	{
+		get
+		{
+			if(!_damageIsSet)
+			{
+				float netDamage = 0f;
+				foreach(Tag tag in Tags)
+				{
+					float difference = tag.damageRange[1] - tag.damageRange[0];
+					netDamage += (UnityEngine.Random.value * difference) + tag.damageRange[0];
+				}
+				Debug.Log ("Net damage" +netDamage);
+				_damage = Mathf.RoundToInt(netDamage * 10);
+				Debug.Log ("Recorded damage"+_damage);
+				_damageIsSet = true;
+				return _damage;
+			} else {
+				return _damage;
+			}
+
+		}
+	}
+
 	public List<Tag> Tags
 	{
 		get
@@ -191,6 +217,7 @@ public class FoodAttribute
 //	public float multiplier = 1f;
 //	public float modifier = 0f;
 	public List<Tag> tags = new List<Tag>();
+	public List<string> combinations = new List<string>();
 //	public Temperature temperature = Temperature.None;
 //	public float spice = 0f;
 //	public string special = "";
@@ -277,7 +304,7 @@ public class Database : MonoBehaviour {
 	public List<FoodAttribute> attributeData;
 
 	//Debug
-	public Tag testTag;
+	//public Tag testTag;
 
 
 	public void Awake()
@@ -348,6 +375,9 @@ public class Database : MonoBehaviour {
 						break;
 					case "Rarity":
 						recordAttribute.rarity = recordStrings[j];
+						break;
+					case "Combinations":
+						recordAttribute.combinations = Regex.Split(recordStrings[j], "; ").ToList();
 						break;
 					default:
 						Debug.LogError ("Unhandled field name: "+fieldLookup[j]);
@@ -569,6 +599,11 @@ public class Database : MonoBehaviour {
 			list[i - 1] = tmp;
 		}
 	}
+
+//	public float GetRandomInRange(float lowerLimit, float upperLimit)
+//	{
+//
+//	}
 
 
 }
