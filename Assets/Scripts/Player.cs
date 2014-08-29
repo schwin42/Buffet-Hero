@@ -199,6 +199,7 @@ public class Player : MonoBehaviour {
 
 	public void Pass()
 	{
+		Debug.Log ("player"+playerId+" pass");
 		GameController.Instance.playerChoices.Add(playerId, false);
 		EnableButtons(false);
 //		InterfaceController.Instance.WriteToOutcome("Didn't eat");

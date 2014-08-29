@@ -117,7 +117,7 @@ if(playerChoices.Count >= 4)
 			{
 				foreach(Player player in players)
 				{
-					if(!eatingPlayers.Contains(player))
+					if(!eatingPlayers.Contains(player) && !playerChoices.ContainsKey(player.playerId))
 					{
 						player.Pass ();
 					}
