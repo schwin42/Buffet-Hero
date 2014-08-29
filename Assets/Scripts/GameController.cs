@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour {
 	//Configurable
 	public Restaurant activeRestaurant;
 	public int numberOfRounds = 1;
+	public int servingsPerFood = 2;
 
 	//Cached
 	public Player[] players = new Player[4];
@@ -92,13 +93,39 @@ public class GameController : MonoBehaviour {
 			RunFoodTrials();
 				}
 
-		//bool allPlayersConfirmed = true;
+
 		if(currentPhase == Phase.Choose)
 		{
 if(playerChoices.Count >= 4)
 		{
 				EvaluateRound();
 		}
+
+			//Run out of food after 2
+			int eatCounter = 0;
+			List<Player> eatingPlayers = new List<Player>();
+			foreach(KeyValuePair<int, bool> entry in playerChoices)
+			{
+				if(entry.Value)
+				{
+					eatCounter++;
+					eatingPlayers.Add (players[entry.Key]);
+
+				}
+			}
+			if(eatCounter >= servingsPerFood)
+			{
+				foreach(Player player in players)
+				{
+					if(!eatingPlayers.Contains(player))
+					{
+						player.Pass ();
+					}
+				}
+				EvaluateRound();
+				//break;
+			}
+
 		}
 	}
 
@@ -231,6 +258,7 @@ if(playerChoices.Count >= 4)
 
 	public void BeginRound()
 	{
+
 		currentRound ++;
 		Debug.Log ("Begin round: " + currentRound);
 		//Increment round
@@ -242,6 +270,40 @@ if(playerChoices.Count >= 4)
 			player.updateScoreLabel.text = "";
 			player.Score += player.pendingScore;
 			player.pendingScore = 0f;
+		}
+
+		//Set ranking
+		Player[] playersByScore = ((from player in players
+		                            select player).OrderByDescending(player => player.Score)).ToArray();
+		string debugString = "";
+		for(int k = 0; k < playersByScore.Length; k++)
+		{
+			debugString += playersByScore[k].name +": "+playersByScore[k].Score+", ";
+		}
+		Debug.Log (debugString);
+		int nextRanking = 0;
+		for(int i = 0; i < playersByScore.Count(); i++)
+		{
+			Player[] matchingScoresQuery = (from player in playersByScore
+			                                where player != playersByScore[i] && player.Score == playersByScore[i].Score
+			                                select player).ToArray();
+			if(matchingScoresQuery.Length <= 0)
+			{
+				Debug.Log ("No matching");
+				playersByScore[i].Ranking = nextRanking;
+				Debug.Log ("Player"+playersByScore[i].playerId+" set to "+nextRanking);
+				nextRanking++;
+			} else {
+				Debug.Log ("Matches.");
+				playersByScore[i].Ranking = nextRanking;
+				for(int j = 0; j < matchingScoresQuery.Length; j++)
+				{
+					matchingScoresQuery[j].Ranking = nextRanking;
+					Debug.Log ("Player"+playersByScore[i].playerId+" set to "+nextRanking);
+					i++;
+				}
+				nextRanking++;
+			}
 		}
 
 		//Reset choices
@@ -282,6 +344,7 @@ if(playerChoices.Count >= 4)
 		{
 			if(playerChoices[player.playerId]) //if player chose to eat
 			{
+				Debug.Log ("Update score");
 				float qualityFloat = activeFood.Quality;
 				string qualityString = qualityFloat >= 0 ? "+" + qualityFloat.ToString ("F0"): qualityFloat.ToString("F0");
 				player.updateScoreLabel.text = qualityString;
@@ -291,7 +354,7 @@ if(playerChoices.Count >= 4)
 		Debug.Log ("Evaluation ended @"+currentRound);
 
 		//Debug
-		EndRound ();
+		//EndRound ();
 	}
 
 	void RegisterPlayers()

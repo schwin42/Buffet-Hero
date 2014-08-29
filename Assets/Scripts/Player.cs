@@ -36,10 +36,10 @@ public class Player : MonoBehaviour {
 
 	public Plate plate;
 
-	public float constitution = 0f;
-	public float pendingConstitution = 0f;
+	public float hp = 0f;
+	public float pendingHp = 0f;
 
-	public float _score = 0f;
+	private float _score = 0f;
 	public float Score
 	{
 		get
@@ -51,6 +51,36 @@ public class Player : MonoBehaviour {
 			_score = value;
 			scoreLabel.text = _score.ToString("F0");
 		}
+	}
+	private int _ranking = -1;
+	public int Ranking
+	{
+		get
+		{
+			return _ranking;
+		}
+		set
+		{
+			_ranking = value;
+			switch(_ranking)
+			{
+			case 0:
+				rankingLabel.text = "1st";
+				break;
+			case 1:
+				rankingLabel.text = "2nd";
+				break;
+			case 2:
+				rankingLabel.text = "3rd";
+				break;
+			case 3:
+				rankingLabel.text = "4th";
+				break;
+			default:
+			Debug.LogError ("Invalid rank: "+_ranking);
+			break;
+		}
+	}
 	}
 	public float pendingScore = 0f;
 
@@ -68,6 +98,8 @@ public class Player : MonoBehaviour {
 	public UILabel updateScoreLabel;
 	public UILabel updateHpLabel;
 
+	public UILabel rankingLabel;
+
 
 
 	//public bool isConfirmed = false;
@@ -81,6 +113,11 @@ public class Player : MonoBehaviour {
 	{
 		eatButton = transform.FindChild("Eat").GetComponent<UIButton>();
 		passButtton = transform.FindChild("Pass").GetComponent<UIButton>();
+
+		hpLabel.text = hp.ToString();
+		updateHpLabel.text = "";
+		scoreLabel.text = Score.ToString();
+		updateScoreLabel.text = "";
 	}
 
 	void Update()
@@ -89,7 +126,7 @@ public class Player : MonoBehaviour {
 		//Computer choice
 		if(GameController.Instance.currentPhase == Phase.Choose && controlType == ControlType.Computer)
 		{
-			Debug.Log ("AI controlled during control phase");
+			//Debug.Log ("AI controlled during control phase");
 			if(GameController.Instance.playerChoices.Count >= GameController.Instance.humanPlayers.Count && !GameController.Instance.humanPlayers.Contains(this))
 			{
 				Debug.Log ("Human players gone");
@@ -112,6 +149,7 @@ public class Player : MonoBehaviour {
 		GameController.Instance.playerChoices.Add(playerId, true);
 		plate.foods.Add (new Food(GameController.Instance.activeFood));
 		EnableButtons(false);
+		AudioController.Instance.PlaySound(SoundEffect.OrderFood);
 //		Food food = GameController.Instance.activeFood;
 //		//float foodValue = GameController.Instance.activeFood.Value;
 //		float foodQuality = food.Quality;

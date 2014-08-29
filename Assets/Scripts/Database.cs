@@ -203,6 +203,7 @@ public class Tag
 	public string tagType = "";
 	public float value = 0f;
 	public float magnitude = 0f;
+	public float[] damageRange = new float[] {0, 0};
 	public float price = 0f;
 	public float calories = 0f;
 	public float spiciness = 0f;
@@ -383,6 +384,7 @@ public class Database : MonoBehaviour {
 				string[] recordStrings = dataLines[i].Split(',');
 				for (int j = 0; j < fieldLookup.Count; j++)
 				{
+					if(recordStrings[j] != ""){
 					switch(fieldLookup[j])
 					{
 					case "Tag ID":
@@ -428,17 +430,30 @@ public class Database : MonoBehaviour {
 					case "Combines Dramatically With":
 						recordTag.combinesDramaticallyWith = Regex.Split(recordStrings[j], "; ");
 						break;
+					case "Damage":
+						if(recordStrings[j].Contains("-")){
+						string[] damageStrings = Regex.Split (recordStrings[j], "-");
+							for(int k = 0; k < damageStrings.Length; k++)
+							{
+								recordTag.damageRange[k] = float.Parse(damageStrings[k]);
+							}
+						} else {
+							Debug.Log ('"'+recordStrings[j]+'"');
+						recordTag.damageRange[0] = float.Parse(recordStrings[j]);
+						recordTag.damageRange[1] = float.Parse(recordStrings[j]);
+						}
+							break;
 					default:
 						Debug.LogError ("Unhandled tag name: "+fieldLookup[j]);
 						break;
 					}
-					
+				}
+
 				}
 				tagData.Add (recordTag);
 			}
-			
 		}
-	}
+		}
 
 	public Rank StringToRank(string s)
 	{

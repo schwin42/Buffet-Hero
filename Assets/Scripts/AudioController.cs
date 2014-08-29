@@ -3,7 +3,8 @@ using System.Collections;
 
 public enum SoundEffect{
 	None = -1,
-	Click = 0
+	Click = 0,
+	OrderFood = 1
 }
 
 
