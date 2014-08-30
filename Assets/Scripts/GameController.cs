@@ -45,7 +45,7 @@ public class GameController : MonoBehaviour {
 	public Phase currentPhase = Phase.Uninitialized;
 	public Food activeFood;
 	public Food previousFood;
-	public Dictionary<int, bool> playerChoices = new Dictionary<int, bool>(); //True indicates "eat"
+	//public Dictionary<int, bool> playerChoices = new Dictionary<int, bool>(); //True indicates "eat"
 
 	//Debug
 	public int trials = 1000;
@@ -53,15 +53,17 @@ public class GameController : MonoBehaviour {
 	void Awake()
 	{
 		Instance = this;
+
+		qualifierQueue = GetShuffledAttributes(AttributeType.Qualifier);
+		ingredientQueue = GetShuffledAttributes(AttributeType.Ingredient);
+		formQueue = GetShuffledAttributes(AttributeType.Form);
 	}
 
 	// Use this for initialization
 	void Start () {
 	
 	//	players = 
-		qualifierQueue = GetShuffledAttributes(AttributeType.Qualifier);
-		ingredientQueue = GetShuffledAttributes(AttributeType.Ingredient);
-		formQueue = GetShuffledAttributes(AttributeType.Form);
+
 
 		//qualifierQueue
 
@@ -74,7 +76,7 @@ public class GameController : MonoBehaviour {
 		RegisterPlayers();
 
 		//Initialize game
-		BeginRound();
+		//BeginRound();
 
 		//GET AVERAGE SCORE
 //		for(int i = 0; i < numberOfTrials; i++)
@@ -83,7 +85,7 @@ public class GameController : MonoBehaviour {
 //		}
 //		Debug.Log ("Average score: "+Player.Instance.score / numberOfTrials);
 
-		//RunFoodTrials ();
+		//Runtrials ();
 
 	}
 	
@@ -92,41 +94,62 @@ public class GameController : MonoBehaviour {
 	
 		//Debug
 		if (Input.GetKeyUp (KeyCode.Alpha1)) {
-			RunFoodTrials();
+			RunTrials();
 				}
 
 
 		if(currentPhase == Phase.Choose)
 		{
-if(playerChoices.Count >= 4)
+			var query = from player in players
+				where player.playerChoice != PlayerChoice.Undecided
+					select player;
+			if((query.Count() == players.Count()))
 		{
 				EvaluateRound();
-		}
+		} else if(query.Count () > players.Count ())
+			{
+				Debug.Log("Something terrible has happened");
+			}
 
 			//Run out of food after 2
 			int eatCounter = 0;
 			List<Player> eatingPlayers = new List<Player>();
-			foreach(KeyValuePair<int, bool> entry in playerChoices)
-			{
-				if(entry.Value)
-				{
-					eatCounter++;
-					eatingPlayers.Add (players[entry.Key]);
 
-				}
-			}
-			if(eatCounter >= servingsPerFood)
+			var eatingPlayersQuery = from player in players
+				where player.playerChoice == PlayerChoice.Eat
+					select player;
+			if(eatingPlayersQuery.Count() >= servingsPerFood)
 			{
-				foreach(Player player in players)
+				var undecidedPlayersQuery = from player in players
+					where player.playerChoice == PlayerChoice.Undecided
+						select player;
+				foreach(Player passingPlayer in undecidedPlayersQuery)
 				{
-					if(!eatingPlayers.Contains(player) && !playerChoices.ContainsKey(player.playerId))
-					{
-						player.Pass ();
-					}
+					passingPlayer.Pass ();
 				}
-				EvaluateRound();
-				//break;
 			}
+
+//			foreach(KeyValuePair<int, bool> entry in playerChoices)
+//			{
+//				if(entry.Value)
+//				{
+//					eatCounter++;
+//					eatingPlayers.Add (players[entry.Key]);
+//
+//				}
+//			}
+//			if(eatCounter >= servingsPerFood)
+//			{
+//				foreach(Player player in players)
+//				{
+//					if(!eatingPlayers.Contains(player) && !playerChoices.ContainsKey(player.playerId))
+//					{
+//						player.Pass ();
+//					}
+//				}
+//				//EvaluateRound();
+//				//break;
+//			}
 
 		}
 	}
@@ -267,9 +290,21 @@ if(playerChoices.Count >= 4)
 
 		InterfaceController.Instance.DisplayRound();
 
-		//Update score and health
+		//Update score health and ranking
 		UpdatePlayerStats();
 
+		//Reset choices
+		foreach(Player player in players)
+		{
+			player.playerChoice = PlayerChoice.Undecided;
+		}
+
+
+		NextFood ();
+	}
+
+	public void UpdatePlayerStats()
+	{
 		foreach(Player player in players)
 		{
 			player.updateScoreLabel.text = "";
@@ -279,8 +314,6 @@ if(playerChoices.Count >= 4)
 			player.Hp += player.pendingHp;
 			player.pendingHp = 0f;
 		}
-
-
 
 		//Set ranking
 		Player[] playersByScore = ((from player in players
@@ -315,25 +348,6 @@ if(playerChoices.Count >= 4)
 				nextRanking++;
 			}
 		}
-
-		//Reset choices
-		playerChoices = new Dictionary<int, bool>();
-
-
-		NextFood ();
-	}
-
-	public void UpdatePlayerStats()
-	{
-		foreach(Player player in players)
-		{
-			player.updateScoreLabel.text = "";
-			player.Score += player.pendingScore;
-			player.pendingScore = 0f;
-			player.updateHpLabel.text = "";
-			player.Hp += player.pendingHp;
-			player.pendingHp = 0f;
-		}
 	}
 
 	public void NextFood()
@@ -361,11 +375,16 @@ if(playerChoices.Count >= 4)
 
 	public void EvaluateRound()
 	{
-		Debug.Log ("Evaluate round: " + currentRound);
+		Debug.Log ("Evaluate round: " + currentRound + " @"+Time.frameCount);
 		currentPhase = Phase.Evaluate;
+
+		//Show food ranking
+		InterfaceController.Instance.ShowFoodRank(GetFoodRank(activeFood));
+
 		foreach(Player player in players)
 		{
-			if(playerChoices[player.playerId]) //if player chose to eat
+			//Debug.Log ("Player id: "+player.playerId);
+			if(player.playerChoice == PlayerChoice.Eat) //if player chose to eat
 			{
 				//Score
 				Debug.Log ("Update score");
@@ -379,8 +398,6 @@ if(playerChoices.Count >= 4)
 				player.updateHpLabel.text = hpString;
 				player.pendingHp = hpFloat;
 				Debug.Log ("Pending hp: "+player.pendingHp);
-	
-
 			}
 		}
 		Debug.Log ("Evaluation ended @"+currentRound);
@@ -418,6 +435,8 @@ if(playerChoices.Count >= 4)
 
 	public void EndRound()
 	{
+		InterfaceController.Instance.HideFoodRank();
+
 		Debug.Log ("Ending round " + currentRound);
 		if (currentRound < numberOfRounds - 1) {
 						BeginRound ();
@@ -427,7 +446,7 @@ if(playerChoices.Count >= 4)
 				}
 	}
 
-	public void RunFoodTrials()
+	public void RunTrials()
 	{
 		//GET RANDOM FOOD N TIMES
 		Dictionary<string, int> trialLog = new Dictionary<string, int>();
@@ -462,6 +481,19 @@ if(playerChoices.Count >= 4)
 	public void EndGame()
 	{
 		UpdatePlayerStats();
+	}
+
+	public LetterRank GetFoodRank (Food food)
+	{
+		List<float> percentiles = Tools.Instance.hardPercentiles;
+		for(int i = 0; i < percentiles.Count; i++)
+		{
+			if(food.Quality > percentiles[i])
+			{
+				return (LetterRank)i;
+			}
+		}
+		return LetterRank.F;
 	}
 	
 }

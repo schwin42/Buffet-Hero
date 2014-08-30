@@ -9,16 +9,16 @@ using System;
 #region Enums
 
 [System.Serializable]
-public enum Rank
+public enum LetterRank
 {
-	None = 0,
-	S = 1,
-	A = 2,
-	B = 3,
-	C = 4,
-	D = 5,
-	E = 6,
-	F = 7
+	None = -1,
+	S = 0,
+	A = 1,
+	B = 2,
+	C = 3,
+	D = 4,
+	E = 5,
+	F = 6
 }
 
 [System.Serializable]
@@ -90,6 +90,8 @@ public class Food
 
 		}
 	}
+
+	public float Value = 0f;
 
 	private int _damage;
 	private bool _damageIsSet;
@@ -210,7 +212,7 @@ public class Food
 public class FoodAttribute
 {
 	public string name = "";
-	public Rank rank = Rank.None;
+	public LetterRank rank = LetterRank.None;
 	public string rarity = "";
 	public AttributeType attributeType;
 	public string attributeSubtype;
@@ -485,27 +487,27 @@ public class Database : MonoBehaviour {
 		}
 		}
 
-	public Rank StringToRank(string s)
+	public LetterRank StringToRank(string s)
 	{
 		switch (s)
 		{
 		case "S":
-			return Rank.S;
+			return LetterRank.S;
 		case "A":
-			return Rank.A;
+			return LetterRank.A;
 		case "B":
-			return Rank.B;
+			return LetterRank.B;
 		case "C":
-			return Rank.C;
+			return LetterRank.C;
 		case "D":
-			return Rank.D;
+			return LetterRank.D;
 		case "E":
-			return Rank.E;
+			return LetterRank.E;
 		case "F":
-			return Rank.F;
+			return LetterRank.F;
 		default:
 			Debug.LogError("Invalid rank: "+s);
-			return Rank.None;
+			return LetterRank.None;
 		}
 	}
 

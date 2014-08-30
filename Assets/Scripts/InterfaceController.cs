@@ -12,10 +12,13 @@ public class InterfaceController : MonoBehaviour {
 	public Color neutralDarkColor;
 	public Color[] colors; 
 	public GameObject promptPrefab;
+	public GameObject letterRankPrefab;
 	public Vector3 localPromptPosition = new Vector3(0, -105, 0);
+	public Vector3 localLetterRankPosition;
 
 	//Status
 	UILabel[] activePrompts = new UILabel[2];
+	GameObject[] activeFoodRanks = new GameObject[2];
 
 
 	//public UIPanel[] playerPanels;
@@ -23,6 +26,8 @@ public class InterfaceController : MonoBehaviour {
 	public UILabel[] roundLabels;
 
 	public UIPanel[] mirrorPanels;
+
+
 
 
 	void Awake()
@@ -99,6 +104,40 @@ public class InterfaceController : MonoBehaviour {
 		{
 			label.text = (GameController.Instance.currentRound+1).ToString()+"/ "+GameController.Instance.numberOfRounds;
 		}
+	}
+
+	public void ShowFoodRank(LetterRank letterRank)
+	{
+		for(int i = 0; i < mirrorPanels.Length; i++)
+		{
+		GameObject letterRankGo = Instantiate(letterRankPrefab) as GameObject;
+
+			letterRankGo.transform.parent = mirrorPanels[i].transform;
+			letterRankGo.transform.localScale = Vector3.one;
+			letterRankGo.transform.localRotation = Quaternion.identity;
+			letterRankGo.transform.localPosition = localLetterRankPosition;
+			letterRankGo.GetComponentInChildren<UILabel>().text = letterRank.ToString();
+			activeFoodRanks[i] = letterRankGo;
+
+		}
+	}
+
+	public void HidePrompts()
+	{
+		foreach(UILabel label in activePrompts)
+		{
+			Destroy (label);
+		}
+		
+	}
+
+	public void HideFoodRank()
+	{
+		foreach(GameObject go in activeFoodRanks)
+		{
+			Destroy (go);
+		}
+
 	}
 
 }

@@ -2,6 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum PlayerChoice
+{
+	Undecided = 0,
+	Eat = 1,
+	Pass = 2
+}
+
 public enum ControlType
 {
 	None = 0,
@@ -12,10 +19,10 @@ public enum ControlType
 public enum PlayerColor
 {
 	None = -1,
-	Red,
-	Blue,
-	Yellow,
-	Green
+	Red = 2,
+	Blue = 3,
+	Yellow = 4,
+	Green = 5
 }
 
 [System.Serializable]
@@ -100,6 +107,14 @@ public class Player : MonoBehaviour {
 	public string status = "";
 
 
+	//Status
+	public PlayerChoice playerChoice = PlayerChoice.Undecided;
+	public bool computerDecisionRunning = false;
+
+	//Computer
+	public float computerDelayLowLimit = 3;
+	public float computerDelayHighLimit = 10;
+
 
 	//UI
 	public UIButton eatButton;
@@ -137,29 +152,69 @@ public class Player : MonoBehaviour {
 	{
 		//Debug.Log ("Updating");
 		//Computer choice
-		if(GameController.Instance.currentPhase == Phase.Choose && controlType == ControlType.Computer)
+		if(GameController.Instance.currentPhase == Phase.Choose && controlType == ControlType.Computer 
+		   && !computerDecisionRunning && playerChoice == PlayerChoice.Undecided)
 		{
+			computerDecisionRunning = true;
+			StartCoroutine(ComputerDecision());
+			Debug.Log ("Computer "+playerId+" running @"+Time.frameCount);
 			//Debug.Log ("AI controlled during control phase");
-			if(GameController.Instance.playerChoices.Count >= GameController.Instance.humanPlayers.Count && !GameController.Instance.humanPlayers.Contains(this))
+
+		}
+	}
+
+	IEnumerator ComputerDecision()
+	{
+		float timer = 0;
+		float decisionDelay = (computerDelayHighLimit - computerDelayLowLimit) * Random.value + computerDelayLowLimit; 
+
+		while(GameController.Instance.currentPhase == Phase.Choose && computerDecisionRunning && playerChoice == PlayerChoice.Undecided)
+		{
+			if( timer >= decisionDelay)
 			{
-				Debug.Log ("Human players gone");
-				//Choose whether to eat
 				if(Random.value >= .5f)
 				{
-
+					Debug.Log ("Computer "+playerId+ "eat @"+Time.frameCount, this);
 					Eat ();
 				} else 
 				{
+					Debug.Log ("Computer "+playerId+ "pass @"+Time.frameCount, this);
 					Pass ();
 				}
-				Debug.Log ("Chose");
+			} else {
+				timer += Time.deltaTime;
 			}
+			yield return 0;
 		}
+		computerDecisionRunning = false;
+		yield break;
+
+		//If game is not in choose phase, end coroutine immediately
+//		if(GameController.Instance.currentPhase != Phase.Choose)
+//		{
+//			Debug.Log ("Not in choose phase, stopping @"+Time.frameCount);
+//			computerDecisionRunning = false;
+//			yield break;
+//		} else {
+//			Debug.Log ("In choose phase, proceeding @"+Time.frameCount);
+//		}
+//		float decisionDelay = (computerDelayHighLimit - computerDelayLowLimit) * Random.value + computerDelayLowLimit; 
+//		yield return new WaitForSeconds(decisionDelay);
+//		if(Random.value >= .5f)
+//		{
+//			Debug.Log ("Computer "+playerId+ "eat @"+Time.frameCount, this);
+//			Eat ();
+//		} else 
+//		{
+//			Debug.Log ("Computer "+playerId+ "pass @"+Time.frameCount, this);
+//			Pass ();
+//		}
+//		computerDecisionRunning = false;
 	}
 
 	public void Eat()
 	{
-		GameController.Instance.playerChoices.Add(playerId, true);
+		playerChoice = PlayerChoice.Eat;
 		plate.foods.Add (new Food(GameController.Instance.activeFood));
 		EnableButtons(false);
 		AudioController.Instance.PlaySound(SoundEffect.OrderFood);
@@ -212,16 +267,11 @@ public class Player : MonoBehaviour {
 
 	public void Pass()
 	{
-		Debug.Log ("player"+playerId+" pass");
-		if(GameController.Instance.playerChoices.ContainsKey(playerId))
-		{
-		GameController.Instance.playerChoices.Add(playerId, false);
-		} else {
-			Debug.Log (playerId + " already chose.");
-		}
+		playerChoice = PlayerChoice.Pass;
 		EnableButtons(false);
 //		InterfaceController.Instance.WriteToOutcome("Didn't eat");
 //		GameController.Instance.NextPrompt();
+		AudioController.Instance.PlaySound(SoundEffect.Swoop);
 	}
 
 	public void EnableButtons(bool b)
