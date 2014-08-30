@@ -13,6 +13,7 @@ public class DatabaseEditor : Editor {
 	public void OnEnable()
 	{
 		database = (Database)target;
+		Database.Instance = database;
 	}
 
 	public override void OnInspectorGUI()

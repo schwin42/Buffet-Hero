@@ -8,45 +8,46 @@ public class Tools : MonoBehaviour {
 	public static Tools Instance;
 
 	public int numberOfTrials = 10000;
-	public List<Food> trials = new List<Food>();
+	//public List<Food> trials = new List<Food>();
 
 	public List<float> percentiles = new List<float>();
-	public List<float> hardPercentiles = new List<float>
-	{
-		187.5f, 112.5f, 50f, -25f, -62.5f, -125f
-	};
+//	public List<float> hardPercentiles = new List<float>
+//	{
+//		187.5f, 112.5f, 50f, -25f, -62.5f, -125f
+//	};
 
 	void Awake () {
 		Instance = this;
 	}
 	// Use this for initialization
 //	void Start () {
-//	
-//		List<Food> foodTrials = new List<Food>();
-//		for(int i = 0; i < numberOfTrials; i++)
-//		{
-//			foodTrials.Add (GameController.Instance.GetRandomFood());
-//		}
-//		percentiles = DeriveRatingPercentiles(foodTrials);
-//
-//	}
+	//	}
+
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
 
-	List<float> DeriveRatingPercentiles(List<Food> foodTrials)
+	public List<float> DeriveRatingPercentiles()
 	{
-		List<float> percentilesOutput = new List<float>();
-		trials = foodTrials.OrderBy(food => food.Quality).ToList();
+		List<Food> foodTrials = new List<Food>();
+		for(int i = 0; i < numberOfTrials; i++)
+		{
+			foodTrials.Add (GameController.GetRandomFoodUsingData());
+		}
+		//percentiles = DeriveRatingPercentiles(foodTrials);
 
-		percentilesOutput.Add(trials[(int)Mathf.Floor( trials.Count * 0.95f)].Quality);
-		percentilesOutput.Add(trials[(int)Mathf.Floor( trials.Count * 0.85f)].Quality);
-		percentilesOutput.Add(trials[(int)Mathf.Floor( trials.Count * 0.65f)].Quality);
-		percentilesOutput.Add(trials[(int)Mathf.Floor( trials.Count * 0.35f)].Quality);
-		percentilesOutput.Add(trials[(int)Mathf.Floor( trials.Count * 0.15f)].Quality);
-		percentilesOutput.Add(trials[(int)Mathf.Floor( trials.Count * 0.05f)].Quality);
+
+		List<float> percentilesOutput = new List<float>();
+		foodTrials = foodTrials.OrderBy(food => food.Quality).ToList();
+
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.95f)].Quality);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.85f)].Quality);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.65f)].Quality);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.35f)].Quality);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.15f)].Quality);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.05f)].Quality);
 //		percentilesOutput.Add(trials[(int)Mathf.Floor( trials.Count * 0.05f)].Quality);
 //		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.95f)].Value);
 //		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.90f)].Value);
@@ -56,7 +57,9 @@ public class Tools : MonoBehaviour {
 //		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.10f)].Value);
 //		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.05f)].Value);
 
-		
+		Debug.Log ("Best food: "+foodTrials[foodTrials.Count -1].Name+", "+foodTrials[foodTrials.Count - 1].Quality);
+		Debug.Log ("Worst food: "+foodTrials[0].Name+", "+foodTrials[0].Quality);
+
 		return percentilesOutput;
 	}
 	

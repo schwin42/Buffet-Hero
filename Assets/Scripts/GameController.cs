@@ -181,7 +181,7 @@ public class GameController : MonoBehaviour {
 //	}
 
 
-	public FoodAttribute GetRandomAttribute (AttributeType attributeType)
+	public FoodAttribute GetRandomAttributeFromQueue (AttributeType attributeType)
 	{
 		//Debug.Log ("GetAttribute, rank, type, round: " + rank + ", " + attributeType + ", " + currentRound);
 		//IEnumerable<FoodAttribute> query = null;
@@ -237,6 +237,52 @@ public class GameController : MonoBehaviour {
 //		}
 	}
 
+	public static FoodAttribute GetRandomAttributeFromData (AttributeType attributeType)
+	{
+		//Debug.Log ("GetAttribute, rank, type, round: " + rank + ", " + attributeType + ", " + currentRound);
+		//IEnumerable<FoodAttribute> query = null;
+		FoodAttribute attribute = null;
+		FoodAttribute[] query;
+		int newIndex;
+
+		switch(attributeType)
+		{
+		case AttributeType.Qualifier:
+			 query = (from element in Database.Instance.attributeData
+				where element.attributeType == AttributeType.Qualifier
+					select element).ToArray();
+			attribute = query[Mathf.FloorToInt(Random.value * query.Count ())];
+			break;
+		case AttributeType.Ingredient:
+			 query = (from element in Database.Instance.attributeData
+			             where element.attributeType == AttributeType.Ingredient
+			             select element).ToArray();
+			attribute = query[Mathf.FloorToInt(Random.value * query.Count ())];
+			break;
+		case AttributeType.Form:
+			 query = (from element in Database.Instance.attributeData
+			             where element.attributeType == AttributeType.Form
+			             select element).ToArray();
+			attribute = query[Mathf.FloorToInt(Random.value * query.Count ())];
+			break;
+		default:
+			Debug.LogError ("Invalid attribute type: "+attributeType);
+			break;
+		}
+		return attribute;
+		
+		//		FoodAttribute[] possibleAttributes = query.ToArray();
+		//		if(possibleAttributes.Length > 0)
+		//		{
+		//		return possibleAttributes[(int)Mathf.Floor (Random.value * possibleAttributes.Length)];
+		//		} else {
+		//		Debug.Log("No "+attributeType+"s of Rank "+rank+" found.");
+		//			FoodAttribute subAttribute = new FoodAttribute();
+		//			subAttribute.name = "ERROR";
+		//			return subAttribute;
+		//		}
+	}
+
 	//	public Quality GetRandomQuality (Rank rank)
 	//	{
 	//			var query = from quality in Database.Instance.qualities
@@ -268,16 +314,29 @@ public class GameController : MonoBehaviour {
 //}
 //	}
 
-	public Food GetRandomFood()
+	public Food GetRandomFoodUsingQueue()
 	{
-		Debug.Log ("Get random food @" + currentRound);
+		//Debug.Log ("Get random food @" + currentRound);
 		Food food = new Food();
 
-		food.attributes.Add (GetRandomAttribute(AttributeType.Form));
-		food.attributes.Add (GetRandomAttribute(AttributeType.Ingredient));
-		food.attributes.Add (GetRandomAttribute(AttributeType.Qualifier));
+		food.attributes.Add (GetRandomAttributeFromQueue(AttributeType.Form));
+		food.attributes.Add (GetRandomAttributeFromQueue(AttributeType.Ingredient));
+		food.attributes.Add (GetRandomAttributeFromQueue(AttributeType.Qualifier));
 		food.Realize(true);
 //
+		return food;
+	}
+
+	public static Food GetRandomFoodUsingData()
+	{
+		//Debug.Log ("Get random food @" + currentRound);
+		Food food = new Food();
+		
+		food.attributes.Add (GetRandomAttributeFromData(AttributeType.Form));
+		food.attributes.Add (GetRandomAttributeFromData(AttributeType.Ingredient));
+		food.attributes.Add (GetRandomAttributeFromData(AttributeType.Qualifier));
+		food.Realize(true);
+		//
 		return food;
 	}
 
@@ -357,7 +416,7 @@ public class GameController : MonoBehaviour {
 		{
 			previousFood = activeFood;
 		}
-		activeFood = GetRandomFood();
+		activeFood = GetRandomFoodUsingQueue();
 		InterfaceController.Instance.DisplayPrompt(
 			//"You encounter: "+
 		                                           //"\n "+
@@ -452,7 +511,7 @@ public class GameController : MonoBehaviour {
 		Dictionary<string, int> trialLog = new Dictionary<string, int>();
 		for(int i = 0; i < trials; i++)
 		{
-			Food food = GetRandomFood();
+			Food food = GetRandomFoodUsingQueue();
 			if(trialLog.ContainsKey(food.Name))
 			{
 				trialLog[food.Name] += 1;
@@ -485,7 +544,7 @@ public class GameController : MonoBehaviour {
 
 	public LetterRank GetFoodRank (Food food)
 	{
-		List<float> percentiles = Tools.Instance.hardPercentiles;
+		List<float> percentiles = Tools.Instance.percentiles;
 		for(int i = 0; i < percentiles.Count; i++)
 		{
 			if(food.Quality > percentiles[i])

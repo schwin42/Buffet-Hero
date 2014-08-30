@@ -105,7 +105,9 @@ public class Food
 				foreach(Tag tag in Tags)
 				{
 					float difference = tag.damageRange[1] - tag.damageRange[0];
-					netDamage += (UnityEngine.Random.value * difference) + tag.damageRange[0];
+					float random = UnityEngine.Random.value;
+					Debug.Log ("Random = "+random);
+					netDamage += (random * difference) + tag.damageRange[0];
 				}
 				Debug.Log ("Net damage" +netDamage);
 				_damage = Mathf.RoundToInt(netDamage * 10);
@@ -212,7 +214,7 @@ public class Food
 public class FoodAttribute
 {
 	public string name = "";
-	public LetterRank rank = LetterRank.None;
+	//public LetterRank rank = LetterRank.None;
 	public string rarity = "";
 	public AttributeType attributeType;
 	public string attributeSubtype;
@@ -370,10 +372,15 @@ public class Database : MonoBehaviour {
 						var query = from tag in tagData
 							where tagList.Contains(tag.name)
 								select tag;
+						if(tagArray.Length > query.Count ())
+						{
+							Debug.Log ("Missing tags on "+recordAttribute.name);
+						}
 						recordAttribute.tags = query.ToList();
 						break;
 					case "Rank":
-						recordAttribute.rank = StringToRank(recordStrings[j]);
+						Debug.LogError ("No handling for rank.");
+						//recordAttribute.rank = StringToRank(recordStrings[j]);
 						break;
 					case "Rarity":
 						recordAttribute.rarity = recordStrings[j];
