@@ -344,7 +344,7 @@ if(playerChoices.Count >= 4)
 			previousFood = activeFood;
 		}
 		activeFood = GetRandomFood();
-		InterfaceController.Instance.WriteToPrompt(
+		InterfaceController.Instance.DisplayPrompt(
 			//"You encounter: "+
 		                                           //"\n "+
 		                                           activeFood.Name);
@@ -379,6 +379,7 @@ if(playerChoices.Count >= 4)
 				player.updateHpLabel.text = hpString;
 				player.pendingHp = hpFloat;
 				Debug.Log ("Pending hp: "+player.pendingHp);
+	
 
 			}
 		}

@@ -8,14 +8,21 @@ public class InterfaceController : MonoBehaviour {
 	//Inspector
 	public Color disabledTextColor;
 	public Color enabledTextColor;
-	public UILabel[] promptLabels;
-	//public UILabel outcomeLabel;
-	//public UILabel scoreLabel;
+	public Color neutralLightColor;
+	public Color neutralDarkColor;
 	public Color[] colors; 
+	public GameObject promptPrefab;
+	public Vector3 localPromptPosition = new Vector3(0, -105, 0);
+
+	//Status
+	UILabel[] activePrompts = new UILabel[2];
+
 
 	//public UIPanel[] playerPanels;
 
 	public UILabel[] roundLabels;
+
+	public UIPanel[] mirrorPanels;
 
 
 	void Awake()
@@ -34,12 +41,31 @@ public class InterfaceController : MonoBehaviour {
 	
 	}
 
-	public void WriteToPrompt(string s)
+	public void DisplayPrompt(string s)
 	{
-		foreach(UILabel label in promptLabels)
+		foreach(UILabel label in activePrompts)
 		{
-			label.text = s;
+			Destroy(label);
 		}
+
+		for(int i = 0; i < 2; i++)
+		{
+			GameObject prompt = Instantiate(promptPrefab) as GameObject;
+			prompt.transform.parent = mirrorPanels[i].transform;
+			prompt.transform.localScale = Vector3.one;
+			prompt.transform.localEulerAngles = Vector3.zero;
+			prompt.transform.localPosition = localPromptPosition;
+			UILabel promptLabel = prompt.GetComponent<UILabel>();
+			activePrompts[i] = promptLabel;
+			promptLabel.color = i > 0 ? neutralLightColor : neutralDarkColor;
+			promptLabel.text = s;
+			AudioController.Instance.PlaySound(SoundEffect.Swoop);
+		}
+
+		//foreach(UILabel label in promptLabels)
+		//{
+		//	label.text = s;
+		//}
 	}
 
 //	public void WriteToOutcome(string s)

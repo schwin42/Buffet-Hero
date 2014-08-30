@@ -213,7 +213,12 @@ public class Player : MonoBehaviour {
 	public void Pass()
 	{
 		Debug.Log ("player"+playerId+" pass");
+		if(GameController.Instance.playerChoices.ContainsKey(playerId))
+		{
 		GameController.Instance.playerChoices.Add(playerId, false);
+		} else {
+			Debug.Log (playerId + " already chose.");
+		}
 		EnableButtons(false);
 //		InterfaceController.Instance.WriteToOutcome("Didn't eat");
 //		GameController.Instance.NextPrompt();
