@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public enum ButtonAction
 {
@@ -75,8 +76,13 @@ public class ButtonHandler : MonoBehaviour {
 			Debug.Log ("Next");
 			if(GameController.Instance.currentPhase == Phase.Pregame)
 			{
+				if((from possiblePlayer in GameController.Instance.possiblePlayers
+				    where possiblePlayer.playerChoice == PlayerChoice.Ready
+				    select possiblePlayer).Count() > 0)
+				{
 				GameController.Instance.BeginGame();
-			} else if(GameController.Instance.currentPhase == Phase.Evaluate)
+				}
+				} else if(GameController.Instance.currentPhase == Phase.Evaluate)
 			{
 				//Debug.Log ("Current phase is evaluation");
 				AudioController.Instance.PlaySound(SoundEffect.Click);

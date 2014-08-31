@@ -137,7 +137,7 @@ public class Player : MonoBehaviour {
 
 
 	//Status
-	public PlayerChoice playerChoice = PlayerChoice.Ready;
+	public PlayerChoice playerChoice = PlayerChoice.Inactive;
 	public bool computerDecisionRunning = false;
 	public bool playedInLastGame = false;
 

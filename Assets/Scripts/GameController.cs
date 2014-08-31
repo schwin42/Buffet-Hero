@@ -617,6 +617,13 @@ public class GameController : MonoBehaviour {
 		Player[] winQuery = registeredPlayers.OrderByDescending(player => player.Score).ToArray();
 		InterfaceController.Instance.WriteWinner(winQuery[0]);
 		InterfaceController.Instance.SetGameUiState(GameUIState.Results);
+//		foreach(Player player in registeredPlayers)
+//		{
+//			player.playerChoice = PlayerChoice.Inactive;
+//		}
+		registeredPlayers.Clear();
+		activePlayers.Clear();
+		humanPlayers.Clear();
 
 	}
 
@@ -635,9 +642,12 @@ public class GameController : MonoBehaviour {
 
 	public void ReadyJoinedPlayers()
 	{
-		foreach(Player player in registeredPlayers)
+		foreach(Player player in possiblePlayers)
 		{
+			if(player.playedInLastGame)
+			{
 			player.playerChoice = PlayerChoice.Ready;
+			}
 		}
 	}
 

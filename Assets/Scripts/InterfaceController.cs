@@ -273,6 +273,7 @@ public class InterfaceController : MonoBehaviour {
 			break;
 		case PlayerUiState.Join:
 			player.nameInput.value = "Player"+player.playerId;
+			player.playerChoice = PlayerChoice.Inactive;
 			break;
 		case PlayerUiState.Inactive:
 			player.trayBacker.gameObject.SetActive(false);
@@ -319,6 +320,8 @@ public class InterfaceController : MonoBehaviour {
 			} else {
 				foreach(Player player in GameController.Instance.possiblePlayers)
 				{
+					player.playerChoice = PlayerChoice.Inactive;
+					GameController.Instance.currentPhase = Phase.Pregame;
 					if(player.playedInLastGame)
 					{
 						SetPlayerUiState(player, PlayerUiState.Entry);
