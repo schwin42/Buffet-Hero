@@ -72,7 +72,7 @@ public class InterfaceController : MonoBehaviour {
 
 	public List<UIPanel> uiLookup; //Panels by player id
 	//public UIPanel[] playerPanels;
-	public UILabel winLabel;
+	public UILabel[] winLabels;
 
 
 
@@ -234,6 +234,7 @@ public class InterfaceController : MonoBehaviour {
 
 	public static void SetPlayerUiState(Player player, PlayerUiState targetState)
 	{
+		Debug.Log (player.playerId + "to "+targetState+" from "+Instance.playerUiStates[player.playerId]);
 		//Cache last state
 		PlayerUiState oldState = Instance.playerUiStates[player.playerId];
 
@@ -271,7 +272,7 @@ public class InterfaceController : MonoBehaviour {
 			player.nameInput.value = "";
 			break;
 		case PlayerUiState.Join:
-			player.nameInput.value = "Enter a Name";
+			player.nameInput.value = "Player"+player.playerId;
 			break;
 		case PlayerUiState.Inactive:
 			player.trayBacker.gameObject.SetActive(false);
@@ -313,14 +314,17 @@ public class InterfaceController : MonoBehaviour {
 		case GameUIState.Join:
 			if(!displayedFirstScreen)
 			{
-				//Do nothing	
+				//Do nothing
+				displayedFirstScreen = true;
 			} else {
 				foreach(Player player in GameController.Instance.possiblePlayers)
 				{
 					if(player.playedInLastGame)
 					{
 						SetPlayerUiState(player, PlayerUiState.Entry);
+						player.nameInput.value = player.playerName;
 					} else {
+						Debug.Log ("Join");
 						SetPlayerUiState(player, PlayerUiState.Join);
 					}
 				}
@@ -355,7 +359,9 @@ public class InterfaceController : MonoBehaviour {
 
 	public void WriteWinner(Player player)
 	{
+		foreach(UILabel winLabel in winLabels){
 		winLabel.text = player.playerName + " wins!";
+		}
 	}
 
 }

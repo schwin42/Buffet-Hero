@@ -83,6 +83,10 @@ public class ButtonHandler : MonoBehaviour {
 				//Debug.Log ("About to end round.");
 				//GameController.Instance.BeginRound();
 				GameController.Instance.EndRound();
+			} else if(GameController.Instance.currentPhase == Phase.GameOver)
+			{
+				GameController.Instance.ReadyJoinedPlayers();
+				GameController.Instance.BeginGame();
 			}
 			break;
 		case ButtonAction.Join:

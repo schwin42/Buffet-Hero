@@ -352,6 +352,7 @@ public class GameController : MonoBehaviour {
 	public void BeginGame()
 	{
 		currentPhase = Phase.GameStart;
+		currentRound = -1;
 	//Register players
 	RegisterPlayers();
 
@@ -530,8 +531,9 @@ public class GameController : MonoBehaviour {
 			if(player.playerChoice != PlayerChoice.Ready)
 			{
 				InterfaceController.SetPlayerUiState(player, PlayerUiState.Inactive);
+				player.playedInLastGame = false;
 			}
-			player.playedInLastGame = false;
+
 		}
 
 
@@ -544,14 +546,14 @@ public class GameController : MonoBehaviour {
 			}
 
 			//Set identification
-			activePlayers[i].name = "Player "+i;
-			activePlayers[i].playerId = i;
+			//activePlayers[i].name = "Player "+i;
+			//activePlayers[i].playerId = i;
 
 			//Activate
 			//activePlayers[i].isActive = true;
 
 			//Set color
-			activePlayers[i].playerColor = (PlayerColor)i;
+			//activePlayers[i].playerColor = (PlayerColor)i;
 
 			//Set starting stats
 			activePlayers[i].Hp = startingHp;
@@ -612,7 +614,7 @@ public class GameController : MonoBehaviour {
 	public void EndGame()
 	{
 		//Determine winner
-		Player[] winQuery = registeredPlayers.OrderBy(player => player.Score).ToArray();
+		Player[] winQuery = registeredPlayers.OrderByDescending(player => player.Score).ToArray();
 		InterfaceController.Instance.WriteWinner(winQuery[0]);
 		InterfaceController.Instance.SetGameUiState(GameUIState.Results);
 
@@ -629,6 +631,14 @@ public class GameController : MonoBehaviour {
 			}
 		}
 		return LetterRank.F;
+	}
+
+	public void ReadyJoinedPlayers()
+	{
+		foreach(Player player in registeredPlayers)
+		{
+			player.playerChoice = PlayerChoice.Ready;
+		}
 	}
 
 
