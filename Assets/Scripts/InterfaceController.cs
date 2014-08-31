@@ -1,26 +1,64 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
+[System.Serializable]
+public enum PlayerUiState
+{
+	Uninitialized = -1,
+	Join = 0,
+	Entry = 1,
+	Ready = 2,
+	Game = 3,
+	Inactive = 4
+}
+
+[System.Serializable]
+public enum GameUIState
+{
+	Uninitialized = -1,
+	Join = 0,
+	MainGame = 1,
+	Results = 2,
+	Pause = 3
+}
 
 public class InterfaceController : MonoBehaviour {
 
 	public static InterfaceController Instance;
 
 	//Inspector
+
+		//Colors
 	public Color disabledTextColor;
 	public Color enabledTextYellowColor;
 	public Color neutralLightColor;
 	public Color neutralDarkColor;
 	public Color[] colors; 
+	public Color[] letterRankColors = new Color[7];
+	public Color[] playerTrayColors = new Color[4]; //Red, yellow, green, blue
+	public Color[] highlightColors = new Color[4];
+
+
 	public GameObject promptPrefab;
 	public GameObject letterRankPrefab;
 	public Vector3 localPromptPosition = new Vector3(0, -105, 0);
 	public Vector3 localLetterRankPosition;
-	public Color[] letterRankColors = new Color[7];
+
+	//public UIWidget[] gameStateWidgets = new UIWidget[4];
 
 	//Status
 	public UILabel[] activePrompts = new UILabel[2];
 	GameObject[] activeFoodRanks = new GameObject[2];
-
+	 PlayerUiState[] playerUiStates = new PlayerUiState[] //Start FSM at all players uninitialized
+	{
+		(PlayerUiState) (-1),
+		(PlayerUiState) (-1),
+		(PlayerUiState) (-1),
+		(PlayerUiState) (-1)
+	};
+	public GameUIState currentGameState = GameUIState.Uninitialized;
+	public bool displayedFirstScreen = false;
 
 	//public UIPanel[] playerPanels;
 
@@ -28,7 +66,14 @@ public class InterfaceController : MonoBehaviour {
 
 	public UIPanel[] mirrorPanels;
 
+	public UIPanel foregroundPanel;
+
 	public UIButton[] nextButtons;
+
+	public List<UIPanel> uiLookup; //Panels by player id
+	//public UIPanel[] playerPanels;
+	public UILabel winLabel;
+
 
 
 
@@ -41,6 +86,29 @@ public class InterfaceController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
+		for(int i = 0; i < 4; i++) //Magic number of players
+		{
+			Player player = GameController.Instance.possiblePlayers[i];
+			player.EnableUi();
+			player.trayBacker.color = playerTrayColors[player.playerId];
+
+			//Start player FSMs
+			SetPlayerUiState(player, PlayerUiState.Join);
+
+			//Unready players
+			player.playerChoice = PlayerChoice.Inactive;
+
+
+		}
+
+		//Acquire global UI
+		//gameStateWidgets[0] = 
+		SetGameUiState(GameUIState.Join);
+
+
+			//UISprite backer = panel.transform.Find("Backer").GetComponent<UISprite>();
+			//backer.color = 
+
 
 	}
 	
@@ -89,12 +157,15 @@ public class InterfaceController : MonoBehaviour {
 
 	public void EnableButton(ButtonHandler buttonHandler, bool b)
 	{
+		Debug.Log (buttonHandler.ToString(), buttonHandler.gameObject);
 		UIButton uiButton = buttonHandler.GetComponent<UIButton>();
 		//Debug.Log("Enable button: "+uiButton.gameObject.transform.parent.gameObject);
-		UILabel uiLabel = uiButton.GetComponentInChildren<UILabel>();
+		UILabel uiLabel = uiButton.transform.Find("Label").GetComponent<UILabel>();
 
 		if(b)
 		{
+			Debug.Log (buttonHandler.player.playerId);
+			Debug.Log (uiLabel.ToString());
 			uiButton.isEnabled = true;
 			uiLabel.color = enabledTextYellowColor;
 		} else {
@@ -154,11 +225,137 @@ public class InterfaceController : MonoBehaviour {
 			button.isEnabled = b;
 			if(b)
 			{
-				button.GetComponentInChildren<UILabel>().color = neutralDarkColor;
+				button.transform.Find ("Label").GetComponent<UILabel>().color = neutralLightColor;
 			} else {
-				button.GetComponentInChildren<UILabel>().color = disabledTextColor;
+				button.transform.Find ("Label").GetComponent<UILabel>().color = disabledTextColor;
 			}
 		}
+	}
+
+	public static void SetPlayerUiState(Player player, PlayerUiState targetState)
+	{
+		//Cache last state
+		PlayerUiState oldState = Instance.playerUiStates[player.playerId];
+
+		//Disable old elements
+		if((int)oldState != -1)
+		{
+		player.stateWidgets[(int)oldState].gameObject.SetActive(false);
+		} else {
+			//If unit, disable all
+			foreach(UIWidget widget in player.stateWidgets)
+			{
+				widget.gameObject.SetActive(false);
+			}
+		}
+		//Terminate last state
+		switch(oldState)
+		{
+		case PlayerUiState.Inactive:
+			player.trayBacker.gameObject.SetActive(true);
+			break;
+		}
+
+		//Enable new elements
+		player.stateWidgets[(int)targetState].gameObject.SetActive(true);
+
+		//Initialize state
+		switch(targetState)
+		{
+		case PlayerUiState.Entry:
+			Instance.HighlightControlType(player);
+			player.nameInput.defaultText = player.name;
+			break;
+		case PlayerUiState.Ready:
+			player.playerName = player.nameInput.value;
+			player.nameInput.value = "";
+			break;
+		case PlayerUiState.Join:
+			player.nameInput.value = "Enter a Name";
+			break;
+		case PlayerUiState.Inactive:
+			player.trayBacker.gameObject.SetActive(false);
+			break;
+		}
+
+
+		//Record state
+		Instance.playerUiStates[player.playerId] = targetState;
+	
+	}
+
+	public void SetGameUiState(GameUIState targetState)
+	{
+		//Cache old state
+		GameUIState oldState = currentGameState;
+
+		Debug.Log (targetState);
+		//Remove old state elements
+		if(oldState != GameUIState.Uninitialized)
+		{
+		foreach(UIPanel panel in mirrorPanels)
+		{
+			panel.transform.Find("Widget"+oldState.ToString()).gameObject.SetActive(false);
+		}
+		foregroundPanel.transform.Find("Widget"+oldState.ToString()).gameObject.SetActive(false);
+		}
+
+		//Add new elements
+		foreach(UIPanel panel in mirrorPanels)
+		{
+			panel.transform.Find("Widget"+targetState.ToString()).gameObject.SetActive(true);
+		}
+		foregroundPanel.transform.Find("Widget"+targetState.ToString()).gameObject.SetActive(true);
+	
+		//Initialize new elements
+		switch(targetState)
+		{
+		case GameUIState.Join:
+			if(!displayedFirstScreen)
+			{
+				//Do nothing	
+			} else {
+				foreach(Player player in GameController.Instance.possiblePlayers)
+				{
+					if(player.playedInLastGame)
+					{
+						SetPlayerUiState(player, PlayerUiState.Entry);
+					} else {
+						SetPlayerUiState(player, PlayerUiState.Join);
+					}
+				}
+			}
+			break;
+
+		}
+
+
+		currentGameState = targetState;
+	}
+
+
+	public void HighlightControlType(Player player)
+	{
+		if(player.controlType == ControlType.Human)
+		{
+			player.humanButton.defaultColor = highlightColors[player.playerId];
+			player.computerButton.defaultColor = neutralLightColor;
+			player.humanButton.GetComponentInChildren<UILabel>().color = neutralLightColor;
+			player.computerButton.GetComponentInChildren<UILabel>().color = neutralDarkColor;
+		} else if(player.controlType == ControlType.Computer)
+		{
+			player.computerButton.defaultColor = highlightColors[player.playerId];
+			player.humanButton.defaultColor = neutralLightColor;
+			player.computerButton.GetComponentInChildren<UILabel>().color = neutralLightColor;
+			player.humanButton.GetComponentInChildren<UILabel>().color = neutralDarkColor;
+		} else {
+			Debug.LogError ("Something bad happened");
+		}
+	}
+
+	public void WriteWinner(Player player)
+	{
+		winLabel.text = player.playerName + " wins!";
 	}
 
 }

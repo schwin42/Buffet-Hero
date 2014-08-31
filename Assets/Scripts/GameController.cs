@@ -5,11 +5,12 @@ using System.Linq;
 
 public enum Phase
 {
-	Uninitialized = 0,
+	GameStart = 0,
 	Choose = 1,
 	Evaluate = 2,
 	FinalScoring = 3,
-	GameOver = 4
+	GameOver = 4,
+	Pregame = 5
 }
 
 //public enum FoodAttributeType
@@ -38,6 +39,7 @@ public class GameController : MonoBehaviour {
 	public static float RandomConstant = 0f;
 
 	//Cached
+	public List<Player> possiblePlayers = new List<Player>();
 	public List<Player> registeredPlayers = new List<Player>();
 	public List<Player> activePlayers = new List<Player>();
 	public List<FoodAttribute> qualifierQueue;
@@ -49,7 +51,7 @@ public class GameController : MonoBehaviour {
 
 	//public int confirmedPlayers = 0;
 	public List<Player> humanPlayers = new List<Player>();
-	public Phase currentPhase = Phase.Uninitialized;
+	public Phase currentPhase = Phase.GameStart;
 	public Food activeFood;
 	public Food previousFood;
 	//public Dictionary<int, bool> playerChoices = new Dictionary<int, bool>(); //True indicates "eat"
@@ -64,11 +66,15 @@ public class GameController : MonoBehaviour {
 		qualifierQueue = GetShuffledAttributes(AttributeType.Qualifier);
 		ingredientQueue = GetShuffledAttributes(AttributeType.Ingredient);
 		formQueue = GetShuffledAttributes(AttributeType.Form);
+
+		possiblePlayers = GetComponentsInChildren<Player>().ToList();
 	}
 
 	// Use this for initialization
 	void Start () {
 	
+
+		currentPhase = Phase.Pregame;
 	//	players = 
 
 
@@ -104,7 +110,7 @@ public class GameController : MonoBehaviour {
 		if(currentPhase == Phase.Choose)
 		{
 			var query = from player in activePlayers
-				where player.playerChoice != PlayerChoice.Undecided
+				where player.playerChoice != PlayerChoice.Ready
 					select player;
 			if((query.Count() == activePlayers.Count()))
 		{
@@ -124,7 +130,7 @@ public class GameController : MonoBehaviour {
 			if(eatingPlayersQuery.Count() >= servingsPerFood)
 			{
 				var undecidedPlayersQuery = from player in activePlayers
-					where player.playerChoice == PlayerChoice.Undecided
+					where player.playerChoice == PlayerChoice.Ready
 						select player;
 				foreach(Player passingPlayer in undecidedPlayersQuery)
 				{
@@ -345,10 +351,13 @@ public class GameController : MonoBehaviour {
 
 	public void BeginGame()
 	{
+		currentPhase = Phase.GameStart;
 	//Register players
 	RegisterPlayers();
 
 
+		//Set game ui state
+		InterfaceController.Instance.SetGameUiState(GameUIState.MainGame);
 
 		if(activePlayers.Count == 0 || activePlayers.Count > 4)
 		{
@@ -381,7 +390,7 @@ public class GameController : MonoBehaviour {
 				activePlayers.Remove(player);
 				player.EnableButtons(false);
 			}
-			player.playerChoice = PlayerChoice.Undecided;
+			player.playerChoice = PlayerChoice.Ready;
 		}
 
 		//Enable next buttons
@@ -505,8 +514,25 @@ public class GameController : MonoBehaviour {
 		Debug.Log ("Register players");
 		//Log human players
 
-		registeredPlayers = GetComponentsInChildren<Player>().ToList();
+		registeredPlayers = (from player in GetComponentsInChildren<Player>()
+			where player.playerChoice == PlayerChoice.Ready
+				select player).ToList();
 		activePlayers = new List<Player>(registeredPlayers);
+		foreach(Player player in registeredPlayers)
+		{
+			InterfaceController.SetPlayerUiState(player, PlayerUiState.Game);
+			player.playerNameLabel.text = player.playerName;
+			player.playedInLastGame = true;
+
+		}
+		foreach(Player player in possiblePlayers)
+		{
+			if(player.playerChoice != PlayerChoice.Ready)
+			{
+				InterfaceController.SetPlayerUiState(player, PlayerUiState.Inactive);
+			}
+			player.playedInLastGame = false;
+		}
 
 
 		for(int i = 0; i < activePlayers.Count (); i++)
@@ -585,7 +611,11 @@ public class GameController : MonoBehaviour {
 
 	public void EndGame()
 	{
-		//Do something
+		//Determine winner
+		Player[] winQuery = registeredPlayers.OrderBy(player => player.Score).ToArray();
+		InterfaceController.Instance.WriteWinner(winQuery[0]);
+		InterfaceController.Instance.SetGameUiState(GameUIState.Results);
+
 	}
 
 	public LetterRank GetFoodRank (Food food)
@@ -600,5 +630,6 @@ public class GameController : MonoBehaviour {
 		}
 		return LetterRank.F;
 	}
-	
+
+
 }

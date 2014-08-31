@@ -8,7 +8,7 @@ donut,form,,sweet; dessert,,common
 frankfurter,form,,savory; hot,,common
 french fries,form,,salty; hot,,common
 lasagna,form,,italian; savory,,common
-sandwich,form,,tasty,meat+; dairy+,common
+sandwich,form,,,meat+; dairy+,common
 taco,form,,crispy; hot,,common
 caramel,ingredient,,sweet; chewy,,common
 chicken,ingredient,,meat; savory; hot,,common
@@ -161,4 +161,11 @@ an infected,qualifier,,toxic,,rare
 an infested,qualifier,,dangerous; terrifying,,rare
 soap,ingredient,,non-food,,rare
 a paradoxical,qualifier,,heals,,mythic
-omelette,form,,hot; savory,meat+; dairy+,common
+omelette,form,,hot; savory; french,meat+; dairy+,common
+chili,ingredient,,hot; savory; chewy; american,,uncommon
+crepe,form,,fancy; french,,uncommon
+pikachu,ingredient,,dangerous; impossible; meat,,mythic
+a flaming,qualifier,,hot; dangerous,,rare
+a sizzling,qualifier,,hot; enticing,,uncommon
+pierogi,form,,hot; european; enticing,,uncommon
+empanada,form,,european; hot; doughy,meat+; dairy+; dessert+,uncommon

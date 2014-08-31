@@ -1,20 +1,54 @@
 using UnityEngine;
 using System.Collections;
 
+public enum ButtonAction
+{
+	None = 0,
+	Eat = 1,
+	Pass = 2,
+	Next = 3,
+	Human = 4,
+	Computer = 5,
+	Join = 6,
+	Close = 7,
+	Confirm = 8,
+	Menu = 9
+}
+
 public class ButtonHandler : MonoBehaviour {
 
-	public Player player;
+	[System.NonSerialized]
+	public  Player player;
 
-	public string buttonFunction;
+	public ButtonAction buttonAction = ButtonAction.None;
 
 	// Use this for initialization
 	void Start () {
 	
 		//player = GetComponentInParent<Player>();
-		if(player != null)
+		Transform target = transform;
+		int i = 0;
+		while(player == null && i < 20) //Arbitrary number to break infinite loops
 		{
-		buttonFunction = gameObject.name;
+
+			Transform parent = target.parent;
+
+			if(parent == transform.root || parent.parent == null)
+			{
+				Debug.Log ("End catch");
+				break;
+			}
+
+			if(parent.name.Contains("Player"))
+			{
+				player = GameController.Instance.possiblePlayers[ int.Parse(parent.name[parent.name.Length - 1].ToString())];
+			} else {
+				target = transform.parent;
+			}
+			i++;
 		}
+		Debug.Log ("Unable to find player for : "+gameObject.name+", i="+i, gameObject);
+
 	}
 	
 	// Update is called once per frame
@@ -25,21 +59,21 @@ public class ButtonHandler : MonoBehaviour {
 	public void OnClick()
 	{
 		Debug.Log ("Click @" + GameController.Instance.currentRound);
-		if(buttonFunction != "NEXT"){
+		if(buttonAction != ButtonAction.Next){
 		AudioController.Instance.PlaySound(SoundEffect.Click);
 		}
 
-		switch(buttonFunction)
+		switch(buttonAction)
 		{
-		case "Eat":
+		case ButtonAction.Eat:
 			player.Eat();
 			break;
-		case "Pass":
+		case ButtonAction.Pass:
 			player.Pass();
 			break;
-		case "NEXT":
+		case ButtonAction.Next:
 			Debug.Log ("Next");
-			if(GameController.Instance.currentPhase == Phase.Uninitialized)
+			if(GameController.Instance.currentPhase == Phase.Pregame)
 			{
 				GameController.Instance.BeginGame();
 			} else if(GameController.Instance.currentPhase == Phase.Evaluate)
@@ -50,10 +84,31 @@ public class ButtonHandler : MonoBehaviour {
 				//GameController.Instance.BeginRound();
 				GameController.Instance.EndRound();
 			}
-
+			break;
+		case ButtonAction.Join:
+			//InterfaceController.Instance.PlayerUiStates[player.playerId] = 
+			InterfaceController.SetPlayerUiState(player, PlayerUiState.Entry);
+			break;
+		case ButtonAction.Close:
+			InterfaceController.SetPlayerUiState(player, PlayerUiState.Join);
+			break;
+		case ButtonAction.Confirm:
+			player.playerChoice = PlayerChoice.Ready;
+			InterfaceController.SetPlayerUiState(player, PlayerUiState.Ready);
+			break;
+		case ButtonAction.Human:
+			player.controlType = ControlType.Human;
+			InterfaceController.Instance.HighlightControlType(player);
+			break;
+		case ButtonAction.Computer:
+			player.controlType = ControlType.Computer;
+			InterfaceController.Instance.HighlightControlType(player);
+			break;
+		case ButtonAction.Menu:
+			InterfaceController.Instance.SetGameUiState(GameUIState.Join);
 			break;
 		default:
-			Debug.LogError("Invalid button action: "+buttonFunction);
+			Debug.LogError("Invalid button action: "+buttonAction);
 			break;
 		}
 	}

@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public enum PlayerChoice
 {
-	Undecided = 0,
+	Inactive = -1,
+	Ready = 0,
 	Eat = 1,
 	Pass = 2
 }
@@ -37,7 +38,10 @@ public class Player : MonoBehaviour {
 
 	public int playerId;
 
+	public string playerName;
+
 	public PlayerColor playerColor = PlayerColor.None;
+
 
 	public ControlType controlType = ControlType.Human;
 
@@ -133,27 +137,40 @@ public class Player : MonoBehaviour {
 
 
 	//Status
-	public PlayerChoice playerChoice = PlayerChoice.Undecided;
+	public PlayerChoice playerChoice = PlayerChoice.Ready;
 	public bool computerDecisionRunning = false;
+	public bool playedInLastGame = false;
 
 	//Computer
 	public float computerDelayLowLimit = 3;
 	public float computerDelayHighLimit = 10;
 
+	//State
+	[System.NonSerialized]
+	public UIWidget[] stateWidgets = new UIWidget[5];
 
 	//UI
-	 UIPanel playerPanel;
+	public UIPanel playerPanel;
 
-	 ButtonHandler eatButton;
-	 ButtonHandler passButtton;
+	public UISprite trayBacker;
 
-	 UILabel scoreLabel;
-	 UILabel hpLabel;
+		//Entry state
+	public UIButton humanButton;
+	public UIButton computerButton;
+	public UIInput nameInput;
 
-	  UILabel updateScoreLabel;
-	 UILabel updateHpLabel;
+		//Game state
+	public ButtonHandler eatButton;
+	public ButtonHandler passButtton;
+	public UILabel scoreLabel;
+	public UILabel hpLabel;
+	public UILabel updateScoreLabel;
+	public UILabel updateHpLabel;
+	public UILabel rankingLabel;
+	public UILabel playerNameLabel;
 
-	 UILabel rankingLabel;
+
+
 
 
 
@@ -166,23 +183,6 @@ public class Player : MonoBehaviour {
 
 	void Start()
 	{
-		playerPanel = GameObject.Find ("UI Root/Camera/PanelPlayer"+playerId).GetComponent<UIPanel>();
-		eatButton = playerPanel.transform.FindChild("Eat").GetComponent<ButtonHandler>();
-		passButtton = playerPanel.transform.FindChild("Pass").GetComponent<ButtonHandler>();
-		eatButton.player = this;
-		passButtton.player = this;
-
-
-		hpLabel = playerPanel.transform.FindChild("FieldBacker/HPMarker/LabelHPDisplay").GetComponent<UILabel>();
-		rankingLabel = playerPanel.transform.FindChild("FieldBacker/Ranking").GetComponent<UILabel>();
-		scoreLabel = playerPanel.transform.FindChild("FieldBacker/ScoreMarker/LabelScoreDisplay").GetComponent<UILabel>();
-		updateHpLabel = playerPanel.transform.FindChild("AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
-		updateScoreLabel = playerPanel.transform.FindChild("AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
-
-		hpLabel.text = Hp.ToString();
-		updateHpLabel.text = "";
-		scoreLabel.text = Score.ToString();
-		updateScoreLabel.text = "";
 	}
 
 	void Update()
@@ -190,7 +190,7 @@ public class Player : MonoBehaviour {
 		//Debug.Log ("Updating");
 		//Computer choice
 		if(GameController.Instance.currentPhase == Phase.Choose && controlType == ControlType.Computer 
-		   && !computerDecisionRunning && playerChoice == PlayerChoice.Undecided)
+		   && !computerDecisionRunning && playerChoice == PlayerChoice.Ready)
 		{
 			computerDecisionRunning = true;
 			StartCoroutine(ComputerDecision());
@@ -205,7 +205,7 @@ public class Player : MonoBehaviour {
 		float timer = 0;
 		float decisionDelay = (computerDelayHighLimit - computerDelayLowLimit) * Random.value + computerDelayLowLimit; 
 
-		while(GameController.Instance.currentPhase == Phase.Choose && computerDecisionRunning && playerChoice == PlayerChoice.Undecided)
+		while(GameController.Instance.currentPhase == Phase.Choose && computerDecisionRunning && playerChoice == PlayerChoice.Ready)
 		{
 			if( timer >= decisionDelay)
 			{
@@ -320,5 +320,48 @@ public class Player : MonoBehaviour {
 
 	}
 
+	public void EnableUi()
+	{
+		playerPanel = GameObject.Find ("UI Root/Camera/PanelPlayer"+playerId).GetComponent<UIPanel>();
+
+		//UI
+
+		//General
+		trayBacker = playerPanel.transform.Find("Backer").GetComponent<UISprite>();
+
+		//Entry
+		humanButton = playerPanel.transform.Find("EntryWidget/ButtonHuman").GetComponent<UIButton>();
+		computerButton = playerPanel.transform.Find("EntryWidget/ButtonComputer").GetComponent<UIButton>();
+		nameInput = playerPanel.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UIInput>();
+
+
+		//Game
+		eatButton = playerPanel.transform.FindChild("GameWidget/Eat").GetComponent<ButtonHandler>();
+		passButtton = playerPanel.transform.FindChild("GameWidget/Pass").GetComponent<ButtonHandler>();
+		eatButton.player = this;
+		passButtton.player = this;
+		hpLabel = playerPanel.transform.FindChild("GameWidget/FieldBacker/LabelHPDisplay").GetComponent<UILabel>();
+		rankingLabel = playerPanel.transform.FindChild("GameWidget/FieldBacker/Ranking").GetComponent<UILabel>();
+		scoreLabel = playerPanel.transform.FindChild("GameWidget/FieldBacker/LabelScoreDisplay").GetComponent<UILabel>();
+		updateHpLabel = playerPanel.transform.FindChild("GameWidget/AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
+		updateScoreLabel = playerPanel.transform.FindChild("GameWidget/AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
+		playerNameLabel = playerPanel.transform.Find ("GameWidget/LabelPlayer").GetComponent<UILabel>();
+
+
+		//Acquire state widgets
+		//UIWidget[] stateWidgets = new UIWidget[4];
+		stateWidgets[0] = playerPanel.transform.Find ("JoinWidget").GetComponent<UIWidget>();
+		stateWidgets[1] = playerPanel.transform.Find ("EntryWidget").GetComponent<UIWidget>();
+		stateWidgets[2] = playerPanel.transform.Find ("ReadyWidget").GetComponent<UIWidget>();
+		stateWidgets[3] = playerPanel.transform.Find ("GameWidget").GetComponent<UIWidget>();
+		stateWidgets[4] = playerPanel.transform.Find ("InactiveWidget").GetComponent<UIWidget>(); //Dummy widget
+		//stateWidgets = stateWidgets;
+
+		
+		hpLabel.text = Hp.ToString();
+		updateHpLabel.text = "";
+		scoreLabel.text = Score.ToString();
+		updateScoreLabel.text = "";
+	}
 
 }
