@@ -30,9 +30,16 @@ public class GameController : MonoBehaviour {
 	public int servingsPerFood = 2;
 	public int startingHp = 100;
 	public float damageConstant = 10f;
+	//public Color[] letterRankColors = new Color[7];
+
+	//Generated
+	public static float ScoreConstant = 25f;
+	private float scoreWobble = 10f;
+	public static float RandomConstant = 0f;
 
 	//Cached
-	public Player[] players = new Player[4];
+	public List<Player> registeredPlayers = new List<Player>();
+	public List<Player> activePlayers = new List<Player>();
 	public List<FoodAttribute> qualifierQueue;
 	public List<FoodAttribute> ingredientQueue;
 	public List<FoodAttribute> formQueue;
@@ -69,14 +76,10 @@ public class GameController : MonoBehaviour {
 
 		                        //Acquire objects
 		GameObject camera = GameObject.Find ("UI Root/Camera");
-	players = camera.GetComponentsInChildren<Player>();
 
+	
 
-		//Register players
-		RegisterPlayers();
-
-		//Initialize game
-		//BeginRound();
+		//BeginGame();
 
 		//GET AVERAGE SCORE
 //		for(int i = 0; i < numberOfTrials; i++)
@@ -100,13 +103,13 @@ public class GameController : MonoBehaviour {
 
 		if(currentPhase == Phase.Choose)
 		{
-			var query = from player in players
+			var query = from player in activePlayers
 				where player.playerChoice != PlayerChoice.Undecided
 					select player;
-			if((query.Count() == players.Count()))
+			if((query.Count() == activePlayers.Count()))
 		{
 				EvaluateRound();
-		} else if(query.Count () > players.Count ())
+		} else if(query.Count () > activePlayers.Count ())
 			{
 				Debug.Log("Something terrible has happened");
 			}
@@ -115,12 +118,12 @@ public class GameController : MonoBehaviour {
 			int eatCounter = 0;
 			List<Player> eatingPlayers = new List<Player>();
 
-			var eatingPlayersQuery = from player in players
+			var eatingPlayersQuery = from player in activePlayers
 				where player.playerChoice == PlayerChoice.Eat
 					select player;
 			if(eatingPlayersQuery.Count() >= servingsPerFood)
 			{
-				var undecidedPlayersQuery = from player in players
+				var undecidedPlayersQuery = from player in activePlayers
 					where player.playerChoice == PlayerChoice.Undecided
 						select player;
 				foreach(Player passingPlayer in undecidedPlayersQuery)
@@ -314,7 +317,7 @@ public class GameController : MonoBehaviour {
 //}
 //	}
 
-	public Food GetRandomFoodUsingQueue()
+	public Food GetRandomFoodUsingQueue() //During runtime; for game use
 	{
 		//Debug.Log ("Get random food @" + currentRound);
 		Food food = new Food();
@@ -327,7 +330,7 @@ public class GameController : MonoBehaviour {
 		return food;
 	}
 
-	public static Food GetRandomFoodUsingData()
+	public static Food GetRandomFoodUsingData() //Pre-runtime; for statistical use
 	{
 		//Debug.Log ("Get random food @" + currentRound);
 		Food food = new Food();
@@ -340,6 +343,22 @@ public class GameController : MonoBehaviour {
 		return food;
 	}
 
+	public void BeginGame()
+	{
+	//Register players
+	RegisterPlayers();
+
+
+
+		if(activePlayers.Count == 0 || activePlayers.Count > 4)
+		{
+			Debug.LogError ("Invalid number of players: "+activePlayers.Count);
+		}
+	
+	//Initialize game
+	BeginRound();
+	}
+
 	public void BeginRound()
 	{
 
@@ -349,33 +368,47 @@ public class GameController : MonoBehaviour {
 
 		InterfaceController.Instance.DisplayRound();
 
-		//Update score health and ranking
-		UpdatePlayerStats();
+
+
+
 
 		//Reset choices
-		foreach(Player player in players)
+		List<Player> tempPlayers = new List<Player>(activePlayers);
+		foreach(Player player in tempPlayers)
 		{
+			if(player.Hp < 0)
+			{
+				activePlayers.Remove(player);
+				player.EnableButtons(false);
+			}
 			player.playerChoice = PlayerChoice.Undecided;
 		}
 
+		//Enable next buttons
+		InterfaceController.Instance.EnableNextButtons(false);
+
+
+		//Set score constant for next food
+		RandomConstant = ((Random.value * scoreWobble)-scoreWobble/2) + ScoreConstant;
+		Debug.Log ("Random constant: "+RandomConstant +", Score Constant"+ScoreConstant);
 
 		NextFood ();
 	}
 
 	public void UpdatePlayerStats()
 	{
-		foreach(Player player in players)
+		foreach(Player player in activePlayers)
 		{
-			player.updateScoreLabel.text = "";
-			player.Score += player.pendingScore;
-			player.pendingScore = 0f;
-			player.updateHpLabel.text = "";
-			player.Hp += player.pendingHp;
-			player.pendingHp = 0f;
+			//player.updateScoreLabel.text = "";
+			player.Score += player.PendingScore;
+			player.PendingScore = 0f;
+			//player.updateHpLabel.text = "";
+			player.Hp += player.PendingHp;
+			player.PendingHp = 0f;
 		}
 
 		//Set ranking
-		Player[] playersByScore = ((from player in players
+		Player[] playersByScore = ((from player in registeredPlayers
 		                            select player).OrderByDescending(player => player.Score)).ToArray();
 		string debugString = "";
 		for(int k = 0; k < playersByScore.Length; k++)
@@ -426,7 +459,7 @@ public class GameController : MonoBehaviour {
 		//EvaluateRound();
 		currentPhase = Phase.Choose;
 
-		foreach(Player player in players)
+		foreach(Player player in activePlayers)
 		{
 			player.EnableButtons(true);
 		}
@@ -440,7 +473,7 @@ public class GameController : MonoBehaviour {
 		//Show food ranking
 		InterfaceController.Instance.ShowFoodRank(GetFoodRank(activeFood));
 
-		foreach(Player player in players)
+		foreach(Player player in activePlayers)
 		{
 			//Debug.Log ("Player id: "+player.playerId);
 			if(player.playerChoice == PlayerChoice.Eat) //if player chose to eat
@@ -448,19 +481,21 @@ public class GameController : MonoBehaviour {
 				//Score
 				Debug.Log ("Update score");
 				float qualityFloat = activeFood.Quality;
-				string qualityString = qualityFloat >= 0 ? "+" + qualityFloat.ToString ("F0"): qualityFloat.ToString("F0");
-				player.updateScoreLabel.text = qualityString;
-				player.pendingScore = qualityFloat;
+				//string qualityString = qualityFloat >= 0 ? "+" + qualityFloat.ToString ("F0"): qualityFloat.ToString("F0");
+				//player.updateScoreLabel.text = qualityString;
+				player.PendingScore = qualityFloat;
 				//Health
 				float hpFloat = -activeFood.Damage;
-				string hpString = hpFloat < 0 ? hpFloat.ToString ("F0"): "";
-				player.updateHpLabel.text = hpString;
-				player.pendingHp = hpFloat;
-				Debug.Log ("Pending hp: "+player.pendingHp);
+				//string hpString = hpFloat < 0 ? hpFloat.ToString ("F0"): "";
+				//player.updateHpLabel.text = hpString;
+				player.PendingHp = hpFloat;
+				Debug.Log ("Pending hp: "+player.PendingHp);
 			}
 		}
-		Debug.Log ("Evaluation ended @"+currentRound);
+		Debug.Log ("Evaluation ended for round"+currentRound+" @"+Time.frameCount);
 
+
+		InterfaceController.Instance.EnableNextButtons(true);
 		//Debug
 		//EndRound ();
 	}
@@ -470,24 +505,31 @@ public class GameController : MonoBehaviour {
 		Debug.Log ("Register players");
 		//Log human players
 
-		for(int i = 0; i < players.Count (); i++)
+		registeredPlayers = GetComponentsInChildren<Player>().ToList();
+		activePlayers = new List<Player>(registeredPlayers);
+
+
+		for(int i = 0; i < activePlayers.Count (); i++)
 		{
 			//Log as human 
-			if(players[i].controlType == ControlType.Human)
+			if(activePlayers[i].controlType == ControlType.Human)
 			{
-				humanPlayers.Add(players[i]);
+				humanPlayers.Add(activePlayers[i]);
 			}
 
 			//Set identification
-			players[i].name = "Player "+i;
-			players[i].playerId = i;
-			
+			activePlayers[i].name = "Player "+i;
+			activePlayers[i].playerId = i;
+
+			//Activate
+			//activePlayers[i].isActive = true;
+
 			//Set color
-			players[i].playerColor = (PlayerColor)i;
+			activePlayers[i].playerColor = (PlayerColor)i;
 
 			//Set starting stats
-			players[i].Hp = startingHp;
-			players[i].Score = 0;
+			activePlayers[i].Hp = startingHp;
+			activePlayers[i].Score = 0;
 
 		}
 	}
@@ -495,6 +537,10 @@ public class GameController : MonoBehaviour {
 	public void EndRound()
 	{
 		InterfaceController.Instance.HideFoodRank();
+		InterfaceController.Instance.HidePrompts();
+
+		//Update score health and ranking
+		UpdatePlayerStats();
 
 		Debug.Log ("Ending round " + currentRound);
 		if (currentRound < numberOfRounds - 1) {
@@ -539,7 +585,7 @@ public class GameController : MonoBehaviour {
 
 	public void EndGame()
 	{
-		UpdatePlayerStats();
+		//Do something
 	}
 
 	public LetterRank GetFoodRank (Food food)

@@ -41,6 +41,8 @@ public class Player : MonoBehaviour {
 
 	public ControlType controlType = ControlType.Human;
 
+	//public bool isActive = false;
+
 	public Plate plate;
 
 	private float _hp = 0f;
@@ -56,8 +58,19 @@ public class Player : MonoBehaviour {
 			hpLabel.text = _hp.ToString("F0");
 		}
 	}
-
-	public float pendingHp = 0f;
+	private float _pendingHp = 0f;
+	public float PendingHp 
+	{
+		get
+		{
+			return _pendingHp;
+		}
+		set
+		{
+			_pendingHp = value;
+			updateHpLabel.text = _pendingHp == 0 ? "" : ((_pendingHp > 0 ? "+"+_pendingHp.ToString() : _pendingHp.ToString())+" HP");
+		}
+	}
 
 	private float _score = 0f;
 	public float Score
@@ -102,7 +115,19 @@ public class Player : MonoBehaviour {
 		}
 	}
 	}
-	public float pendingScore = 0f;
+	public float _pendingScore = 0f;
+	public float PendingScore 
+	{
+		get
+		{
+			return _pendingScore;
+		}
+		set
+		{
+			_pendingScore = value;
+			updateScoreLabel.text = _pendingScore == 0 ? "": ((_pendingScore >= 0 ? "+"+_pendingScore.ToString() : _pendingScore.ToString())+" Pts");
+		}
+	}
 
 	public string status = "";
 
@@ -117,16 +142,18 @@ public class Player : MonoBehaviour {
 
 
 	//UI
-	public UIButton eatButton;
-	public UIButton passButtton;
+	 UIPanel playerPanel;
 
-	public UILabel scoreLabel;
-	public UILabel hpLabel;
+	 ButtonHandler eatButton;
+	 ButtonHandler passButtton;
 
-	public UILabel updateScoreLabel;
-	public UILabel updateHpLabel;
+	 UILabel scoreLabel;
+	 UILabel hpLabel;
 
-	public UILabel rankingLabel;
+	  UILabel updateScoreLabel;
+	 UILabel updateHpLabel;
+
+	 UILabel rankingLabel;
 
 
 
@@ -139,8 +166,18 @@ public class Player : MonoBehaviour {
 
 	void Start()
 	{
-		eatButton = transform.FindChild("Eat").GetComponent<UIButton>();
-		passButtton = transform.FindChild("Pass").GetComponent<UIButton>();
+		playerPanel = GameObject.Find ("UI Root/Camera/PanelPlayer"+playerId).GetComponent<UIPanel>();
+		eatButton = playerPanel.transform.FindChild("Eat").GetComponent<ButtonHandler>();
+		passButtton = playerPanel.transform.FindChild("Pass").GetComponent<ButtonHandler>();
+		eatButton.player = this;
+		passButtton.player = this;
+
+
+		hpLabel = playerPanel.transform.FindChild("FieldBacker/HPMarker/LabelHPDisplay").GetComponent<UILabel>();
+		rankingLabel = playerPanel.transform.FindChild("FieldBacker/Ranking").GetComponent<UILabel>();
+		scoreLabel = playerPanel.transform.FindChild("FieldBacker/ScoreMarker/LabelScoreDisplay").GetComponent<UILabel>();
+		updateHpLabel = playerPanel.transform.FindChild("AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
+		updateScoreLabel = playerPanel.transform.FindChild("AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
 
 		hpLabel.text = Hp.ToString();
 		updateHpLabel.text = "";
@@ -187,6 +224,7 @@ public class Player : MonoBehaviour {
 			yield return 0;
 		}
 		computerDecisionRunning = false;
+		Debug.Log ("Computer "+playerId+" stopped running. @"+Time.frameCount);
 		yield break;
 
 		//If game is not in choose phase, end coroutine immediately

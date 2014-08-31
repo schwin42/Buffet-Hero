@@ -7,7 +7,7 @@ public class InterfaceController : MonoBehaviour {
 
 	//Inspector
 	public Color disabledTextColor;
-	public Color enabledTextColor;
+	public Color enabledTextYellowColor;
 	public Color neutralLightColor;
 	public Color neutralDarkColor;
 	public Color[] colors; 
@@ -15,9 +15,10 @@ public class InterfaceController : MonoBehaviour {
 	public GameObject letterRankPrefab;
 	public Vector3 localPromptPosition = new Vector3(0, -105, 0);
 	public Vector3 localLetterRankPosition;
+	public Color[] letterRankColors = new Color[7];
 
 	//Status
-	UILabel[] activePrompts = new UILabel[2];
+	public UILabel[] activePrompts = new UILabel[2];
 	GameObject[] activeFoodRanks = new GameObject[2];
 
 
@@ -26,6 +27,8 @@ public class InterfaceController : MonoBehaviour {
 	public UILabel[] roundLabels;
 
 	public UIPanel[] mirrorPanels;
+
+	public UIButton[] nextButtons;
 
 
 
@@ -62,7 +65,8 @@ public class InterfaceController : MonoBehaviour {
 			prompt.transform.localPosition = localPromptPosition;
 			UILabel promptLabel = prompt.GetComponent<UILabel>();
 			activePrompts[i] = promptLabel;
-			promptLabel.color = i > 0 ? neutralLightColor : neutralDarkColor;
+			promptLabel.color = neutralDarkColor;
+				//i > 0 ? neutralLightColor : neutralDarkColor;
 			promptLabel.text = s;
 			AudioController.Instance.PlaySound(SoundEffect.Swoop);
 		}
@@ -83,15 +87,16 @@ public class InterfaceController : MonoBehaviour {
 //		//scoreLabel.text = "Score: "+f.ToString();
 //	}
 
-	public void EnableButton(UIButton uiButton, bool b)
+	public void EnableButton(ButtonHandler buttonHandler, bool b)
 	{
+		UIButton uiButton = buttonHandler.GetComponent<UIButton>();
 		//Debug.Log("Enable button: "+uiButton.gameObject.transform.parent.gameObject);
 		UILabel uiLabel = uiButton.GetComponentInChildren<UILabel>();
 
 		if(b)
 		{
 			uiButton.isEnabled = true;
-			uiLabel.color = enabledTextColor;
+			uiLabel.color = enabledTextYellowColor;
 		} else {
 			uiButton.isEnabled = false;
 			uiLabel.color = disabledTextColor;
@@ -117,6 +122,7 @@ public class InterfaceController : MonoBehaviour {
 			letterRankGo.transform.localRotation = Quaternion.identity;
 			letterRankGo.transform.localPosition = localLetterRankPosition;
 			letterRankGo.GetComponentInChildren<UILabel>().text = letterRank.ToString();
+			letterRankGo.GetComponent<UISprite>().color = letterRankColors[(int)letterRank];
 			activeFoodRanks[i] = letterRankGo;
 
 		}
@@ -124,9 +130,10 @@ public class InterfaceController : MonoBehaviour {
 
 	public void HidePrompts()
 	{
+		Debug.Log ("Hiding prompts");
 		foreach(UILabel label in activePrompts)
 		{
-			Destroy (label);
+			Destroy (label.gameObject);
 		}
 		
 	}
@@ -138,6 +145,20 @@ public class InterfaceController : MonoBehaviour {
 			Destroy (go);
 		}
 
+	}
+
+	public void EnableNextButtons(bool b)
+	{
+		foreach(UIButton button in nextButtons)
+		{
+			button.isEnabled = b;
+			if(b)
+			{
+				button.GetComponentInChildren<UILabel>().color = neutralDarkColor;
+			} else {
+				button.GetComponentInChildren<UILabel>().color = disabledTextColor;
+			}
+		}
 	}
 
 }

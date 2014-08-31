@@ -34,7 +34,14 @@ public class Tools : MonoBehaviour {
 		List<Food> foodTrials = new List<Food>();
 		for(int i = 0; i < numberOfTrials; i++)
 		{
-			foodTrials.Add (GameController.GetRandomFoodUsingData());
+			Food food = GameController.GetRandomFoodUsingData();
+			foodTrials.Add (food);
+
+			//Debug
+			if(food.Quality == 0)
+			{
+				Debug.LogError(food.Name + " has zero quality");
+			}
 		}
 		//percentiles = DeriveRatingPercentiles(foodTrials);
 

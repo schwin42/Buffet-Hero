@@ -3,17 +3,17 @@ using System.Collections;
 
 public class ButtonHandler : MonoBehaviour {
 
-	Player player;
+	public Player player;
 
 	public string buttonFunction;
 
 	// Use this for initialization
 	void Start () {
 	
-		player = GetComponentInParent<Player>();
+		//player = GetComponentInParent<Player>();
 		if(player != null)
 		{
-		buttonFunction = GetComponentInChildren<UILabel>().text;
+		buttonFunction = gameObject.name;
 		}
 	}
 	
@@ -31,15 +31,18 @@ public class ButtonHandler : MonoBehaviour {
 
 		switch(buttonFunction)
 		{
-		case "EAT":
+		case "Eat":
 			player.Eat();
 			break;
-		case "PASS":
+		case "Pass":
 			player.Pass();
 			break;
 		case "NEXT":
 			Debug.Log ("Next");
-			if(GameController.Instance.currentPhase == Phase.Uninitialized || GameController.Instance.currentPhase == Phase.Evaluate)
+			if(GameController.Instance.currentPhase == Phase.Uninitialized)
+			{
+				GameController.Instance.BeginGame();
+			} else if(GameController.Instance.currentPhase == Phase.Evaluate)
 			{
 				//Debug.Log ("Current phase is evaluation");
 				AudioController.Instance.PlaySound(SoundEffect.Click);
@@ -47,6 +50,7 @@ public class ButtonHandler : MonoBehaviour {
 				//GameController.Instance.BeginRound();
 				GameController.Instance.EndRound();
 			}
+
 			break;
 		default:
 			Debug.LogError("Invalid button action: "+buttonFunction);

@@ -86,12 +86,18 @@ public class Food
 				netMagnitude += tag.magnitude;
 			}
 			//Debug.Log ("Net value, magnitude"+netValue + ", "+ netMagnitude);
-			return (netValue >= 0 ? netValue + 1 : netValue) * ((netMagnitude / 4) + 1) * Database.Instance.scoreConstant;
+			float staticValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
+			if(GameController.RandomConstant != 0f)
+			{
+			return Mathf.Round (staticValue * GameController.RandomConstant);
+			} else {
+				return Mathf.Round (staticValue * GameController.ScoreConstant);
+			}
 
 		}
 	}
 
-	public float Value = 0f;
+	//public float Value = 0f;
 
 	private int _damage;
 	private bool _damageIsSet;
@@ -299,7 +305,7 @@ public class Database : MonoBehaviour {
 
 	//Configurable
 
-	public float scoreConstant = 25f;
+
 	public static string attributesFile = "Buffet Hero - Food Attributes.csv";
 	public static string tagsFile = "Buffet Hero - Tags.csv";
 
@@ -470,8 +476,8 @@ public class Database : MonoBehaviour {
 						recordTag.combinesDramaticallyWith = Regex.Split(recordStrings[j], "; ");
 						break;
 					case "Damage":
-						if(recordStrings[j].Contains("-")){
-						string[] damageStrings = Regex.Split (recordStrings[j], "-");
+							if(recordStrings[j].Contains(";")){
+								string[] damageStrings = Regex.Split (recordStrings[j], ";");
 							for(int k = 0; k < damageStrings.Length; k++)
 							{
 								recordTag.damageRange[k] = float.Parse(damageStrings[k]);
