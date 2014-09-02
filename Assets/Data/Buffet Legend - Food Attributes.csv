@@ -158,7 +158,7 @@ vegetable,ingredient,,vegan; vegetable,,common
 venison,ingredient,,meat; savory; hot; fancy; cruel,,rare
 a bellicose,qualifier,,fancy; dangerous,,rare
 an infected,qualifier,,toxic,,rare
-an infested,qualifier,,dangerous; terrifying,,rare
+an infested,qualifier,,dangerous; terrifying; gross,,rare
 soap,ingredient,,non-food,,rare
 a paradoxical,qualifier,,heals,,mythic
 omelette,form,,hot; savory; french,meat+; dairy+,common
@@ -169,3 +169,20 @@ a flaming,qualifier,,hot; dangerous,,rare
 a sizzling,qualifier,,hot; enticing,,uncommon
 pierogi,form,,hot; european; enticing,,uncommon
 empanada,form,,european; hot; doughy,meat+; dairy+; dessert+,uncommon
+"""chicken""",ingredient,,crummy; risky; meat,,rare
+bologna,ingredient,,crummy; meat; cheap,,uncommon
+anus,ingredient,,gross; meat,,rare
+napkin,ingredient,,non-food,,rare
+avocado,ingredient,,tasty; fruit,,common
+skunk,ingredient,,gross; meat,,rare
+blood,ingredient,,crummy,,rare
+escargot,ingredient,,meat; risky,,rare
+haggis,form,,crummy; meat; scottish,,rare
+fugu,ingredient,,fish; enticing; dangerous,,rare
+eyeball,ingredient,,meat; gross,,rare
+a live,qualifier,,terrifying; enticing,,rare
+chalupa,form,,bread; cheap,,uncommon
+antifreeze,ingredient,,toxic; sweet; non-food,,rare
+a leftover,qualifier,,stale,,common
+a tepid,qualifier,,lukewarm,,common
+shrim,ingredient,,non-food; disgusting,,rare

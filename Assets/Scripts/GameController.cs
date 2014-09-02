@@ -386,7 +386,7 @@ public class GameController : MonoBehaviour {
 		List<Player> tempPlayers = new List<Player>(activePlayers);
 		foreach(Player player in tempPlayers)
 		{
-			if(player.Hp < 0)
+			if(player.Hp <= 0)
 			{
 				activePlayers.Remove(player);
 				player.EnableButtons(false);

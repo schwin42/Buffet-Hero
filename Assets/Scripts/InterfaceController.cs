@@ -363,7 +363,7 @@ public class InterfaceController : MonoBehaviour {
 	public void WriteWinner(Player player)
 	{
 		foreach(UILabel winLabel in winLabels){
-		winLabel.text = player.playerName + " wins!";
+		winLabel.text = player.playerName + " wins with "+player.Score+" Points!";
 		}
 	}
 

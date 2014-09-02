@@ -67,7 +67,7 @@ public class Food
 					returnString += " ";
 				}
 			}
-			Debug.Log ("Food = "+returnString);
+			//Debug.Log ("Food = "+returnString);
 			return returnString;
 			//return descriptor.name + " " + ingredient.name + " " + form.name;
 		}
@@ -209,6 +209,12 @@ public class Food
 		virtualTags = food.virtualTags;
 	}
 
+	public Food (List<FoodAttribute> _attributes)
+	{
+		attributes.AddRange(_attributes);
+		Realize (true);
+	}
+
 
 
 	public List<FoodAttribute> attributes = new List<FoodAttribute>();
@@ -306,8 +312,8 @@ public class Database : MonoBehaviour {
 	//Configurable
 
 
-	public static string attributesFile = "Buffet Hero - Food Attributes.csv";
-	public static string tagsFile = "Buffet Hero - Tags.csv";
+	public static string attributesFile = "Buffet Legend - Food Attributes.csv";
+	public static string tagsFile = "Buffet Legend - Tags.csv";
 
 	//Data
 	public List<Tag> tagData;
@@ -495,7 +501,15 @@ public class Database : MonoBehaviour {
 				}
 
 				}
+				var query = from tag in tagData
+					where tag.name == recordTag.name
+						select tag;
+				if(query.Count () > 0)
+				{
+					Debug.Log ("Tag "+recordTag.name+" already exists.");
+				} else {
 				tagData.Add (recordTag);
+				}
 			}
 		}
 		}

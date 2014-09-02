@@ -16,6 +16,14 @@ public class Tools : MonoBehaviour {
 //		187.5f, 112.5f, 50f, -25f, -62.5f, -125f
 //	};
 
+	public string[] viewCombinedAttributes = new string[3];
+	public Food selectedFood;
+
+	public string tagTypeQuery;
+	public List<string> queryOuput = new List<string>();
+
+
+
 	void Awake () {
 		Instance = this;
 	}
@@ -70,4 +78,5 @@ public class Tools : MonoBehaviour {
 		return percentilesOutput;
 	}
 	
+
 }

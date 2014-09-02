@@ -142,8 +142,8 @@ public class Player : MonoBehaviour {
 	public bool playedInLastGame = false;
 
 	//Computer
-	public float computerDelayLowLimit = 3;
-	public float computerDelayHighLimit = 10;
+	public static float computerDelayLowLimit = 1;
+	public static float computerDelayHighLimit = 5;
 
 	//State
 	[System.NonSerialized]
