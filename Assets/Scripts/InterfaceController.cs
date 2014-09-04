@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 [System.Serializable]
 public enum PlayerUiState
@@ -20,7 +21,8 @@ public enum GameUIState
 	Join = 0,
 	MainGame = 1,
 	Results = 2,
-	Pause = 3
+	Pause = 3,
+	Stats0 = 4
 }
 
 public class InterfaceController : MonoBehaviour {
@@ -28,6 +30,8 @@ public class InterfaceController : MonoBehaviour {
 	public static InterfaceController Instance;
 
 	//Inspector
+		//Configurable
+	public int maxScoresToDisplay = 12;
 
 		//Colors
 	public Color disabledTextColor;
@@ -73,6 +77,9 @@ public class InterfaceController : MonoBehaviour {
 	public List<UIPanel> uiLookup; //Panels by player id
 	//public UIPanel[] playerPanels;
 	public UILabel[] winLabels;
+
+	public UILabel[] highScoreNames;
+	public UILabel[] highScoreAmounts;
 
 
 
@@ -333,13 +340,55 @@ public class InterfaceController : MonoBehaviour {
 				}
 			}
 			break;
-
+		case GameUIState.Stats0:
+			//Retrieve top n records from the top scores database in order
+			PlayerResult[] allScoresSorted = UserDatabase.Instance.playerGameRecords.OrderByDescending(element => element.score).ToArray();
+			List<PlayerResult> topResults = new List<PlayerResult>();
+			for(int i = 0; i < allScoresSorted.Length; i++)
+			{
+				if(i >= maxScoresToDisplay)
+				{
+					break;
+				}
+				topResults.Add (allScoresSorted[i]);
+			}
+			DisplayScores(topResults);
+			break;
 		}
 
 
 		currentGameState = targetState;
 	}
 
+	public void DisplayScores(List<PlayerResult> playerScores)
+	{
+		string names0 = "";
+		string names1 = "";
+		string scores0 = "";
+		string scores1 = "";
+
+		for(int i = 0; i < playerScores.Count; i++) 
+		{
+
+			if(i < maxScoresToDisplay / 2)
+			{
+				names0 += (i+1).ToString()+". "+ playerScores[i].playerName + "\n";
+				scores0 += playerScores[i].score + "\n";
+			} else {
+				names1 += (i+1).ToString()+". "+ playerScores[i].playerName + "\n";
+				scores1 += playerScores[i].score + "\n";
+			}
+
+		}
+		highScoreNames[0].text = names0;
+		highScoreNames[1].text = names1;
+		highScoreNames[2].text = names0;
+		highScoreNames[3].text = names1;
+		highScoreAmounts[0].text = scores0;
+		highScoreAmounts[1].text = scores1;
+		highScoreAmounts[2].text = scores0;
+		highScoreAmounts[3].text = scores1;
+	}
 
 	public void HighlightControlType(Player player)
 	{

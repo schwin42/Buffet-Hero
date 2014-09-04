@@ -621,6 +621,16 @@ public class GameController : MonoBehaviour {
 //		{
 //			player.playerChoice = PlayerChoice.Inactive;
 //		}
+		foreach(Player player in registeredPlayers)
+		{
+			PlayerResult record = new PlayerResult();
+			record.playerName = player.playerName;
+			record.rank = player.Ranking;
+			record.score = player.Score;
+			UserDatabase.Instance.playerGameRecords.Add(record);
+		}
+
+
 		registeredPlayers.Clear();
 		activePlayers.Clear();
 		humanPlayers.Clear();

@@ -234,6 +234,7 @@ public class FoodAttribute
 //	public float modifier = 0f;
 	public List<Tag> tags = new List<Tag>();
 	public List<string> combinations = new List<string>();
+	public string date = "";
 //	public Temperature temperature = Temperature.None;
 //	public float spice = 0f;
 //	public string special = "";
@@ -256,6 +257,7 @@ public class Tag
 	public string[] combinesWellWith;
 	public string[] combinesPoorlyWith;
 	public string[] combinesDramaticallyWith;
+	public string helpTag = "";
 
 	public int GetHitsInFood(Food food, string tagString)
 	{
@@ -400,6 +402,9 @@ public class Database : MonoBehaviour {
 					case "Combinations":
 						recordAttribute.combinations = Regex.Split(recordStrings[j], "; ").ToList();
 						break;
+					case "Date Added":
+						recordAttribute.date = recordStrings[j];
+						break;
 					default:
 						Debug.LogError ("Unhandled field name: "+fieldLookup[j]);
 						break;
@@ -465,7 +470,7 @@ public class Database : MonoBehaviour {
 					case "Anticipation":
 						recordTag.anticipation = StringToFloat(recordStrings[j]);
 						break;
-					case "Description":
+					case "Effect":
 						recordTag.description = recordStrings[j];
 						break;
 					case "Combines Well With":
@@ -493,6 +498,9 @@ public class Database : MonoBehaviour {
 						recordTag.damageRange[0] = float.Parse(recordStrings[j]);
 						recordTag.damageRange[1] = float.Parse(recordStrings[j]);
 						}
+							break;
+						case "HelpTag":
+							recordTag.helpTag = recordStrings[j];
 							break;
 					default:
 						Debug.LogError ("Unhandled tag name: "+fieldLookup[j]);
