@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 [System.Serializable]
 public class PlayerResult
@@ -9,6 +11,7 @@ public class PlayerResult
 	public string playerName = "";
 	public float score = 0f;
 	public int rank = -1;
+	public float remainingHp = 0f;
 }
 
 public class UserDatabase : MonoBehaviour {
@@ -28,7 +31,20 @@ public class UserDatabase : MonoBehaviour {
 		}
 
 	//Previous players data
-	public List<PlayerResult> playerGameRecords = new List<PlayerResult>();
+	public List<PlayerResult> _playerGameRecords  = new List<PlayerResult>();
+	public List<PlayerResult> PlayerGameRecords 
+	{
+		get
+		{
+			return _playerGameRecords;
+		}
+		set
+		{
+			_playerGameRecords = value;
+			SaveToBinaryFile<List<PlayerResult>>("PlayerResults", _playerGameRecords);
+		}
+	}
+
 
 
 	void Awake()
@@ -40,13 +56,37 @@ public class UserDatabase : MonoBehaviour {
 		}
 	}
 
-	// Use this for initialization
-	void Start () {
-	
+	void Start()
+	{
+		_playerGameRecords = GetPlayerResultsFromBinary();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	void SaveToBinaryFile<T>(string fileName, T param)
+	{
+		string fullFileName = Application.persistentDataPath+"/"+fileName+".dat";
+		Debug.Log("Saving "+fileName+" to "+fullFileName);
+		BinaryFormatter binaryFormatter = new BinaryFormatter();
+		FileStream fileStream = File.Create(fullFileName);
+		binaryFormatter.Serialize(fileStream, param);
+		fileStream.Close();
 	}
+
+	List<PlayerResult> GetPlayerResultsFromBinary()
+	{
+		string fileName = "PlayerResults.dat";
+		string fullFileName = Application.persistentDataPath+"/"+fileName;
+		if(File.Exists(fullFileName))
+		{
+			Debug.Log ("Loading "+fileName+" from "+fullFileName);
+			BinaryFormatter binaryFormatter = new BinaryFormatter();
+			FileStream fileStream = File.Open (fullFileName, FileMode.Open);
+			List<PlayerResult> resultOutput = (List<PlayerResult>)binaryFormatter.Deserialize(fileStream);
+			fileStream.Close();
+			return resultOutput;
+		} else {
+			Debug.Log("File not found: "+fullFileName);
+			return new List<PlayerResult>();
+		}
+	}
+
 }

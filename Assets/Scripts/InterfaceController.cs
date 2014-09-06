@@ -241,7 +241,7 @@ public class InterfaceController : MonoBehaviour {
 
 	public static void SetPlayerUiState(Player player, PlayerUiState targetState)
 	{
-		Debug.Log (player.playerId + "to "+targetState+" from "+Instance.playerUiStates[player.playerId]);
+		//Debug.Log (player.playerId + "to "+targetState+" from "+Instance.playerUiStates[player.playerId]);
 		//Cache last state
 		PlayerUiState oldState = Instance.playerUiStates[player.playerId];
 
@@ -342,7 +342,7 @@ public class InterfaceController : MonoBehaviour {
 			break;
 		case GameUIState.Stats0:
 			//Retrieve top n records from the top scores database in order
-			PlayerResult[] allScoresSorted = UserDatabase.Instance.playerGameRecords.OrderByDescending(element => element.score).ToArray();
+			PlayerResult[] allScoresSorted = UserDatabase.Instance.PlayerGameRecords.OrderByDescending(element => element.score).ToArray();
 			List<PlayerResult> topResults = new List<PlayerResult>();
 			for(int i = 0; i < allScoresSorted.Length; i++)
 			{
