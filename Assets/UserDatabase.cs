@@ -30,6 +30,7 @@ public class UserInfo
 	public FoodResult grossestFoodMissed;
 }
 
+[System.Serializable]
 public class FoodResult
 {
 	public Food food;
@@ -66,12 +67,12 @@ public class UserDatabase : MonoBehaviour {
 		}
 
 	//Previous players data
-	private UserInfo _gameStats = new UserInfo();
+	private UserInfo _userInfo = new UserInfo();
 	public UserInfo userInfo 
 	{
 		get
 		{
-			return _gameStats;
+			return _userInfo;
 		}
 
 	}
@@ -103,7 +104,7 @@ public class UserDatabase : MonoBehaviour {
 
 	void Start()
 	{
-		_gameStats = GetGameStatsFromBinary();
+		_userInfo = GetUserInfoFromBinary();
 		//_playerGameRecords = GetPlayerResultsFromBinary();
 	}
 
@@ -117,10 +118,10 @@ public class UserDatabase : MonoBehaviour {
 		fileStream.Close();
 	}
 
-	UserInfo GetGameStatsFromBinary()
+	UserInfo GetUserInfoFromBinary()
 	{
 
-		string fileName = "GameStats.dat";
+		string fileName = "UserInfo.dat";
 		string fullFileName = Application.persistentDataPath+"/"+fileName;
 		if(File.Exists(fullFileName))
 		{
@@ -138,9 +139,9 @@ public class UserDatabase : MonoBehaviour {
 
 	public void LogGame(List<PlayerResult> newGameEntries)
 	{
-		_gameStats.totalGamesPlayed ++;
-		_gameStats.playerGameResults.AddRange(newGameEntries);
-		SaveToBinaryFile<UserInfo>("GameStats", _gameStats);
+		_userInfo.totalGamesPlayed ++;
+		_userInfo.playerGameResults.AddRange(newGameEntries);
+		SaveToBinaryFile<UserInfo>("UserInfo", _userInfo);
 	}
 
 }

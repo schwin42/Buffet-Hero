@@ -49,8 +49,8 @@ public class ButtonHandler : MonoBehaviour {
 			}
 			i++;
 		}
-		Debug.Log ("Unable to find player for : "+gameObject.name+", i="+i, gameObject);
-
+		//Debug.Log ("Unable to find player for : "+gameObject.name+", i="+i, gameObject);
+		//TODO: Better handling for button acquisition
 	}
 	
 	// Update is called once per frame
