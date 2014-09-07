@@ -5,13 +5,48 @@ using System.Linq;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
+public class Profile
+{
+	public int profileId = -1;
+	public string playerName = "";
+	public int gamesPlayed = 0;
+	public float averageScore = 0f;
+	public float bestScore = 0f;
+	public float worstScore = 0f;
+	public float winPercentage = 0f;
+
+}
+
+[System.Serializable]
+public class UserInfo
+{
+	public List<Profile> profiles;
+
+	public int totalGamesPlayed = 0;
+	public List<PlayerResult> playerGameResults = new List<PlayerResult>();
+	public FoodResult tastiestFoodEaten;
+	public FoodResult grossestFoodEaten;
+	public FoodResult tastiestFoodMissed;
+	public FoodResult grossestFoodMissed;
+}
+
+public class FoodResult
+{
+	public Food food;
+	public List<int> playerId;
+	public bool wasEaten;
+
+}
+
 [System.Serializable]
 public class PlayerResult
 {
-	public string playerName = "";
+	//public string playerName = "";
+	public string playerStringId = "";
 	public float score = 0f;
 	public int rank = -1;
 	public float remainingHp = 0f;
+	public int gameId = -1;
 }
 
 public class UserDatabase : MonoBehaviour {
@@ -31,19 +66,29 @@ public class UserDatabase : MonoBehaviour {
 		}
 
 	//Previous players data
-	public List<PlayerResult> _playerGameRecords  = new List<PlayerResult>();
-	public List<PlayerResult> PlayerGameRecords 
+	private UserInfo _gameStats = new UserInfo();
+	public UserInfo userInfo 
 	{
 		get
 		{
-			return _playerGameRecords;
+			return _gameStats;
 		}
-		set
-		{
-			_playerGameRecords = value;
-			SaveToBinaryFile<List<PlayerResult>>("PlayerResults", _playerGameRecords);
-		}
+
 	}
+
+//	private List<PlayerResult> _playerGameRecords  = new List<PlayerResult>();
+//	public List<PlayerResult> PlayerGameRecords 
+//	{
+//		get
+//		{
+//			return _playerGameRecords;
+//		}
+//		set
+//		{
+//			_playerGameRecords = value;
+//			SaveToBinaryFile<List<PlayerResult>>("PlayerResults", _playerGameRecords);
+//		}
+//	}
 
 
 
@@ -58,7 +103,8 @@ public class UserDatabase : MonoBehaviour {
 
 	void Start()
 	{
-		_playerGameRecords = GetPlayerResultsFromBinary();
+		_gameStats = GetGameStatsFromBinary();
+		//_playerGameRecords = GetPlayerResultsFromBinary();
 	}
 
 	void SaveToBinaryFile<T>(string fileName, T param)
@@ -71,22 +117,30 @@ public class UserDatabase : MonoBehaviour {
 		fileStream.Close();
 	}
 
-	List<PlayerResult> GetPlayerResultsFromBinary()
+	UserInfo GetGameStatsFromBinary()
 	{
-		string fileName = "PlayerResults.dat";
+
+		string fileName = "GameStats.dat";
 		string fullFileName = Application.persistentDataPath+"/"+fileName;
 		if(File.Exists(fullFileName))
 		{
 			Debug.Log ("Loading "+fileName+" from "+fullFileName);
 			BinaryFormatter binaryFormatter = new BinaryFormatter();
 			FileStream fileStream = File.Open (fullFileName, FileMode.Open);
-			List<PlayerResult> resultOutput = (List<PlayerResult>)binaryFormatter.Deserialize(fileStream);
+			UserInfo resultOutput = (UserInfo)binaryFormatter.Deserialize(fileStream);
 			fileStream.Close();
 			return resultOutput;
 		} else {
 			Debug.Log("File not found: "+fullFileName);
-			return new List<PlayerResult>();
+			return new UserInfo();
 		}
+	}
+
+	public void LogGame(List<PlayerResult> newGameEntries)
+	{
+		_gameStats.totalGamesPlayed ++;
+		_gameStats.playerGameResults.AddRange(newGameEntries);
+		SaveToBinaryFile<UserInfo>("GameStats", _gameStats);
 	}
 
 }

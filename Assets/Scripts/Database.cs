@@ -73,11 +73,14 @@ public class Food
 		}
 	}
 		
-
+	public float _quality;
+	private bool _qualityIsSet = false;
 	public float Quality
 	{
 		get
 		{
+			if(!_qualityIsSet)
+			{
 			float netValue = 0f;
 			float netMagnitude = 0f;
 			foreach(Tag tag in Tags)
@@ -91,7 +94,13 @@ public class Food
 			{
 			return Mathf.Round (staticValue * GameController.RandomConstant);
 			} else {
-				return Mathf.Round (staticValue * GameController.ScoreConstant);
+					float output = Mathf.Round (staticValue * GameController.ScoreConstant);
+					_quality = output;
+					_qualityIsSet = true;
+						return output;
+				}
+			} else {
+				return _quality;
 			}
 
 		}
@@ -100,7 +109,7 @@ public class Food
 	//public float Value = 0f;
 
 	private int _damage;
-	private bool _damageIsSet;
+	private bool _damageIsSet = false;
 	public float Damage
 	{
 		get
@@ -146,6 +155,7 @@ public class Food
 		}
 	}
 
+	public bool _isRealized = false;
 	public void Realize(bool b)
 	{
 		if(b)
@@ -195,9 +205,11 @@ public class Food
 				}
 				}
 			}
+			_isRealized = true;
 			//virtualTag.Add = _virtualTag;
 		} else {
 			virtualTags = new List<Tag>();
+			_isRealized = false;
 		}
 	}
 

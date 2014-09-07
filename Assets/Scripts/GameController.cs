@@ -625,17 +625,21 @@ public class GameController : MonoBehaviour {
 		foreach(Player player in registeredPlayers)
 		{
 			PlayerResult record = new PlayerResult();
-			record.playerName = player.playerName;
+			record.playerStringId = player.playerName;
 			record.rank = player.Ranking;
 			record.score = player.Score;
 			record.remainingHp = player.Hp;
+			record.gameId = UserDatabase.Instance.userInfo.totalGamesPlayed;
 			outputRecords.Add(record);
 		}
 
 		//Save entries to user database
 		Debug.Log ("Writing to user database, output: "+outputRecords.Count);
-		outputRecords.AddRange(UserDatabase.Instance.PlayerGameRecords);
-		UserDatabase.Instance.PlayerGameRecords = outputRecords;
+
+		UserDatabase.Instance.LogGame(outputRecords);
+		//UserDatabase.Instance.gameStats.totalGamesPlayed++;
+		//outputRecords.AddRange(UserDatabase.Instance.PlayerGameRecords);
+		//UserDatabase.Instance.PlayerGameRecords = outputRecords;
 
 		registeredPlayers.Clear();
 		activePlayers.Clear();

@@ -342,7 +342,7 @@ public class InterfaceController : MonoBehaviour {
 			break;
 		case GameUIState.Stats0:
 			//Retrieve top n records from the top scores database in order
-			PlayerResult[] allScoresSorted = UserDatabase.Instance.PlayerGameRecords.OrderByDescending(element => element.score).ToArray();
+			PlayerResult[] allScoresSorted = UserDatabase.Instance.userInfo.playerGameResults.OrderByDescending(element => element.score).ToArray();
 			List<PlayerResult> topResults = new List<PlayerResult>();
 			for(int i = 0; i < allScoresSorted.Length; i++)
 			{
@@ -369,13 +369,27 @@ public class InterfaceController : MonoBehaviour {
 
 		for(int i = 0; i < playerScores.Count; i++) 
 		{
+			string colorSubstring = "";
+			//Check if any players played in last game with same name
+			if(playerScores[i].gameId == UserDatabase.Instance.userInfo.totalGamesPlayed - 1)
+			{
+				Player[] query = (from player in GameController.Instance.registeredPlayers
+					where player.playerName == playerScores[i].playerStringId
+						select player).ToArray();
+				if(query.Length > 0)
+				{
+					//colorSubstring = query[0].playerColor;
+				}
+			}
+			//if(from element in 
+			//	playerScores[i].playerStringId == 
 
 			if(i < maxScoresToDisplay / 2)
 			{
-				names0 += (i+1).ToString()+". "+ playerScores[i].playerName + "\n";
+				names0 += (i+1).ToString()+". "+ playerScores[i].playerStringId + "\n";
 				scores0 += playerScores[i].score + "\n";
 			} else {
-				names1 += (i+1).ToString()+". "+ playerScores[i].playerName + "\n";
+				names1 += (i+1).ToString()+". "+ playerScores[i].playerStringId + "\n";
 				scores1 += playerScores[i].score + "\n";
 			}
 
