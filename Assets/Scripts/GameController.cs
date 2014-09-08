@@ -641,7 +641,7 @@ public class GameController : MonoBehaviour {
 		//outputRecords.AddRange(UserDatabase.Instance.PlayerGameRecords);
 		//UserDatabase.Instance.PlayerGameRecords = outputRecords;
 
-		registeredPlayers.Clear();
+
 		activePlayers.Clear();
 		humanPlayers.Clear();
 

@@ -307,6 +307,25 @@ public class InterfaceController : MonoBehaviour {
 			panel.transform.Find("Widget"+oldState.ToString()).gameObject.SetActive(false);
 		}
 		foregroundPanel.transform.Find("Widget"+oldState.ToString()).gameObject.SetActive(false);
+		} else {
+			//Remove all panels
+			foreach(UIPanel panel in mirrorPanels)
+			{
+				UIWidget[] stateWidgets = panel.GetComponentsInChildren<UIWidget>();
+				foreach(UIWidget widget in stateWidgets)
+				{
+					if(widget.name.Contains("Widget"))
+					{
+
+					widget.gameObject.SetActive(false);
+					}
+				}
+			}
+			foreach(UIWidget widget in foregroundPanel.GetComponentsInChildren<UIWidget>())
+			{
+				widget.gameObject.SetActive(false);
+			}
+
 		}
 
 		//Add new elements
@@ -325,6 +344,7 @@ public class InterfaceController : MonoBehaviour {
 				//Do nothing
 				displayedFirstScreen = true;
 			} else {
+				GameController.Instance.registeredPlayers.Clear();
 				foreach(Player player in GameController.Instance.possiblePlayers)
 				{
 					player.playerChoice = PlayerChoice.Inactive;
@@ -369,15 +389,21 @@ public class InterfaceController : MonoBehaviour {
 
 		for(int i = 0; i < playerScores.Count; i++) 
 		{
-			string colorSubstring = "";
+			string highlightStartTag = "";
+			string highlightEndTag = "";
 			//Check if any players played in last game with same name
 			if(playerScores[i].gameId == UserDatabase.Instance.userInfo.totalGamesPlayed - 1)
 			{
+				Debug.Log ( "player scores name, registered players: "+playerScores[i].playerStringId+", "+
+				           GameController.Instance.registeredPlayers.Count);
 				Player[] query = (from player in GameController.Instance.registeredPlayers
 					where player.playerName == playerScores[i].playerStringId
 						select player).ToArray();
 				if(query.Length > 0)
 				{
+Debug.Log("Query greater than 0");
+					highlightStartTag = "[b]";
+					highlightEndTag = "[/b]";
 					//colorSubstring = query[0].playerColor;
 				}
 			}
@@ -386,11 +412,11 @@ public class InterfaceController : MonoBehaviour {
 
 			if(i < maxScoresToDisplay / 2)
 			{
-				names0 += (i+1).ToString()+". "+ playerScores[i].playerStringId + "\n";
-				scores0 += playerScores[i].score + "\n";
+				names0 += highlightStartTag + (i+1).ToString()+". "+ playerScores[i].playerStringId + highlightEndTag + "\n";
+				scores0 += highlightStartTag + playerScores[i].score + highlightEndTag + "\n";
 			} else {
-				names1 += (i+1).ToString()+". "+ playerScores[i].playerStringId + "\n";
-				scores1 += playerScores[i].score + "\n";
+				names1 += highlightStartTag + (i+1).ToString()+". "+ playerScores[i].playerStringId + highlightEndTag + "\n";
+				scores1 += highlightStartTag + playerScores[i].score+ highlightEndTag  + "\n";
 			}
 
 		}
