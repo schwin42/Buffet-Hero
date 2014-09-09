@@ -456,4 +456,10 @@ Debug.Log("Query greater than 0");
 		}
 	}
 
+	public void SetPlayerProfile(Player player, string profileName)
+	{
+		player.playerName = profileName;
+		player.nameField.text = profileName; 
+	}
+
 }
