@@ -68,7 +68,7 @@ bacon,ingredient,,savory; awesome,,common,2014.09.04
 banana,ingredient,,sweet; fruit,,common,2014.09.04
 blood,ingredient,,crummy,,rare,2014.09.04
 bologna,ingredient,,crummy; meat; cheap,,uncommon,2014.09.04
-broccoli,ingredient,,vegetable; entree; unappetizing,,common,2014.09.04
+broccoli,ingredient,,vegetable; entree; boring,,common,2014.09.04
 buffalo,ingredient,,cheap,,uncommon,2014.09.04
 butt,ingredient,,disgusting; meat,,rare,2014.09.04
 butterfinger,ingredient,,crispy; sweet; dessert,,uncommon,2014.09.04
@@ -89,7 +89,7 @@ fatback,ingredient,,savory; hot; crummy; cheap,,uncommon,2014.09.04
 fugu,ingredient,,seafood; enticing; dangerous,,rare,2014.09.04
 ghost-chili,ingredient,,extreme spice,,rare,2014.09.04
 goat cheese,ingredient,,potent; dairy,,uncommon,2014.09.04
-gorschblat,ingredient,,disgusting,,mythic,2014.09.04
+gorschblat,ingredient,deprecated,disgusting,,mythic,2014.09.04
 gravy,ingredient,,cheap; meat; hot,,common,2014.09.04
 habanero,ingredient,,hot spice; hot,,uncommon,2014.09.04
 human,ingredient,,savory; meat; hot; enticing; cruel,,rare,2014.09.04
@@ -144,7 +144,7 @@ a barbeque,qualifier,,savory; hot,--dessert,common,2014.09.04
 a bellicose,qualifier,,fancy; dangerous,,rare,2014.09.04
 a botched,qualifier,,ruined,,common,2014.09.04
 a burnt,qualifier,temperature,ruined; hot,,common,2014.09.04
-a caffinated,qualifier,,caffinated,,uncommon,2014.09.04
+a caffinated,qualifier,,caffinated; beverage,,uncommon,2014.09.04
 a chocolatey,qualifier,,sweet,,common,2014.09.04
 a day-old,qualifier,freshness,stale,,common,2014.09.04
 a decadent,qualifier,,delicious,,uncommon,2014.09.04
@@ -166,7 +166,7 @@ a made-to-order,qualifier,,fresh,,common,2014.09.04
 a magical,qualifier,,exciting,,rare,2014.09.04
 a mesmerising,qualifier,,enticing; risky,,rare,2014.09.04
 a microwaved,qualifier,,crummy; hot,,common,2014.09.04
-a moldy,qualifier,,crummy; stale,,common,2014.09.04
+a moldy,qualifier,,gross; stale,,uncommon,2014.09.04
 a pangalactic,qualifier,,awesome; toxic; psychotropic; impossible,,mythic,2014.09.04
 a paradoxical,qualifier,,heals,,mythic,2014.09.04
 a pickled,qualifier,,crunchy; sour; risky,dessert--,common,2014.09.04
@@ -214,9 +214,10 @@ one hell of a,qualifier,,potent,,rare,2014.09.04
 the last,qualifier,,enticing,,mythic,2014.09.04
 your mother's,qualifier,,nostalgic,,rare,2014.09.04
 pistachio,ingredient,,tasty,,uncommon,2014.09.04
-rainicorn ,ingredient,,enticing; impossible; meat,,mythic,2014.09.04
+rainicorn,ingredient,,impossible; meat,,mythic,2014.09.04
 chipotle,ingredient,,Mexican; mild spice,,uncommon,2014.09.04
 a hyperbolic,qualifier,,potent,,rare,2014.09.04
 beef,ingredient,,meat,,common,2014.09.05
 cranberry,ingredient,,sweet; fruit,,common,2014.09.05
 a carbonated,qualifier,,beverage,,common,2014.09.05
+pate,form,,French; fancy,,rare,2014.09.06

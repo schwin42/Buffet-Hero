@@ -157,7 +157,7 @@ public class Player : MonoBehaviour {
 		//Entry state
 	public UIButton humanButton;
 	public UIButton computerButton;
-	public UIInput nameInput;
+	public UILabel nameField;
 
 		//Game state
 	public ButtonHandler eatButton;
@@ -332,7 +332,7 @@ public class Player : MonoBehaviour {
 		//Entry
 		humanButton = playerPanel.transform.Find("EntryWidget/ButtonHuman").GetComponent<UIButton>();
 		computerButton = playerPanel.transform.Find("EntryWidget/ButtonComputer").GetComponent<UIButton>();
-		nameInput = playerPanel.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UIInput>();
+		nameField = playerPanel.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();
 
 
 		//Game

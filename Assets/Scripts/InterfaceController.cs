@@ -272,14 +272,14 @@ public class InterfaceController : MonoBehaviour {
 		{
 		case PlayerUiState.Entry:
 			Instance.HighlightControlType(player);
-			player.nameInput.defaultText = player.name;
+			player.nameField.text = player.playerName;
 			break;
 		case PlayerUiState.Ready:
-			player.playerName = player.nameInput.value;
-			player.nameInput.value = "";
+			//player.playerName = player.nameField.value;
+			//player.nameInput.value = "";
 			break;
 		case PlayerUiState.Join:
-			player.nameInput.value = "Player"+player.playerId;
+			//player.playerNameLabel.text = "Player"+player.playerId;
 			player.playerChoice = PlayerChoice.Inactive;
 			break;
 		case PlayerUiState.Inactive:
@@ -352,7 +352,7 @@ public class InterfaceController : MonoBehaviour {
 					if(player.playedInLastGame)
 					{
 						SetPlayerUiState(player, PlayerUiState.Entry);
-						player.nameInput.value = player.playerName;
+						player.nameField.text = player.playerName;
 					} else {
 						Debug.Log ("Join");
 						SetPlayerUiState(player, PlayerUiState.Join);

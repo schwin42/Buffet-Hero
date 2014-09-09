@@ -99,6 +99,7 @@ public class UserDatabase : MonoBehaviour {
 		{
 			_instance = this;
 			DontDestroyOnLoad(gameObject);
+			System.Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 		}
 	}
 
