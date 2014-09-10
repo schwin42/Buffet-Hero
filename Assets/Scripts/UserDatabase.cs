@@ -36,6 +36,10 @@ public class Profile
 	public FoodResult grossestFoodMissed;
 
 	public Profile () {}
+	public Profile (string profileName)
+	{
+		playerName = profileName;
+	}
 	public Profile (Profile otherProfile)
 	{
 		profileId = otherProfile.profileId;
@@ -60,6 +64,12 @@ public class UserInfo
 
 	public int totalGamesPlayed = 0;
 	public List<PlayerResult> playerGameResults = new List<PlayerResult>();
+
+	public UserInfo ()
+	{
+		Profile guestProfile = new Profile("Guest");
+		profiles.Add(guestProfile);
+	}
 }
 
 [System.Serializable]

@@ -7,9 +7,12 @@ public class ProfileMenuHandler : MonoBehaviour {
 	//Inspector
 	public UIPanel playerPanel;
 	public GameObject menuWidgetPrefab;
+	public GameObject menuInputPrefab;
+
 	public UIGrid menuGrid;
 
 	public List<GameObject> activeMenuWidgets = new List<GameObject>();
+	public UIInput activeInput;
 
 	//Runtime
 	Player player;
@@ -44,7 +47,9 @@ public class ProfileMenuHandler : MonoBehaviour {
 			foreach(Profile profile in UserDatabase.Instance.userInfo.profiles)
 			{
 				GameObject profileWidget = Instantiate (menuWidgetPrefab) as GameObject;
+				UILabel profileLabel = profileWidget.GetComponentInChildren<UILabel>();
 				profileWidget.transform.parent = menuGrid.transform;
+				profileLabel.text = profile.playerName;
 				profileWidget.transform.localScale = Vector3.one;
 				menuGrid.repositionNow = true;
 				activeMenuWidgets.Add(profileWidget);
@@ -75,5 +80,42 @@ public class ProfileMenuHandler : MonoBehaviour {
 		InterfaceController.Instance.SetPlayerProfile(player, profileName);
 
 
+	}
+
+	public void OpenInput()
+	{
+		GameObject newInputGo = Instantiate(menuInputPrefab) as GameObject;
+		UIInput newInput = newInputGo.GetComponentInChildren<UIInput>();
+		newInput.value = "";
+		activeInput = newInput;
+		newInputGo.transform.parent = menuGrid.transform;
+		newInputGo.transform.localScale = Vector3.one;
+		menuGrid.repositionNow = true;
+		newInput.isSelected = true;
+		
+		//uiInput.isSelected = true;
+	}
+
+	public void Submit()
+	{
+		//Debug.Log ("OnSubmit");
+		MakeSelectionWithString(activeInput.value);
+		Destroy(activeInput.transform.parent.gameObject);
+		Debug.Log ("On submit @"+Time.frameCount);
+
+	}
+
+	IEnumerator WaitForSubmit()
+	{
+		while(activeInput.isSelected)
+		{
+
+			yield return 0;
+		}
+		if(!activeInput.isSelected)
+		{
+			Submit();
+			yield break;
+		}
 	}
 }

@@ -323,7 +323,11 @@ public class InterfaceController : MonoBehaviour {
 			}
 			foreach(UIWidget widget in foregroundPanel.GetComponentsInChildren<UIWidget>())
 			{
-				widget.gameObject.SetActive(false);
+				if(widget.name.Contains("Widget"))
+				{
+					
+					widget.gameObject.SetActive(false);
+				}
 			}
 
 		}

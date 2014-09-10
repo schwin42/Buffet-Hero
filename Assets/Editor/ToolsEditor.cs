@@ -28,9 +28,10 @@ public class ToolsEditor : Editor {
 		{
 			SubmitTagTypeQuery();
 		}
+		DisplayFood();
 		DrawDefaultInspector();
 
-		DisplayFood();
+	
 		serializedObject.ApplyModifiedProperties();
 	}
 

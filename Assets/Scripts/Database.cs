@@ -73,7 +73,7 @@ public class Food
 		}
 	}
 		
-	public float _quality;
+	private float _quality;
 	private bool _qualityIsSet = false;
 	public float Quality
 	{
@@ -206,6 +206,7 @@ public class Food
 				}
 			}
 			_isRealized = true;
+			float tempQuality = Quality;
 			//virtualTag.Add = _virtualTag;
 		} else {
 			virtualTags = new List<Tag>();

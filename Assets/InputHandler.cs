@@ -3,7 +3,9 @@ using System.Collections;
 
 public class InputHandler : MonoBehaviour {
 
-	UIInput uiInput;
+	//UIInput uiInput;
+
+
 
 	void Awake()
 	{
@@ -12,7 +14,7 @@ public class InputHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		uiInput = GetComponent<UIInput>();
+		//uiInput = GetComponent<UIInput>();
 	}
 	
 	// Update is called once per frame
@@ -20,14 +22,11 @@ public class InputHandler : MonoBehaviour {
 	
 	}
 
-	public void OpenInput()
-	{
-		uiInput.isSelected = true;
-	}
-
 	public void OnSubmit()
 	{
-		Debug.Log ("On submit @"+Time.frameCount);
-		SendMessageUpwards("MakeSelectionWithString", uiInput.value);
+		SendMessageUpwards("Submit");
 	}
+
+
+
 }
