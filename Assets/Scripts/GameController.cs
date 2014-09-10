@@ -522,7 +522,7 @@ public class GameController : MonoBehaviour {
 		foreach(Player player in registeredPlayers)
 		{
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Game);
-			player.playerNameLabel.text = player.playerName;
+			player.playerNameLabel.text = player.ProfileStringId;
 			player.playedInLastGame = true;
 
 		}
@@ -625,7 +625,7 @@ public class GameController : MonoBehaviour {
 		foreach(Player player in registeredPlayers)
 		{
 			PlayerResult record = new PlayerResult();
-			record.playerStringId = player.playerName;
+			record.playerStringId = player.ProfileStringId;
 			record.rank = player.Ranking;
 			record.score = player.Score;
 			record.remainingHp = player.Hp;

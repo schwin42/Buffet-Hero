@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public enum PlayerChoice
 {
@@ -38,10 +39,22 @@ public class Player : MonoBehaviour {
 
 	public int playerId;
 
-	public string playerName;
+	private string _profileStringId;
+	public string ProfileStringId
+	{
+		get
+		{
+			return _profileStringId;
+		}
+		set
+		{
+			_profileStringId = value;
+			ChangeProfile(_profileStringId);
+		}
+	}
+	public Profile profileInstance;
 
 	public PlayerColor playerColor = PlayerColor.None;
-
 
 	public ControlType controlType = ControlType.Human;
 
@@ -363,5 +376,32 @@ public class Player : MonoBehaviour {
 		scoreLabel.text = Score.ToString();
 		updateScoreLabel.text = "";
 	}
+
+	public void ChangeProfile(string profileStringId)
+	{
+		if(string.IsNullOrEmpty(profileStringId))
+		{
+			profileInstance = null;
+		} else {
+
+			Profile matchingProfile = null;
+		foreach(Profile profile in UserDatabase.Instance.userInfo.profiles)
+		{
+				Debug.Log ("Local name, inputName"+profile.playerName + ", "+profileStringId);
+			if( profile.playerName == profileStringId)
+			{
+				matchingProfile = new Profile(profile);
+				break;
+			}
+		}
+			if(matchingProfile != null)
+			{
+				profileInstance = matchingProfile;
+			} else {
+		Debug.Log (profileStringId + " not found, creating new profile.");
+			profileInstance = UserDatabase.Instance.AddNewProfile(profileStringId);
+			}
+		}
+		}
 
 }

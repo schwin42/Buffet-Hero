@@ -5,29 +5,61 @@ using System.Linq;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
+[System.Serializable]
 public class Profile
 {
 	public int profileId = -1;
 	public string playerName = "";
 	public int gamesPlayed = 0;
-	public float averageScore = 0f;
+	public int foodsEaten = 0;
+	public float lifetimeScore = 0f;
+	public float AverageGameScore
+	{
+		get
+		{
+			return lifetimeScore / gamesPlayed;
+		}
+	}
+	public float AverageFoodScore
+	{
+		get
+		{
+			return lifetimeScore / foodsEaten;
+		}
+	}
 	public float bestScore = 0f;
 	public float worstScore = 0f;
-	public float winPercentage = 0f;
+	//public float winPercentage = 0f;
+	public FoodResult tastiestFoodEaten;
+	public FoodResult grossestFoodEaten;
+	public FoodResult tastiestFoodMissed;
+	public FoodResult grossestFoodMissed;
+
+	public Profile () {}
+	public Profile (Profile otherProfile)
+	{
+		profileId = otherProfile.profileId;
+		playerName = otherProfile.playerName;
+		gamesPlayed = otherProfile.gamesPlayed;
+		foodsEaten = otherProfile.foodsEaten;
+		lifetimeScore = otherProfile.lifetimeScore;
+		bestScore = otherProfile.bestScore;
+		worstScore = otherProfile.worstScore;
+		tastiestFoodEaten = otherProfile.tastiestFoodEaten;
+		grossestFoodEaten = otherProfile.grossestFoodEaten;
+		tastiestFoodMissed = otherProfile.tastiestFoodMissed;
+		grossestFoodMissed = otherProfile.grossestFoodMissed;
+	}
 
 }
 
 [System.Serializable]
 public class UserInfo
 {
-	public List<Profile> profiles;
+	public List<Profile> profiles = new List<Profile>();
 
 	public int totalGamesPlayed = 0;
 	public List<PlayerResult> playerGameResults = new List<PlayerResult>();
-	public FoodResult tastiestFoodEaten;
-	public FoodResult grossestFoodEaten;
-	public FoodResult tastiestFoodMissed;
-	public FoodResult grossestFoodMissed;
 }
 
 [System.Serializable]
@@ -143,6 +175,15 @@ public class UserDatabase : MonoBehaviour {
 		_userInfo.totalGamesPlayed ++;
 		_userInfo.playerGameResults.AddRange(newGameEntries);
 		SaveToBinaryFile<UserInfo>("UserInfo", _userInfo);
+	}
+
+	public Profile AddNewProfile(string name)
+	{
+		Profile outputProfile = new Profile();
+		outputProfile.playerName = name;
+		outputProfile.profileId = _userInfo.profiles.Count;
+		_userInfo.profiles.Add(outputProfile);
+		return outputProfile;
 	}
 
 }
