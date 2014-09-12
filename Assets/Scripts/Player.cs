@@ -39,19 +39,19 @@ public class Player : MonoBehaviour {
 
 	public int playerId;
 
-	private string _profileStringId;
-	public string ProfileStringId
-	{
-		get
-		{
-			return _profileStringId;
-		}
-		set
-		{
-			_profileStringId = value;
-			ChangeProfile(_profileStringId);
-		}
-	}
+//	private string _profileStringId;
+//	public string ProfileStringId
+//	{
+//		get
+//		{
+//			return _profileStringId;
+//		}
+//		set
+//		{
+//			_profileStringId = value;
+//			ChangeProfile(_profileStringId);
+//		}
+//	}
 	public Profile profileInstance;
 
 	public PlayerColor playerColor = PlayerColor.None;
@@ -180,7 +180,8 @@ public class Player : MonoBehaviour {
 	public UILabel updateScoreLabel;
 	public UILabel updateHpLabel;
 	public UILabel rankingLabel;
-	public UILabel playerNameLabel;
+	public UILabel playerNameLabelGame;
+	public UILabel playerNameLabelEntry;
 
 
 
@@ -358,7 +359,7 @@ public class Player : MonoBehaviour {
 		scoreLabel = playerPanel.transform.FindChild("GameWidget/FieldBacker/LabelScoreDisplay").GetComponent<UILabel>();
 		updateHpLabel = playerPanel.transform.FindChild("GameWidget/AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
 		updateScoreLabel = playerPanel.transform.FindChild("GameWidget/AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
-		playerNameLabel = playerPanel.transform.Find ("GameWidget/LabelPlayer").GetComponent<UILabel>();
+		playerNameLabelGame = playerPanel.transform.Find ("GameWidget/LabelPlayer").GetComponent<UILabel>();
 
 
 		//Acquire state widgets
@@ -387,7 +388,7 @@ public class Player : MonoBehaviour {
 			Profile matchingProfile = null;
 		foreach(Profile profile in UserDatabase.Instance.userInfo.profiles)
 		{
-				Debug.Log ("Local name, inputName"+profile.playerName + ", "+profileStringId);
+				//Debug.Log ("Local name, inputName"+profile.playerName + ", "+profileStringId);
 			if( profile.playerName == profileStringId)
 			{
 				matchingProfile = new Profile(profile);
@@ -397,11 +398,16 @@ public class Player : MonoBehaviour {
 			if(matchingProfile != null)
 			{
 				profileInstance = matchingProfile;
+				Debug.Log ("Existing profile: "+profileInstance.playerName+" set to player id:"+playerId);
 			} else {
 		Debug.Log (profileStringId + " not found, creating new profile.");
 			profileInstance = UserDatabase.Instance.AddNewProfile(profileStringId);
+
 			}
 		}
+		playerNameLabelGame.text = profileInstance.playerName;
+		nameField.text = profileInstance.playerName;
+		Debug.Log(profileStringId+" set to "+playerId+" @"+Time.deltaTime);
 		}
 
 }

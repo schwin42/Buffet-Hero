@@ -175,7 +175,7 @@ public class UserDatabase : MonoBehaviour {
 			fileStream.Close();
 			return resultOutput;
 		} else {
-			Debug.Log("File not found: "+fullFileName);
+			Debug.Log("File not found: "+fullFileName+", creating...");
 			return new UserInfo();
 		}
 	}

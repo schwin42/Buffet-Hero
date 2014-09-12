@@ -44,8 +44,9 @@ public class ProfileMenuHandler : MonoBehaviour {
 			gameObject.SetActive(false);
 		} else {
 			//Populate menu
-			foreach(Profile profile in UserDatabase.Instance.userInfo.profiles)
+			for(int i = 1; i < UserDatabase.Instance.userInfo.profiles.Count; i++)
 			{
+				Profile profile = UserDatabase.Instance.userInfo.profiles[i];
 				GameObject profileWidget = Instantiate (menuWidgetPrefab) as GameObject;
 				UILabel profileLabel = profileWidget.GetComponentInChildren<UILabel>();
 				profileWidget.transform.parent = menuGrid.transform;

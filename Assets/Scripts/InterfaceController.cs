@@ -272,7 +272,7 @@ public class InterfaceController : MonoBehaviour {
 		{
 		case PlayerUiState.Entry:
 			Instance.HighlightControlType(player);
-			player.nameField.text = player.ProfileStringId;
+			player.nameField.text = player.profileInstance.playerName;
 			break;
 		case PlayerUiState.Ready:
 			//player.playerName = player.nameField.value;
@@ -345,7 +345,11 @@ public class InterfaceController : MonoBehaviour {
 		case GameUIState.Join:
 			if(!displayedFirstScreen)
 			{
-				//Do nothing
+				foreach(Player player in GameController.Instance.possiblePlayers)
+				{
+					player.ChangeProfile("Guest");
+				}
+
 				displayedFirstScreen = true;
 			} else {
 				GameController.Instance.registeredPlayers.Clear();
@@ -356,7 +360,7 @@ public class InterfaceController : MonoBehaviour {
 					if(player.playedInLastGame)
 					{
 						SetPlayerUiState(player, PlayerUiState.Entry);
-						player.nameField.text = player.ProfileStringId;
+						player.nameField.text = player.profileInstance.playerName;
 					} else {
 						Debug.Log ("Join");
 						SetPlayerUiState(player, PlayerUiState.Join);
@@ -401,7 +405,7 @@ public class InterfaceController : MonoBehaviour {
 				Debug.Log ( "player scores name, registered players: "+playerScores[i].playerStringId+", "+
 				           GameController.Instance.registeredPlayers.Count);
 				Player[] query = (from player in GameController.Instance.registeredPlayers
-					where player.ProfileStringId == playerScores[i].playerStringId
+					where player.profileInstance.playerName == playerScores[i].playerStringId
 						select player).ToArray();
 				if(query.Length > 0)
 				{
@@ -456,13 +460,13 @@ Debug.Log("Query greater than 0");
 	public void WriteWinner(Player player)
 	{
 		foreach(UILabel winLabel in winLabels){
-		winLabel.text = player.ProfileStringId + " wins with "+player.Score+" Points!";
+		winLabel.text = player.profileInstance.playerName + " wins with "+player.Score+" Points!";
 		}
 	}
 
 	public void SetPlayerProfile(Player player, string profileName)
 	{
-		player.ProfileStringId = profileName;
+		player.profileInstance.playerName = profileName;
 		player.nameField.text = profileName; 
 	}
 
