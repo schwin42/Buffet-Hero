@@ -30,10 +30,10 @@ public class Profile
 	public float bestScore = 0f;
 	public float worstScore = 0f;
 	//public float winPercentage = 0f;
-	public FoodResult tastiestFoodEaten;
-	public FoodResult grossestFoodEaten;
-	public FoodResult tastiestFoodMissed;
-	public FoodResult grossestFoodMissed;
+	public Food tastiestFoodEaten = new Food();
+	public Food grossestFoodEaten = new Food();
+	public Food tastiestFoodMissed = new Food();
+	public Food grossestFoodMissed = new Food();
 
 	public Profile () {}
 	public Profile (string profileName)
@@ -72,14 +72,14 @@ public class UserInfo
 	}
 }
 
-[System.Serializable]
-public class FoodResult
-{
-	public Food food;
-	public List<int> playerId;
-	public bool wasEaten;
-
-}
+//[System.Serializable]
+//public class FoodResult
+//{
+//	public Food food;
+//	public List<int> playerId;
+//	public bool wasEaten;
+//
+//}
 
 [System.Serializable]
 public class PlayerResult
@@ -182,6 +182,7 @@ public class UserDatabase : MonoBehaviour {
 
 	public void LogGame(List<PlayerResult> newGameEntries)
 	{
+		CheckInUserProfiles();
 		_userInfo.totalGamesPlayed ++;
 		_userInfo.playerGameResults.AddRange(newGameEntries);
 		SaveToBinaryFile<UserInfo>("UserInfo", _userInfo);
@@ -194,6 +195,23 @@ public class UserDatabase : MonoBehaviour {
 		outputProfile.profileId = _userInfo.profiles.Count;
 		_userInfo.profiles.Add(outputProfile);
 		return outputProfile;
+	}
+
+	public void CheckInUserProfiles()
+	{
+		Debug.Log ("Checking in profiles");
+		foreach(Player player in GameController.Instance.registeredPlayers)
+		{
+			for(int i = 0; i < _userInfo.profiles.Count; i++)
+			{
+				Profile profile = _userInfo.profiles[i];
+				if(player.profileInstance.playerName == profile.playerName)
+				{
+					_userInfo.profiles[i] = new Profile(player.profileInstance);
+					break;
+				}
+			}
+		}
 	}
 
 }

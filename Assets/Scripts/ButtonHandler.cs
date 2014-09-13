@@ -14,7 +14,8 @@ public enum ButtonAction
 	Close = 7,
 	Confirm = 8,
 	Menu = 9,
-	Stats = 10
+	Stats0 = 10,
+	Stats1 = 11
 }
 
 public class ButtonHandler : MonoBehaviour {
@@ -118,8 +119,11 @@ public class ButtonHandler : MonoBehaviour {
 		case ButtonAction.Menu:
 			InterfaceController.Instance.SetGameUiState(GameUIState.Join);
 			break;
-		case ButtonAction.Stats:
+		case ButtonAction.Stats0:
 			InterfaceController.Instance.SetGameUiState(GameUIState.Stats0);
+			break;
+		case ButtonAction.Stats1:
+			InterfaceController.Instance.SetGameUiState(GameUIState.Stats1);
 			break;
 		default:
 			Debug.LogError("Invalid button action: "+buttonAction);

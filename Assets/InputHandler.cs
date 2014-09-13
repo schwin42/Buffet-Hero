@@ -24,6 +24,7 @@ public class InputHandler : MonoBehaviour {
 
 	public void OnSubmit()
 	{
+		Debug.Log ("OnSubmit");
 		SendMessageUpwards("Submit");
 	}
 

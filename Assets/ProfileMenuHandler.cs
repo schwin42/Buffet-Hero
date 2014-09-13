@@ -44,14 +44,17 @@ public class ProfileMenuHandler : MonoBehaviour {
 			gameObject.SetActive(false);
 		} else {
 			//Populate menu
+			Debug.Log ("User profiles amount: "+UserDatabase.Instance.userInfo.profiles.Count);
 			for(int i = 1; i < UserDatabase.Instance.userInfo.profiles.Count; i++)
 			{
 				Profile profile = UserDatabase.Instance.userInfo.profiles[i];
 				GameObject profileWidget = Instantiate (menuWidgetPrefab) as GameObject;
+				profileWidget.name = "_"+profile.playerName;
 				UILabel profileLabel = profileWidget.GetComponentInChildren<UILabel>();
 				profileWidget.transform.parent = menuGrid.transform;
 				profileLabel.text = profile.playerName;
 				profileWidget.transform.localScale = Vector3.one;
+				profileWidget.transform.localRotation = Quaternion.identity;
 				menuGrid.repositionNow = true;
 				activeMenuWidgets.Add(profileWidget);
 			}
@@ -67,7 +70,7 @@ public class ProfileMenuHandler : MonoBehaviour {
 		string profileName = button.GetComponentInChildren<UILabel>().text;
 		ToggleProfileMenuDisplay();
 		
-		InterfaceController.Instance.SetPlayerProfile(player, profileName);
+		player.ChangeProfile(profileName);
 		
 		
 	}
@@ -78,8 +81,7 @@ public class ProfileMenuHandler : MonoBehaviour {
 		//string profileName = button.GetComponentInChildren<UILabel>().text;
 		ToggleProfileMenuDisplay();
 
-		InterfaceController.Instance.SetPlayerProfile(player, profileName);
-
+		player.ChangeProfile(profileName);
 
 	}
 
@@ -99,10 +101,10 @@ public class ProfileMenuHandler : MonoBehaviour {
 
 	public void Submit()
 	{
-		//Debug.Log ("OnSubmit");
+		Debug.Log ("Submit");
 		MakeSelectionWithString(activeInput.value);
 		Destroy(activeInput.transform.parent.gameObject);
-		Debug.Log ("On submit @"+Time.frameCount);
+		//Debug.Log ("On submit @"+Time.frameCount);
 
 	}
 

@@ -410,4 +410,10 @@ public class Player : MonoBehaviour {
 		Debug.Log(profileStringId+" set to "+playerId+" @"+Time.deltaTime);
 		}
 
+//	public void SetProfile()
+//	{
+//		var query = 
+//		profileInstance = new Profile(
+//	}
+
 }

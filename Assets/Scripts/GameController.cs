@@ -500,6 +500,29 @@ public class GameController : MonoBehaviour {
 				//player.updateHpLabel.text = hpString;
 				player.PendingHp = hpFloat;
 				Debug.Log ("Pending hp: "+player.PendingHp);
+
+				//Eat, update profile
+				player.profileInstance.foodsEaten++;
+				if(activeFood.Quality > player.profileInstance.tastiestFoodEaten.Quality || player.profileInstance.tastiestFoodEaten.attributes.Count == 0)
+				{
+					player.profileInstance.tastiestFoodEaten = activeFood;
+				} 
+				if (activeFood.Quality < player.profileInstance.grossestFoodEaten.Quality || player.profileInstance.grossestFoodEaten.attributes.Count == 0)
+				{
+					player.profileInstance.grossestFoodEaten = activeFood;
+				}
+
+			} else {
+
+				//Didn't eat, update profile
+				if(activeFood.Quality > player.profileInstance.tastiestFoodMissed.Quality  || player.profileInstance.tastiestFoodMissed.attributes.Count == 0)
+				{
+					player.profileInstance.tastiestFoodMissed = activeFood;
+				}
+				if (activeFood.Quality < player.profileInstance.grossestFoodMissed.Quality || player.profileInstance.grossestFoodMissed.attributes.Count == 0)
+				{
+					player.profileInstance.grossestFoodMissed = activeFood;
+				}
 			}
 		}
 		Debug.Log ("Evaluation ended for round"+currentRound+" @"+Time.frameCount);
@@ -631,6 +654,19 @@ public class GameController : MonoBehaviour {
 			record.remainingHp = player.Hp;
 			record.gameId = UserDatabase.Instance.userInfo.totalGamesPlayed;
 			outputRecords.Add(record);
+
+			//Update profile stats
+			player.profileInstance.gamesPlayed++;
+			player.profileInstance.lifetimeScore += player.Score;
+			if(player.Score > player.profileInstance.bestScore  || player.profileInstance.gamesPlayed == 1)
+			{
+				player.profileInstance.bestScore = player.Score;
+			}
+			if(player.Score < player.profileInstance.worstScore || player.profileInstance.gamesPlayed == 1)
+			{
+				player.profileInstance.worstScore = player.Score;
+			}
+
 		}
 
 		//Save entries to user database

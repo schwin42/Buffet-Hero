@@ -14,6 +14,7 @@ public class AudioController : MonoBehaviour {
 
 	public static AudioController Instance;
 
+	public float volume = 1f;
 	//AudioSource audioSource;
 
 	//Inspector
@@ -38,6 +39,6 @@ public class AudioController : MonoBehaviour {
 
 	public void PlaySound(SoundEffect soundEffect)
 	{
-		AudioSource.PlayClipAtPoint(audioClips[(int)soundEffect], transform.position);
+		AudioSource.PlayClipAtPoint(audioClips[(int)soundEffect], transform.position, volume);
 	}
 }

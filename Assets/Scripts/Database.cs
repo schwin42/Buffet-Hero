@@ -81,6 +81,7 @@ public class Food
 		{
 			if(!_qualityIsSet)
 			{
+				Debug.Log ("Quality not set.");
 			float netValue = 0f;
 			float netMagnitude = 0f;
 			foreach(Tag tag in Tags)
@@ -90,16 +91,17 @@ public class Food
 			}
 			//Debug.Log ("Net value, magnitude"+netValue + ", "+ netMagnitude);
 			float staticValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
-			if(GameController.RandomConstant != 0f)
+				float output = 0f;
+				if(GameController.RandomConstant != 0f)
 			{
-			return Mathf.Round (staticValue * GameController.RandomConstant);
+			output = Mathf.Round (staticValue * GameController.RandomConstant);
 			} else {
-					float output = Mathf.Round (staticValue * GameController.ScoreConstant);
-					_quality = output;
-					_qualityIsSet = true;
-						return output;
+					output = Mathf.Round (staticValue * GameController.ScoreConstant);
 				}
-			} else {
+				_quality = output;
+				_qualityIsSet = true;
+				return output;
+			 } else {
 				return _quality;
 			}
 
@@ -227,8 +229,6 @@ public class Food
 		attributes.AddRange(_attributes);
 		Realize (true);
 	}
-
-
 
 	public List<FoodAttribute> attributes = new List<FoodAttribute>();
 	public List<Tag> virtualTags = new List<Tag>();

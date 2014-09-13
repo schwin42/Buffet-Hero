@@ -22,7 +22,8 @@ public enum GameUIState
 	MainGame = 1,
 	Results = 2,
 	Pause = 3,
-	Stats0 = 4
+	Stats0 = 4,
+	Stats1 = 5
 }
 
 public class InterfaceController : MonoBehaviour {
@@ -80,6 +81,10 @@ public class InterfaceController : MonoBehaviour {
 
 	public UILabel[] highScoreNames;
 	public UILabel[] highScoreAmounts;
+
+	//Stats1
+	public UILabel[] stats1Values;
+	public UILabel[] stats1Titles;
 
 
 
@@ -347,7 +352,10 @@ public class InterfaceController : MonoBehaviour {
 			{
 				foreach(Player player in GameController.Instance.possiblePlayers)
 				{
+					if(string.IsNullOrEmpty(player.profileInstance.playerName))
+					{
 					player.ChangeProfile("Guest");
+					}
 				}
 
 				displayedFirstScreen = true;
@@ -381,6 +389,24 @@ public class InterfaceController : MonoBehaviour {
 				topResults.Add (allScoresSorted[i]);
 			}
 			DisplayScores(topResults);
+			break;
+		case GameUIState.Stats1:
+			for(int i = 0; i < GameController.Instance.registeredPlayers.Count; i++)
+			{
+				Player player = GameController.Instance.registeredPlayers[i];
+				string valueOutput = "";
+				string titleOutput = player.profileInstance.playerName;
+				valueOutput = 
+					player.profileInstance.gamesPlayed + "\n" +
+						player.profileInstance.lifetimeScore + "\n" +
+						player.profileInstance.AverageFoodScore.ToString("F2") + "\n" +
+						player.profileInstance.bestScore + "\n" +
+						player.profileInstance.tastiestFoodEaten.Name + ", " + player.profileInstance.tastiestFoodEaten.Quality + "\n" +
+						player.profileInstance.grossestFoodMissed.Name + ", " + player.profileInstance.grossestFoodMissed.Quality;
+				stats1Values[player.playerId].text = valueOutput;
+				stats1Titles[player.playerId].text = titleOutput;
+
+			}
 			break;
 		}
 
@@ -464,10 +490,10 @@ Debug.Log("Query greater than 0");
 		}
 	}
 
-	public void SetPlayerProfile(Player player, string profileName)
-	{
-		player.profileInstance.playerName = profileName;
-		player.nameField.text = profileName; 
-	}
+//	public void SetPlayerProfile(Player player, string profileName)
+//	{
+//		player.profileInstance.playerName = profileName;
+//		player.nameField.text = profileName; 
+//	}
 
 }
