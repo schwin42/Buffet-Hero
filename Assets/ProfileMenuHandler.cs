@@ -93,6 +93,7 @@ public class ProfileMenuHandler : MonoBehaviour {
 		activeInput = newInput;
 		newInputGo.transform.parent = menuGrid.transform;
 		newInputGo.transform.localScale = Vector3.one;
+		newInputGo.transform.localRotation = Quaternion.identity;
 		menuGrid.repositionNow = true;
 		newInput.isSelected = true;
 		

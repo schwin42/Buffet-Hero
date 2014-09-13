@@ -17,7 +17,12 @@ public class Profile
 	{
 		get
 		{
-			return lifetimeScore / gamesPlayed;
+			if(foodsEaten > 0)
+			{
+				return lifetimeScore / gamesPlayed;
+			} else {
+				return 0;
+			}
 		}
 	}
 	public float AverageFoodScore
