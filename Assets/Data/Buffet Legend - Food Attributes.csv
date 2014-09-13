@@ -79,7 +79,7 @@ chili,ingredient,,hot; savory; chewy; American; entree,,uncommon,2014.09.04
 chocolate,ingredient,,sweet; dessert,,common,2014.09.04
 corn,ingredient,,vegetable; entree,,common,2014.09.04
 crap,ingredient,,disgusting; non-food,,rare,2014.09.04
-cuitlacoche,ingredient,,disgusting; vegan,,uncommon,2014.09.04
+cuitlacoche,ingredient,,disgusting; vegan; entree,,uncommon,2014.09.04
 dragon,ingredient,,savory; impossible,,mythic,2014.09.04
 egg,ingredient,,hot; dairy,,common,2014.09.04
 escargot,ingredient,,meat; risky,,rare,2014.09.04
@@ -254,5 +254,4 @@ paella,form,,Spanish; entree,,uncommon,2014.09.11
 risotto,form,,Italian; fancy; grain,,uncommon,2014.09.11
 a heinous,qualifier,,disaster,,rare,2014.09.11
 albacore,ingredient,,seafood; nice,,uncommon,2014.09.11
-poison parsnip,ingredient,,vegetable; deadly; entree,,rare,2014.09.11
-death cherry,ingredient,,dessert; deadly; fruit,,rare,2014.09.11
+crud,ingredient,,gross,,uncommon,2014.09.11

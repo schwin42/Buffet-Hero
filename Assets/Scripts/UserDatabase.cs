@@ -214,4 +214,20 @@ public class UserDatabase : MonoBehaviour {
 		}
 	}
 
+	public void ClearUserData()
+	{
+		DirectoryInfo directoryInfo = new DirectoryInfo(Application.persistentDataPath);
+		FileInfo[] fileInfos = directoryInfo.GetFiles();
+		foreach(FileInfo fileInfo in fileInfos)
+		{
+			fileInfo.Delete();
+		}
+		_userInfo = new UserInfo();
+		foreach(Player player in GameController.Instance.possiblePlayers)
+		{
+			player.ChangeProfile("Guest");
+		}
+		Debug.Log ("User data cleared @"+Time.frameCount);
+	}
+
 }

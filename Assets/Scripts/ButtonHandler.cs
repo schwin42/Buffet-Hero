@@ -15,7 +15,10 @@ public enum ButtonAction
 	Confirm = 8,
 	Menu = 9,
 	Stats0 = 10,
-	Stats1 = 11
+	Stats1 = 11,
+	JoinScreen = 12,
+	ClearUserData = 13,
+	SettingsScreen = 14
 }
 
 public class ButtonHandler : MonoBehaviour {
@@ -124,6 +127,15 @@ public class ButtonHandler : MonoBehaviour {
 			break;
 		case ButtonAction.Stats1:
 			InterfaceController.Instance.SetGameUiState(GameUIState.Stats1);
+			break;
+		case ButtonAction.JoinScreen:
+			InterfaceController.Instance.SetGameUiState(GameUIState.Join);
+			break;
+		case ButtonAction.ClearUserData:
+			UserDatabase.Instance.ClearUserData();
+			break;
+		case ButtonAction.SettingsScreen:
+			InterfaceController.Instance.SetGameUiState(GameUIState.Settings);
 			break;
 		default:
 			Debug.LogError("Invalid button action: "+buttonAction);

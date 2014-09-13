@@ -23,7 +23,8 @@ public enum GameUIState
 	Results = 2,
 	Pause = 3,
 	Stats0 = 4,
-	Stats1 = 5
+	Stats1 = 5,
+	Settings = 6
 }
 
 public class InterfaceController : MonoBehaviour {
@@ -85,6 +86,8 @@ public class InterfaceController : MonoBehaviour {
 	//Stats1
 	public UILabel[] stats1Values;
 	public UILabel[] stats1Titles;
+	public UILabel[] stats1tastiestEaten;
+	public UILabel[] stats1grossestEaten;
 
 
 
@@ -396,15 +399,19 @@ public class InterfaceController : MonoBehaviour {
 				Player player = GameController.Instance.registeredPlayers[i];
 				string valueOutput = "";
 				string titleOutput = player.profileInstance.playerName;
+				string tastiestEatenOutput = player.profileInstance.tastiestFoodEaten.Name + ": " + player.profileInstance.tastiestFoodEaten.Quality;
+				string grossestEatenOutput = player.profileInstance.grossestFoodEaten.Name + ": " + player.profileInstance.grossestFoodEaten.Quality;
 				valueOutput = 
 					player.profileInstance.gamesPlayed + "\n" +
 						player.profileInstance.lifetimeScore + "\n" +
 						player.profileInstance.AverageFoodScore.ToString("F2") + "\n" +
-						player.profileInstance.bestScore + "\n" +
-						player.profileInstance.tastiestFoodEaten.Name + ", " + player.profileInstance.tastiestFoodEaten.Quality + "\n" +
-						player.profileInstance.grossestFoodMissed.Name + ", " + player.profileInstance.grossestFoodMissed.Quality;
+						player.profileInstance.bestScore;
+						//player.profileInstance.tastiestFoodEaten.Name + ", " + player.profileInstance.tastiestFoodEaten.Quality + "\n" +
+						//player.profileInstance.grossestFoodMissed.Name + ", " + player.profileInstance.grossestFoodMissed.Quality;
 				stats1Values[player.playerId].text = valueOutput;
 				stats1Titles[player.playerId].text = titleOutput;
+				stats1tastiestEaten[player.playerId].text = tastiestEatenOutput;
+				stats1grossestEaten[player.playerId].text = grossestEatenOutput;
 
 			}
 			break;
