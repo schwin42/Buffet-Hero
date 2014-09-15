@@ -10,15 +10,16 @@ public enum ButtonAction
 	Next = 3,
 	Human = 4,
 	Computer = 5,
-	Join = 6,
-	Close = 7,
-	Confirm = 8,
-	Menu = 9,
-	Stats0 = 10,
-	Stats1 = 11,
+	JoinGame = 6,
+	CloseTray = 7,
+	ConfirmEntry = 8,
+	Stats0Screen = 10,
+	Stats1Screen = 11,
 	JoinScreen = 12,
 	ClearUserData = 13,
-	SettingsScreen = 14
+	SettingsScreen = 14,
+	ProfilesScreen = 15,
+	RulesScreen = 16
 }
 
 public class ButtonHandler : MonoBehaviour {
@@ -64,7 +65,7 @@ public class ButtonHandler : MonoBehaviour {
 
 	public void OnClick()
 	{
-		Debug.Log ("Click @" + GameController.Instance.currentRound);
+		//Debug.Log ("Click @" + GameController.Instance.currentRound);
 		if(buttonAction != ButtonAction.Next){
 		AudioController.Instance.PlaySound(SoundEffect.Click);
 		}
@@ -100,14 +101,15 @@ public class ButtonHandler : MonoBehaviour {
 				GameController.Instance.BeginGame();
 			}
 			break;
-		case ButtonAction.Join:
+		case ButtonAction.JoinGame:
 			//InterfaceController.Instance.PlayerUiStates[player.playerId] = 
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Entry);
 			break;
-		case ButtonAction.Close:
+		case ButtonAction.CloseTray:
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Join);
 			break;
-		case ButtonAction.Confirm:
+		case ButtonAction.ConfirmEntry:
+			//Debug.Break();
 			player.playerChoice = PlayerChoice.Ready;
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Ready);
 			break;
@@ -119,13 +121,13 @@ public class ButtonHandler : MonoBehaviour {
 			player.controlType = ControlType.Computer;
 			InterfaceController.Instance.HighlightControlType(player);
 			break;
-		case ButtonAction.Menu:
-			InterfaceController.Instance.SetGameUiState(GameUIState.Join);
-			break;
-		case ButtonAction.Stats0:
+//		case ButtonAction.JoinScreen:
+//			InterfaceController.Instance.SetGameUiState(GameUIState.Join);
+//			break;
+		case ButtonAction.Stats0Screen:
 			InterfaceController.Instance.SetGameUiState(GameUIState.Stats0);
 			break;
-		case ButtonAction.Stats1:
+		case ButtonAction.Stats1Screen:
 			InterfaceController.Instance.SetGameUiState(GameUIState.Stats1);
 			break;
 		case ButtonAction.JoinScreen:

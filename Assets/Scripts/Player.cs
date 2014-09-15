@@ -407,7 +407,7 @@ public class Player : MonoBehaviour {
 		}
 		playerNameLabelGame.text = profileInstance.playerName;
 		nameField.text = profileInstance.playerName;
-		Debug.Log(profileStringId+" set to "+playerId+" @"+Time.deltaTime);
+		//Debug.Log(profileStringId+" set to "+playerId+" @"+Time.deltaTime);
 		}
 
 //	public void SetProfile()

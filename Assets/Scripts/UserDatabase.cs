@@ -152,7 +152,7 @@ public class UserDatabase : MonoBehaviour {
 
 	void Start()
 	{
-		_userInfo = GetUserInfoFromBinary();
+
 		//_playerGameRecords = GetPlayerResultsFromBinary();
 	}
 
@@ -233,6 +233,11 @@ public class UserDatabase : MonoBehaviour {
 			player.ChangeProfile("Guest");
 		}
 		Debug.Log ("User data cleared @"+Time.frameCount);
+	}
+
+	public void LoadUserData()
+	{
+		_userInfo = GetUserInfoFromBinary();
 	}
 
 }

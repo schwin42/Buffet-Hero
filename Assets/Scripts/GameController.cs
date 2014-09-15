@@ -75,6 +75,10 @@ public class GameController : MonoBehaviour {
 	
 
 		currentPhase = Phase.Pregame;
+		UserDatabase.Instance.LoadUserData();
+		InterfaceController.Instance.InitializeInterface();
+
+
 	//	players = 
 
 
@@ -135,6 +139,22 @@ public class GameController : MonoBehaviour {
 				foreach(Player passingPlayer in undecidedPlayersQuery)
 				{
 					passingPlayer.Pass ();
+				}
+			}
+
+			int passCounter = 0;
+			List<Player> passingPlayers = new List<Player>();
+			var passingPlayersQuery = from player in activePlayers
+				where player.playerChoice == PlayerChoice.Pass
+					select player;
+			if(passingPlayersQuery.Count () >= activePlayers.Count - 1)
+			{
+				var undecidedPlayersQuery = from player in activePlayers
+					where player.playerChoice == PlayerChoice.Ready
+						select player;
+				foreach(Player eatingPlayer in undecidedPlayersQuery)
+				{
+					eatingPlayer.Eat();
 				}
 			}
 

@@ -101,28 +101,9 @@ public class InterfaceController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		for(int i = 0; i < 4; i++) //Magic number of players
-		{
-			Player player = GameController.Instance.possiblePlayers[i];
-			player.EnableUi();
-			player.trayBacker.color = playerTrayColors[player.playerId];
-
-			//Start player FSMs
-			SetPlayerUiState(player, PlayerUiState.Join);
-
-			//Unready players
-			player.playerChoice = PlayerChoice.Inactive;
 
 
-		}
 
-		//Acquire global UI
-		//gameStateWidgets[0] = 
-		SetGameUiState(GameUIState.Join);
-
-
-			//UISprite backer = panel.transform.Find("Backer").GetComponent<UISprite>();
-			//backer.color = 
 
 
 	}
@@ -303,6 +284,7 @@ public class InterfaceController : MonoBehaviour {
 
 	public void SetGameUiState(GameUIState targetState)
 	{
+		Debug.Log ("Switching to "+targetState+"from "+currentGameState+" @"+Time.frameCount);
 		//Cache old state
 		GameUIState oldState = currentGameState;
 
@@ -358,6 +340,8 @@ public class InterfaceController : MonoBehaviour {
 					if(string.IsNullOrEmpty(player.profileInstance.playerName))
 					{
 					player.ChangeProfile("Guest");
+					} else {
+						player.ChangeProfile(player.profileInstance.playerName);
 					}
 				}
 
@@ -495,6 +479,32 @@ Debug.Log("Query greater than 0");
 		foreach(UILabel winLabel in winLabels){
 		winLabel.text = player.profileInstance.playerName + " wins with "+player.Score+" Points!";
 		}
+	}
+
+	public void InitializeInterface()
+	{
+		for(int i = 0; i < 4; i++) //Magic number of players
+		{
+			Player player = GameController.Instance.possiblePlayers[i];
+			player.EnableUi();
+			player.trayBacker.color = playerTrayColors[player.playerId];
+			
+			//Start player FSMs
+			SetPlayerUiState(player, PlayerUiState.Join);
+			
+			//Unready players
+			player.playerChoice = PlayerChoice.Inactive;
+			
+			
+		}
+		
+		//Acquire global UI
+		//gameStateWidgets[0] = 
+		SetGameUiState(GameUIState.Join);
+		
+		
+		//UISprite backer = panel.transform.Find("Backer").GetComponent<UISprite>();
+		//backer.color = 
 	}
 
 //	public void SetPlayerProfile(Player player, string profileName)

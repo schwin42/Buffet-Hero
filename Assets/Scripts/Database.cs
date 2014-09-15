@@ -81,7 +81,7 @@ public class Food
 		{
 			if(!_qualityIsSet)
 			{
-				Debug.Log ("Quality not set.");
+				//Debug.Log ("Quality not set.");
 			float netValue = 0f;
 			float netMagnitude = 0f;
 			foreach(Tag tag in Tags)
