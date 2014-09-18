@@ -320,7 +320,6 @@ public class InterfaceController : MonoBehaviour {
 			{
 				if(widget.name.Contains("Widget"))
 				{
-					
 					widget.gameObject.SetActive(false);
 				}
 			}
