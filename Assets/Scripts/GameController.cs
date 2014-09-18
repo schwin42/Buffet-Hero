@@ -85,7 +85,7 @@ public class GameController : MonoBehaviour {
 		//qualifierQueue
 
 		                        //Acquire objects
-		GameObject camera = GameObject.Find ("UI Root/Camera");
+		//GameObject camera = GameObject.Find ("UI Root/Camera");
 
 	
 
@@ -125,8 +125,8 @@ public class GameController : MonoBehaviour {
 			}
 
 			//Run out of food after 2
-			int eatCounter = 0;
-			List<Player> eatingPlayers = new List<Player>();
+			//int eatCounter = 0;
+			//List<Player> eatingPlayers = new List<Player>();
 
 			var eatingPlayersQuery = from player in activePlayers
 				where player.playerChoice == PlayerChoice.Eat
@@ -142,8 +142,8 @@ public class GameController : MonoBehaviour {
 				}
 			}
 
-			int passCounter = 0;
-			List<Player> passingPlayers = new List<Player>();
+			//int passCounter = 0;
+			//List<Player> passingPlayers = new List<Player>();
 			var passingPlayersQuery = from player in activePlayers
 				where player.playerChoice == PlayerChoice.Pass
 					select player;
@@ -272,7 +272,7 @@ public class GameController : MonoBehaviour {
 		//IEnumerable<FoodAttribute> query = null;
 		FoodAttribute attribute = null;
 		FoodAttribute[] query;
-		int newIndex;
+		//int newIndex;
 
 		switch(attributeType)
 		{

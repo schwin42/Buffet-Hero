@@ -139,6 +139,9 @@ public class ButtonHandler : MonoBehaviour {
 		case ButtonAction.SettingsScreen:
 			InterfaceController.Instance.SetGameUiState(GameUIState.Settings);
 			break;
+		case ButtonAction.RulesScreen:
+			InterfaceController.Instance.SetGameUiState(GameUIState.Rules);
+			break;
 		default:
 			Debug.LogError("Invalid button action: "+buttonAction);
 			break;

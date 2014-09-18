@@ -288,7 +288,7 @@ public class Tag
 					select foodTag;
 			Tag[] matchingTagsInFood = foodQuery.ToArray();
 			int hits = 0;
-			foreach(Tag foodTag in matchingTagsInFood)
+			for(int i = 0; i < matchingTagsInFood.Length; i++)
 			{
 				hits++;
 			}

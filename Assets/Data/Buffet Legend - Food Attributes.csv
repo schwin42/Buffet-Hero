@@ -98,7 +98,7 @@ kraken,ingredient,,savory; dangerous; awesome; meat; impossible; hot,,mythic,201
 lamb,ingredient,,meat; savory; tasty,,uncommon,2014.09.04
 lard,ingredient,,bland,,uncommon,2014.09.04
 lead,ingredient,,toxic; non-food,,uncommon,2014.09.04
-lobster,ingredient,,fancy; seafood; hot; savory,,uncommon,2014.09.04
+lobster,ingredient,,fancy; seafood; hot; entree,,uncommon,2014.09.04
 maggot,ingredient,,gross,,rare,2014.09.04
 mammoth,ingredient,,meat; tough; impossible,,mythic,2014.09.04
 marshmallow,ingredient,,sweet,,common,2014.09.04
@@ -270,4 +270,14 @@ a bootleg,qualifier,,bland,,uncommon,2014.09.14
 a decoy,qualifier,,disgusting,,rare,2014.09.14
 a counterfeit,qualifier,,weak,,uncommon,2014.09.14
 plastic,ingredient,,non-food; disgusting,,uncommon,2014.09.14
-an aborted,ingredient,,disaster,,uncommon,2014.09.14
+an aborted,qualifier,,disaster,,uncommon,2014.09.14
+frappuccino,form,,dessert; sweet; beverage; tasty,,uncommon,2014.09.14
+an impeccable,qualifier,,awesome,,rare,2014.09.14
+coconut,ingredient,,fruit,,uncommon,2014.09.14
+spaghetti,form,,Italian; grain; entree,,common,2014.09.14
+penguin,ingredient,,meat; hot; enticing,,rare,2014.09.14
+a felonious,qualifier,,toxic; gross,,rare,2014.09.14
+a classic,qualifier,,nice,,common,2014.09.14
+kobe beef,ingredient,,awesome; meat; hot,,rare,2014.09.15
+a signature,qualifier,,nice,,common,2014.09.15
+a luxurious,qualifier,,fancy; nice,,uncommon,2014.09.15

@@ -24,7 +24,8 @@ public enum GameUIState
 	Pause = 3,
 	Stats0 = 4,
 	Stats1 = 5,
-	Settings = 6
+	Settings = 6,
+	Rules = 7
 }
 
 public class InterfaceController : MonoBehaviour {
@@ -88,6 +89,10 @@ public class InterfaceController : MonoBehaviour {
 	public UILabel[] stats1Titles;
 	public UILabel[] stats1tastiestEaten;
 	public UILabel[] stats1grossestEaten;
+
+	//Rules
+	public UIInput rulesRoundsInput;
+	public UIInput rulesServingsInput;
 
 
 
@@ -319,8 +324,16 @@ public class InterfaceController : MonoBehaviour {
 					widget.gameObject.SetActive(false);
 				}
 			}
-
 		}
+		//Terminate last state
+		switch(oldState)
+		{
+		case GameUIState.Rules:
+			GameController.Instance.servingsPerFood = int.Parse(rulesServingsInput.value);
+			GameController.Instance.numberOfRounds = int.Parse(rulesRoundsInput.value);
+			break;
+		}
+
 
 		//Add new elements
 		foreach(UIPanel panel in mirrorPanels)
@@ -398,6 +411,10 @@ public class InterfaceController : MonoBehaviour {
 				stats1grossestEaten[player.playerId].text = grossestEatenOutput;
 
 			}
+			break;
+		case GameUIState.Rules:
+			rulesServingsInput.value = GameController.Instance.servingsPerFood.ToString();
+			rulesRoundsInput.value = GameController.Instance.numberOfRounds.ToString();
 			break;
 		}
 
