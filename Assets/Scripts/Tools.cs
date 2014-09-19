@@ -78,5 +78,24 @@ public class Tools : MonoBehaviour {
 		return percentilesOutput;
 	}
 	
-
+	public void RunTrials()
+	{
+		//GET RANDOM FOOD N TIMES
+		Dictionary<string, int> trialLog = new Dictionary<string, int>();
+		for(int i = 0; i < numberOfTrials; i++)
+		{
+			Food food = GameController.Instance.GetRandomFoodUsingQueue();
+			if(trialLog.ContainsKey(food.Name))
+			{
+				trialLog[food.Name] += 1;
+			} else {
+				trialLog.Add (food.Name, 1);
+			}
+		}
+		Dictionary<string, int> orderedLog = trialLog.OrderByDescending(trial => trial.Value).ToDictionary(trial => trial.Key, trial => trial.Value);
+		foreach(KeyValuePair<string, int> pair in orderedLog)
+		{
+			Debug.Log (pair.Key + " appeared "+pair.Value+" times");
+		}
+	}
 }

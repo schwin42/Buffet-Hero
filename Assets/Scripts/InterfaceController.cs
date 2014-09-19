@@ -93,6 +93,8 @@ public class InterfaceController : MonoBehaviour {
 	//Rules
 	public UIInput rulesRoundsInput;
 	public UIInput rulesServingsInput;
+	public UIInput rulesEatersInput;
+	public UIInput rulesHpInput;
 
 
 
@@ -330,6 +332,8 @@ public class InterfaceController : MonoBehaviour {
 		case GameUIState.Rules:
 			GameController.Instance.servingsPerFood = int.Parse(rulesServingsInput.value);
 			GameController.Instance.numberOfRounds = int.Parse(rulesRoundsInput.value);
+			GameController.Instance.forcedEaters = int.Parse(rulesEatersInput.value);
+			GameController.Instance.startingHp = int.Parse(rulesHpInput.value);
 			break;
 		}
 
@@ -362,12 +366,19 @@ public class InterfaceController : MonoBehaviour {
 				GameController.Instance.registeredPlayers.Clear();
 				foreach(Player player in GameController.Instance.possiblePlayers)
 				{
-					player.playerChoice = PlayerChoice.Inactive;
+					//player.playerChoice = PlayerChoice.Inactive;
 					GameController.Instance.currentPhase = Phase.Pregame;
-					if(player.playedInLastGame)
-					{
-						SetPlayerUiState(player, PlayerUiState.Entry);
+
+						if(oldState == GameUIState.Rules || oldState == GameUIState.Settings)
+						{
+						//Don't change player state
+					} else if(oldState == GameUIState.MainGame || oldState == GameUIState.Results || oldState == GameUIState.Stats0 || oldState == GameUIState.Stats1){
+						if(player.playedInLastGame)
+						{
+						SetPlayerUiState(player, PlayerUiState.Ready);
+							player.playerChoice = PlayerChoice.Ready;
 						player.nameField.text = player.profileInstance.playerName;
+						}
 					} else {
 						Debug.Log ("Join");
 						SetPlayerUiState(player, PlayerUiState.Join);
@@ -414,6 +425,8 @@ public class InterfaceController : MonoBehaviour {
 		case GameUIState.Rules:
 			rulesServingsInput.value = GameController.Instance.servingsPerFood.ToString();
 			rulesRoundsInput.value = GameController.Instance.numberOfRounds.ToString();
+			rulesEatersInput.value = GameController.Instance.forcedEaters.ToString();
+			rulesHpInput.value = GameController.Instance.startingHp.ToString();
 			break;
 		}
 

@@ -25,11 +25,14 @@ public class GameController : MonoBehaviour {
 
 	public static GameController Instance;
 
-	//Configurable
+	//Rules
 	public Restaurant activeRestaurant;
-	public int numberOfRounds = 1;
+	public int numberOfRounds = 10;
 	public int servingsPerFood = 2;
+	public int forcedEaters = 1;
 	public int startingHp = 100;
+
+	//Configurable
 	public float damageConstant = 10f;
 	//public Color[] letterRankColors = new Color[7];
 
@@ -57,7 +60,7 @@ public class GameController : MonoBehaviour {
 	//public Dictionary<int, bool> playerChoices = new Dictionary<int, bool>(); //True indicates "eat"
 
 	//Debug
-	public int trials = 1000;
+	//public int trials = 1000;
 
 	void Awake()
 	{
@@ -106,9 +109,9 @@ public class GameController : MonoBehaviour {
 	void Update () {
 	
 		//Debug
-		if (Input.GetKeyUp (KeyCode.Alpha1)) {
-			RunTrials();
-				}
+//		if (Input.GetKeyUp (KeyCode.Alpha1)) {
+//			RunTrials();
+//				}
 
 
 		if(currentPhase == Phase.Choose)
@@ -147,7 +150,8 @@ public class GameController : MonoBehaviour {
 			var passingPlayersQuery = from player in activePlayers
 				where player.playerChoice == PlayerChoice.Pass
 					select player;
-			if(passingPlayersQuery.Count () >= activePlayers.Count - 1)
+			int maxPassers = activePlayers.Count - forcedEaters > 0 ? activePlayers.Count - forcedEaters : 1;
+			if(passingPlayersQuery.Count () >= maxPassers)
 			{
 				var undecidedPlayersQuery = from player in activePlayers
 					where player.playerChoice == PlayerChoice.Ready
@@ -622,26 +626,7 @@ public class GameController : MonoBehaviour {
 				}
 	}
 
-	public void RunTrials()
-	{
-		//GET RANDOM FOOD N TIMES
-		Dictionary<string, int> trialLog = new Dictionary<string, int>();
-		for(int i = 0; i < trials; i++)
-		{
-			Food food = GetRandomFoodUsingQueue();
-			if(trialLog.ContainsKey(food.Name))
-			{
-				trialLog[food.Name] += 1;
-			} else {
-				trialLog.Add (food.Name, 1);
-			}
-		}
-		Dictionary<string, int> orderedLog = trialLog.OrderByDescending(trial => trial.Value).ToDictionary(trial => trial.Key, trial => trial.Value);
-		foreach(KeyValuePair<string, int> pair in orderedLog)
-		{
-			Debug.Log (pair.Key + " appeared "+pair.Value+" times");
-		}
-	}
+
 
 	List<FoodAttribute> GetShuffledAttributes(AttributeType type)
 	{
