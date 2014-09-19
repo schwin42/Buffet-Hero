@@ -42,7 +42,6 @@ Mexican,nationality,,,,,,,,Selected by restaurant,Mexican,,,
 Scottish,nationality,,,,,,,,,Scottish,,,
 Thai,nationality,,,,,,,,Selected by restaurant,Thai,,,
 boring,novelty,,-1,,,,-2,,,,,,
-nice,taste,1,,,,,,,,,,,a beloved staple
 enticing,novelty,,2,,,,2,,,,,,
 exciting,novelty,,3,,,,,,,,,,
 fancy,novelty,2,,3,,,,,,,,,
@@ -70,7 +69,7 @@ greasy,taste,-1,,,,,,2,,,,,
 gross,taste,-2,,,,,,,,,,,very bad
 potent,taste,,2,,,,,,,,,,
 powerful,taste,,3,,,,,,,,,,
-tasty,taste,2,,,,,,,,,,,
+tasty,taste,1,,,,,,,,,,,
 unappetizing,taste,-1,,,,,,,,,,,
 cold,temperature,,,,,,,,,cold,hot,,good only with cold
 hot,temperature,,,,,,,,,hot,cold,,good only with hot
@@ -96,3 +95,4 @@ Spanish,nationality,,,,,,,,,Spanish,,,
 weak,taste,,-2,,,,,,,,,,
 poor,execution,-3,,,,,,,,,,,
 amazing,taste,4,,,,,,,,,,,
+horrific,taste,-4,,,,,,,,,,,
