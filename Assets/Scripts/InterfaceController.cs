@@ -47,6 +47,7 @@ public class InterfaceController : MonoBehaviour {
 	public Color[] highlightColors = new Color[4];
 
 
+	//Inspector
 	public GameObject promptPrefab;
 	public GameObject letterRankPrefab;
 	public Vector3 localPromptPosition = new Vector3(0, -105, 0);
@@ -237,7 +238,8 @@ public class InterfaceController : MonoBehaviour {
 
 	public static void SetPlayerUiState(Player player, PlayerUiState targetState)
 	{
-		//Debug.Log (player.playerId + "to "+targetState+" from "+Instance.playerUiStates[player.playerId]);
+		Debug.Log (player.playerId);
+		           //+ "to "+targetState+" from "+Instance.playerUiStates[player.playerId]);
 		//Cache last state
 		PlayerUiState oldState = Instance.playerUiStates[player.playerId];
 
@@ -375,9 +377,13 @@ public class InterfaceController : MonoBehaviour {
 					} else if(oldState == GameUIState.MainGame || oldState == GameUIState.Results || oldState == GameUIState.Stats0 || oldState == GameUIState.Stats1){
 						if(player.playedInLastGame)
 						{
+							//Debug.Log (player.name);
 						SetPlayerUiState(player, PlayerUiState.Ready);
 							player.playerChoice = PlayerChoice.Ready;
 						player.nameField.text = player.profileInstance.playerName;
+						} else {
+							SetPlayerUiState(player, PlayerUiState.Join);
+							player.playerChoice = PlayerChoice.Inactive;
 						}
 					} else {
 						Debug.Log ("Join");

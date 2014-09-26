@@ -103,6 +103,7 @@ public class ButtonHandler : MonoBehaviour {
 			break;
 		case ButtonAction.JoinGame:
 			//InterfaceController.Instance.PlayerUiStates[player.playerId] = 
+			Debug.Log (player);
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Entry);
 			break;
 		case ButtonAction.CloseTray:

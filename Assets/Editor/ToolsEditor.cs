@@ -9,6 +9,7 @@ public class ToolsEditor : Editor {
 
 	public GUIContent derivePercentilesButton = new GUIContent("Derive Percentiles");
 	public GUIContent submitTagTypeQueryButton = new GUIContent("Submit Tag Type Query");
+	public GUIContent displayFoodButton = new GUIContent("Display Food");
 
 	public Tools tools;
 
@@ -28,7 +29,11 @@ public class ToolsEditor : Editor {
 		{
 			SubmitTagTypeQuery();
 		}
-		DisplayFood();
+		if(GUILayout.Button(displayFoodButton))
+		{
+			DisplayFood();
+		}
+
 		DrawDefaultInspector();
 
 	
