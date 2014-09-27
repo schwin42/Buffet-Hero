@@ -385,7 +385,18 @@ public class Database : MonoBehaviour {
 					switch(fieldLookup[j])
 					{
 					case "Name ID":
+						if(recordStrings[j].Contains('"'))
+					    {
+							Debug.Log (recordStrings[j]);
+
+							string tripleQuotes = "\"\"\"";
+							string singleQuotes = "\"";
+							string outputString = recordStrings[j].Replace(tripleQuotes, singleQuotes);
+							Debug.Log (outputString);
+							recordAttribute.name = outputString;
+						} else {
 						recordAttribute.name = recordStrings[j];
+						}
 						break;
 					case "Attribute Type":
 						recordAttribute.attributeType = StringToAttributeType(recordStrings[j]);

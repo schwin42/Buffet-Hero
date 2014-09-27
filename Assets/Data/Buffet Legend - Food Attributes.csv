@@ -70,7 +70,7 @@ blood,ingredient,,crummy,,rare,2014.09.04
 bologna,ingredient,,crummy; meat; cheap,,uncommon,2014.09.04
 broccoli,ingredient,,vegetable; entree; boring,,common,2014.09.04
 buffalo,ingredient,,cheap,,uncommon,2014.09.04
-butt,ingredient,,disgusting; meat,,rare,2014.09.04
+butt,ingredient,,disgusting; meat; hot,,rare,2014.09.04
 butterfinger,ingredient,,crispy; sweet; dessert,,uncommon,2014.09.04
 caramel,ingredient,,sweet; chewy,,common,2014.09.04
 carp,ingredient,,seafood; hot; cheap,,uncommon,2014.09.04
@@ -101,7 +101,7 @@ lead,ingredient,,toxic; non-food,,uncommon,2014.09.04
 lobster,ingredient,,fancy; seafood; hot; entree,,uncommon,2014.09.04
 maggot,ingredient,,gross,,rare,2014.09.04
 mammoth,ingredient,,meat; tough; hot; enticing,,mythic,2014.09.04
-marshmallow,ingredient,,sweet,,common,2014.09.04
+marshmallow,ingredient,,sweet; dessert,,common,2014.09.04
 moogle,ingredient,,impossible; meat,,mythic,2014.09.04
 mushroom,ingredient,,chewy; hot,,common,2014.09.04
 mystery,ingredient,,risky,,common,2014.09.04
@@ -139,7 +139,7 @@ venison,ingredient,,meat; savory; hot; fancy,,rare,2014.09.04
 watermelon,ingredient,,sweet; cold; fruit,,common,2014.09.04
 whiskey,ingredient,,bitter; alcoholic,,uncommon,2014.09.04
 yeti,ingredient,,impossible; meat,,mythic,2014.09.04
-a barbeque,qualifier,,savory; hot,--dessert,common,2014.09.04
+a barbeque,qualifier,,marinade; hot,--dessert,common,2014.09.04
 a bellicose,qualifier,,fancy; dangerous,,rare,2014.09.04
 a botched,qualifier,,ruined; disgusting,,common,2014.09.04
 a burnt,qualifier,temperature,ruined,,common,2014.09.04
@@ -156,7 +156,7 @@ a furry,qualifier,,risky; disgusting; terrifying,,uncommon,2014.09.04
 a gamey,qualifier,,savory; tough,,common,2014.09.04
 a gelatinous,qualifier,,dessert; crummy,,uncommon,2014.09.04
 a gnarly,qualifier,,risky,,uncommon,2014.09.04
-a hideous,qualifier,,disgusting; potent,,uncommon,2014.09.04
+a hideous,qualifier,,horrific,,uncommon,2014.09.04
 a leftover,qualifier,,stale,,common,2014.09.04
 a life-changing,qualifier,,ultimate,,rare,2014.09.04
 a live,qualifier,,terrifying; enticing,,rare,2014.09.04
@@ -230,7 +230,6 @@ a pan-seared,qualifier,,hot; enticing,,common,2014.09.09
 salmon,ingredient,,seafood; hot,,common,2014.09.09
 an artisan,qualifier,,delicious,,uncommon,2014.09.09
 mess,form,,disaster,,uncommon,2014.09.10
-rubber,ingredient,,non-food; toxic,,uncommon,2014.09.10
 cactus,ingredient,,crummy; vegetable,,uncommon,2014.09.10
 enchilada,form,,Mexican; grain; hot,,common,2014.09.10
 a ruptured,qualifier,,gross,,uncommon,2014.09.10
@@ -298,7 +297,7 @@ dumpling,form,,delicious; grain; entree,,uncommon,2014.09.18
 mistake,form,,disaster,,uncommon,2014.09.18
 an experimental,qualifier,,risky; potent,,uncommon,2014.09.18
 compote,form,,French; tasty; dessert,,uncommon,2014.09.18
-an accidental,qualifier,,disaster,,uncommon,2014.09.18
+an accidental,qualifier,,ruined,,uncommon,2014.09.18
 sardine,ingredient,,seafood; cheap; salty; entree,,uncommon,2014.09.18
 a refurbished,qualifier,,gross,,rare,2014.09.18
 yellowcake,ingredient,,non-food; toxic; gross,,rare,2014.09.18
@@ -324,3 +323,16 @@ poutine,form,,entree; fancy; Canadian,,uncommon,2014.09.25
 a stunning,qualifier,,potent; tasty,,common,2014.09.25
 a dodgy,qualifier,,British; risky,,common,2014.09.25
 a radical,qualifier,,American; delicious,,uncommon,2014.09.25
+capsaicin,ingredient,,deadly; enticing,,rare,2014.09.25
+the 42nd,qualifier,,potent,,rare,2014.09.25
+an unforgettable,qualifier,,powerful,,rare,2014.09.25
+an unforgivable,qualifier,,horrific,,rare,2014.09.25
+calamari,ingredient,,seafood; fancy; Italian,,common,2014.09.26
+clam,ingredient,,seafood; nice,,common,2014.09.26
+crayfish,ingredient,,cheap; seafood,,uncommon,2014.09.26
+a Cajun-style,qualifier,,American; entree; marinade; hot,,uncommon,2014.09.26
+a Chicago-style,qualifier,,delicious; American,,rare,2014.09.26
+crab,ingredient,,seafood; entree; nice,,common,2014.09.26
+tilapia,ingredient,,seafood; entree; cheap,,common,2014.09.26
+chowder,form,,entree; hot,,common,2014.09.26
+gumbo,form,,entree; hot; American,,uncommon,2014.09.26
