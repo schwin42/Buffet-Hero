@@ -19,7 +19,9 @@ public enum ButtonAction
 	ClearUserData = 13,
 	SettingsScreen = 14,
 	ProfilesScreen = 15,
-	RulesScreen = 16
+	RulesScreen = 16,
+	IncrementRule  = 17,
+	DecrementRule = 18
 }
 
 public class ButtonHandler : MonoBehaviour {
@@ -142,6 +144,12 @@ public class ButtonHandler : MonoBehaviour {
 			break;
 		case ButtonAction.RulesScreen:
 			InterfaceController.Instance.SetGameUiState(GameUIState.Rules);
+			break;
+		case ButtonAction.IncrementRule:
+			SendMessageUpwards ("IncrementRule");
+			break;
+		case ButtonAction.DecrementRule:
+			SendMessageUpwards ("DecrementRule");
 			break;
 		default:
 			Debug.LogError("Invalid button action: "+buttonAction);

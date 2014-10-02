@@ -92,10 +92,10 @@ public class InterfaceController : MonoBehaviour {
 	public UILabel[] stats1grossestEaten;
 
 	//Rules
-	public UIInput rulesRoundsInput;
-	public UIInput rulesServingsInput;
-	public UIInput rulesEatersInput;
-	public UIInput rulesHpInput;
+	public ToggleRule rulesRoundsInput;
+	public ToggleRule rulesServingsInput;
+	public ToggleRule rulesEatersInput;
+	public ToggleRule rulesHpInput;
 
 
 
@@ -332,10 +332,10 @@ public class InterfaceController : MonoBehaviour {
 		switch(oldState)
 		{
 		case GameUIState.Rules:
-			GameController.Instance.servingsPerFood = int.Parse(rulesServingsInput.value);
-			GameController.Instance.numberOfRounds = int.Parse(rulesRoundsInput.value);
-			GameController.Instance.forcedEaters = int.Parse(rulesEatersInput.value);
-			GameController.Instance.startingHp = int.Parse(rulesHpInput.value);
+			GameController.Instance.servingsPerFood = rulesServingsInput.ruleValue;
+			GameController.Instance.numberOfRounds = rulesRoundsInput.ruleValue;
+			GameController.Instance.forcedEaters = rulesEatersInput.ruleValue;
+			GameController.Instance.startingHp = rulesHpInput.ruleValue;
 			break;
 		}
 
@@ -429,10 +429,10 @@ public class InterfaceController : MonoBehaviour {
 			}
 			break;
 		case GameUIState.Rules:
-			rulesServingsInput.value = GameController.Instance.servingsPerFood.ToString();
-			rulesRoundsInput.value = GameController.Instance.numberOfRounds.ToString();
-			rulesEatersInput.value = GameController.Instance.forcedEaters.ToString();
-			rulesHpInput.value = GameController.Instance.startingHp.ToString();
+			rulesServingsInput.ruleValue = GameController.Instance.servingsPerFood;
+			rulesRoundsInput.ruleValue = GameController.Instance.numberOfRounds;
+			rulesEatersInput.ruleValue = GameController.Instance.forcedEaters;
+			rulesHpInput.ruleValue = GameController.Instance.startingHp;
 			break;
 		}
 
