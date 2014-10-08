@@ -79,6 +79,8 @@ public class Food
 	{
 		get
 		{
+			if(_isRealized)
+			{
 			if(!_qualityIsSet)
 			{
 				//Debug.Log ("Quality not set.");
@@ -104,7 +106,9 @@ public class Food
 			 } else {
 				return _quality;
 			}
-
+			} else {
+				 return 0;
+			}
 		}
 	}
 
@@ -387,12 +391,12 @@ public class Database : MonoBehaviour {
 					case "Name ID":
 						if(recordStrings[j].Contains('"'))
 					    {
-							Debug.Log (recordStrings[j]);
+							//Debug.Log (recordStrings[j]);
 
 							string tripleQuotes = "\"\"\"";
 							string singleQuotes = "\"";
 							string outputString = recordStrings[j].Replace(tripleQuotes, singleQuotes);
-							Debug.Log (outputString);
+							//Debug.Log (outputString);
 							recordAttribute.name = outputString;
 						} else {
 						recordAttribute.name = recordStrings[j];

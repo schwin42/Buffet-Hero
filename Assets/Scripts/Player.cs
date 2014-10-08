@@ -170,7 +170,7 @@ public class Player : MonoBehaviour {
 		//Entry state
 	public UIButton humanButton;
 	public UIButton computerButton;
-	public UILabel nameField;
+	public UILabel entryNameField;
 
 		//Game state
 	public ButtonHandler eatButton;
@@ -181,7 +181,7 @@ public class Player : MonoBehaviour {
 	public UILabel updateHpLabel;
 	public UILabel rankingLabel;
 	public UILabel playerNameLabelGame;
-	public UILabel playerNameLabelEntry;
+	//public UILabel playerNameLabelEntry;
 
 
 
@@ -346,7 +346,8 @@ public class Player : MonoBehaviour {
 		//Entry
 		humanButton = playerPanel.transform.Find("EntryWidget/ButtonHuman").GetComponent<UIButton>();
 		computerButton = playerPanel.transform.Find("EntryWidget/ButtonComputer").GetComponent<UIButton>();
-		nameField = playerPanel.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();
+		entryNameField = playerPanel.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();
+
 
 
 		//Game
@@ -406,7 +407,7 @@ public class Player : MonoBehaviour {
 			}
 		}
 		playerNameLabelGame.text = profileInstance.playerName;
-		nameField.text = profileInstance.playerName;
+		entryNameField.text = profileInstance.playerName;
 		//Debug.Log(profileStringId+" set to "+playerId+" @"+Time.deltaTime);
 		}
 

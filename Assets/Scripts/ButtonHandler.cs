@@ -105,7 +105,7 @@ public class ButtonHandler : MonoBehaviour {
 			break;
 		case ButtonAction.JoinGame:
 			//InterfaceController.Instance.PlayerUiStates[player.playerId] = 
-			Debug.Log (player);
+			//Debug.Log (player);
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Entry);
 			break;
 		case ButtonAction.CloseTray:
@@ -128,22 +128,22 @@ public class ButtonHandler : MonoBehaviour {
 //			InterfaceController.Instance.SetGameUiState(GameUIState.Join);
 //			break;
 		case ButtonAction.Stats0Screen:
-			InterfaceController.Instance.SetGameUiState(GameUIState.Stats0);
+			InterfaceController.Instance.SetGameUiState(GameUiState.Stats0);
 			break;
 		case ButtonAction.Stats1Screen:
-			InterfaceController.Instance.SetGameUiState(GameUIState.Stats1);
+			InterfaceController.Instance.SetGameUiState(GameUiState.Stats1);
 			break;
 		case ButtonAction.JoinScreen:
-			InterfaceController.Instance.SetGameUiState(GameUIState.Join);
+			InterfaceController.Instance.SetGameUiState(GameUiState.Join);
 			break;
 		case ButtonAction.ClearUserData:
 			UserDatabase.Instance.ClearUserData();
 			break;
 		case ButtonAction.SettingsScreen:
-			InterfaceController.Instance.SetGameUiState(GameUIState.Settings);
+			InterfaceController.Instance.SetGameUiState(GameUiState.Settings);
 			break;
 		case ButtonAction.RulesScreen:
-			InterfaceController.Instance.SetGameUiState(GameUIState.Rules);
+			InterfaceController.Instance.SetGameUiState(GameUiState.Rules);
 			break;
 		case ButtonAction.IncrementRule:
 			SendMessageUpwards ("IncrementRule");

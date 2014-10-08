@@ -15,7 +15,7 @@ public enum PlayerUiState
 }
 
 [System.Serializable]
-public enum GameUIState
+public enum GameUiState
 {
 	Uninitialized = -1,
 	Join = 0,
@@ -35,6 +35,8 @@ public class InterfaceController : MonoBehaviour {
 	//Inspector
 		//Configurable
 	public int maxScoresToDisplay = 12;
+	public string selectProfileString = "Select Profile";
+	public string stats1NoFoodString = "None";
 
 		//Colors
 	public Color disabledTextColor;
@@ -65,7 +67,7 @@ public class InterfaceController : MonoBehaviour {
 		(PlayerUiState) (-1),
 		(PlayerUiState) (-1)
 	};
-	public GameUIState currentGameState = GameUIState.Uninitialized;
+	public GameUiState currentGameState = GameUiState.Uninitialized;
 	public bool displayedFirstScreen = false;
 
 	//public UIPanel[] playerPanels;
@@ -238,7 +240,7 @@ public class InterfaceController : MonoBehaviour {
 
 	public static void SetPlayerUiState(Player player, PlayerUiState targetState)
 	{
-		Debug.Log (player.playerId);
+		//Debug.Log (player.playerId);
 		           //+ "to "+targetState+" from "+Instance.playerUiStates[player.playerId]);
 		//Cache last state
 		PlayerUiState oldState = Instance.playerUiStates[player.playerId];
@@ -270,7 +272,7 @@ public class InterfaceController : MonoBehaviour {
 		{
 		case PlayerUiState.Entry:
 			Instance.HighlightControlType(player);
-			player.nameField.text = player.profileInstance.playerName;
+			player.entryNameField.text = player.profileInstance.playerName == "Guest" ? Instance.selectProfileString : player.profileInstance.playerName;
 			break;
 		case PlayerUiState.Ready:
 			//player.playerName = player.nameField.value;
@@ -291,15 +293,15 @@ public class InterfaceController : MonoBehaviour {
 	
 	}
 
-	public void SetGameUiState(GameUIState targetState)
+	public void SetGameUiState(GameUiState targetState)
 	{
 		Debug.Log ("Switching to "+targetState+"from "+currentGameState+" @"+Time.frameCount);
 		//Cache old state
-		GameUIState oldState = currentGameState;
+		GameUiState oldState = currentGameState;
 
-		Debug.Log (targetState);
+		//Debug.Log (targetState);
 		//Remove old state elements
-		if(oldState != GameUIState.Uninitialized)
+		if(oldState != GameUiState.Uninitialized)
 		{
 		foreach(UIPanel panel in mirrorPanels)
 		{
@@ -331,7 +333,7 @@ public class InterfaceController : MonoBehaviour {
 		//Terminate last state
 		switch(oldState)
 		{
-		case GameUIState.Rules:
+		case GameUiState.Rules:
 			GameController.Instance.servingsPerFood = rulesServingsInput.ruleValue;
 			GameController.Instance.numberOfRounds = rulesRoundsInput.ruleValue;
 			GameController.Instance.forcedEaters = rulesEatersInput.ruleValue;
@@ -350,7 +352,7 @@ public class InterfaceController : MonoBehaviour {
 		//Initialize new elements
 		switch(targetState)
 		{
-		case GameUIState.Join:
+		case GameUiState.Join:
 			if(!displayedFirstScreen)
 			{
 				foreach(Player player in GameController.Instance.possiblePlayers)
@@ -371,16 +373,16 @@ public class InterfaceController : MonoBehaviour {
 					//player.playerChoice = PlayerChoice.Inactive;
 					GameController.Instance.currentPhase = Phase.Pregame;
 
-						if(oldState == GameUIState.Rules || oldState == GameUIState.Settings)
+						if(oldState == GameUiState.Rules || oldState == GameUiState.Settings)
 						{
 						//Don't change player state
-					} else if(oldState == GameUIState.MainGame || oldState == GameUIState.Results || oldState == GameUIState.Stats0 || oldState == GameUIState.Stats1){
+					} else if(oldState == GameUiState.MainGame || oldState == GameUiState.Results || oldState == GameUiState.Stats0 || oldState == GameUiState.Stats1){
 						if(player.playedInLastGame)
 						{
 							//Debug.Log (player.name);
 						SetPlayerUiState(player, PlayerUiState.Ready);
 							player.playerChoice = PlayerChoice.Ready;
-						player.nameField.text = player.profileInstance.playerName;
+						player.entryNameField.text = player.profileInstance.playerName;
 						} else {
 							SetPlayerUiState(player, PlayerUiState.Join);
 							player.playerChoice = PlayerChoice.Inactive;
@@ -392,7 +394,7 @@ public class InterfaceController : MonoBehaviour {
 				}
 			}
 			break;
-		case GameUIState.Stats0:
+		case GameUiState.Stats0:
 			//Retrieve top n records from the top scores database in order
 			PlayerResult[] allScoresSorted = UserDatabase.Instance.userInfo.playerGameResults.OrderByDescending(element => element.score).ToArray();
 			List<PlayerResult> topResults = new List<PlayerResult>();
@@ -406,14 +408,16 @@ public class InterfaceController : MonoBehaviour {
 			}
 			DisplayScores(topResults);
 			break;
-		case GameUIState.Stats1:
+		case GameUiState.Stats1:
 			for(int i = 0; i < GameController.Instance.registeredPlayers.Count; i++)
 			{
 				Player player = GameController.Instance.registeredPlayers[i];
 				string valueOutput = "";
 				string titleOutput = player.profileInstance.playerName;
-				string tastiestEatenOutput = player.profileInstance.tastiestFoodEaten.Name + ": " + player.profileInstance.tastiestFoodEaten.Quality;
-				string grossestEatenOutput = player.profileInstance.grossestFoodEaten.Name + ": " + player.profileInstance.grossestFoodEaten.Quality;
+				Food tastiestFoodEaten = player.profileInstance.tastiestFoodEaten;
+				string tastiestEatenOutput = tastiestFoodEaten.Quality == 0 ? stats1NoFoodString : tastiestFoodEaten.Name + ": " + tastiestFoodEaten.Quality;
+				Food grossestFoodEaten = player.profileInstance.grossestFoodEaten;
+				string grossestEatenOutput = grossestFoodEaten.Quality == 0 ? stats1NoFoodString : grossestFoodEaten.Name + ": " + grossestFoodEaten.Quality;
 				valueOutput = 
 					player.profileInstance.gamesPlayed + "\n" +
 						player.profileInstance.lifetimeScore + "\n" +
@@ -428,7 +432,7 @@ public class InterfaceController : MonoBehaviour {
 
 			}
 			break;
-		case GameUIState.Rules:
+		case GameUiState.Rules:
 			rulesServingsInput.ruleValue = GameController.Instance.servingsPerFood;
 			rulesRoundsInput.ruleValue = GameController.Instance.numberOfRounds;
 			rulesEatersInput.ruleValue = GameController.Instance.forcedEaters;
@@ -535,7 +539,7 @@ Debug.Log("Query greater than 0");
 		
 		//Acquire global UI
 		//gameStateWidgets[0] = 
-		SetGameUiState(GameUIState.Join);
+		SetGameUiState(GameUiState.Join);
 		
 		
 		//UISprite backer = panel.transform.Find("Backer").GetComponent<UISprite>();

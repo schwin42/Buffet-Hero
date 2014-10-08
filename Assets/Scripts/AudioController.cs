@@ -39,6 +39,7 @@ public class AudioController : MonoBehaviour {
 
 	public void PlaySound(SoundEffect soundEffect)
 	{
+		Debug.Log ("Played sound "+soundEffect+" @"+Time.frameCount);
 		AudioSource.PlayClipAtPoint(audioClips[(int)soundEffect], transform.position, volume);
 	}
 }

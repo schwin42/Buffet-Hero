@@ -17,7 +17,7 @@ public class Profile
 	{
 		get
 		{
-			if(foodsEaten > 0)
+			if(gamesPlayed > 0)
 			{
 				return lifetimeScore / gamesPlayed;
 			} else {
@@ -29,7 +29,7 @@ public class Profile
 	{
 		get
 		{
-			return lifetimeScore / foodsEaten;
+			return foodsEaten > 0 ? lifetimeScore / foodsEaten : 0;
 		}
 	}
 	public float bestScore = 0f;

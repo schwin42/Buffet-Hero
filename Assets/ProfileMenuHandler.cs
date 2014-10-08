@@ -37,14 +37,14 @@ public class ProfileMenuHandler : MonoBehaviour {
 
 			foreach(GameObject profileItem in activeMenuWidgets)
 			{
-				Debug.Log ("Destroying "+profileItem);
+				//Debug.Log ("Destroying "+profileItem);
 				Destroy(profileItem);
 			}
 			activeMenuWidgets.Clear();
 			gameObject.SetActive(false);
 		} else {
 			//Populate menu
-			Debug.Log ("User profiles amount: "+UserDatabase.Instance.userInfo.profiles.Count);
+			//Debug.Log ("User profiles amount: "+UserDatabase.Instance.userInfo.profiles.Count);
 			for(int i = 1; i < UserDatabase.Instance.userInfo.profiles.Count; i++)
 			{
 				Profile profile = UserDatabase.Instance.userInfo.profiles[i];
@@ -66,7 +66,7 @@ public class ProfileMenuHandler : MonoBehaviour {
 
 	public void MakeSelectionWithButton(UIButton button)
 	{
-		AudioController.Instance.PlaySound(SoundEffect.Click);
+		//AudioController.Instance.PlaySound(SoundEffect.Click);
 		string profileName = button.GetComponentInChildren<UILabel>().text;
 		ToggleProfileMenuDisplay();
 		

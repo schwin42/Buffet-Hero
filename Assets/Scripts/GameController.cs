@@ -382,7 +382,7 @@ public class GameController : MonoBehaviour {
 
 
 		//Set game ui state
-		InterfaceController.Instance.SetGameUiState(GameUIState.MainGame);
+		InterfaceController.Instance.SetGameUiState(GameUiState.MainGame);
 
 		if(activePlayers.Count == 0 || activePlayers.Count > 4)
 		{
@@ -644,7 +644,7 @@ public class GameController : MonoBehaviour {
 		//Determine winner
 		Player[] winQuery = registeredPlayers.OrderByDescending(player => player.Score).ToArray();
 		InterfaceController.Instance.WriteWinner(winQuery[0]);
-		InterfaceController.Instance.SetGameUiState(GameUIState.Results);
+		InterfaceController.Instance.SetGameUiState(GameUiState.Results);
 //		foreach(Player player in registeredPlayers)
 //		{
 //			player.playerChoice = PlayerChoice.Inactive;
