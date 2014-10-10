@@ -115,7 +115,7 @@ prosciutto,ingredient,,savory; delicious; meat; fancy,,uncommon,2014.09.04
 ranch,ingredient,,salty; creamy; cheap; delicious,,common,2014.09.04
 roadkill,ingredient,,savory; hot; gross; meat,,uncommon,2014.09.04
 sasquatch,ingredient,,savory; meat; hot,,mythic,2014.09.04
-shnozzberry,ingredient,,sweet; juicy; impossible; fruit,,mythic,2014.09.04
+snozzberry,ingredient,,sweet; juicy; impossible; fruit,,mythic,2014.09.04
 shrim,ingredient,,non-food; disgusting,,rare,2014.09.04
 shrimp,ingredient,,savory; seafood; fancy,,uncommon,2014.09.04
 skunk,ingredient,,gross; meat; hot,,rare,2014.09.04
@@ -348,3 +348,10 @@ medallion,form,,fancy; delicious,,rare,2014.09.30
 a barely legal,qualifier,,disgusting,,rare,2014.10.07
 wasabi,ingredient,,hot spice; Japanese,,common,2014.10.07
 milk,form,,beverage; dairy; dessert,,common,2014.10.07
+a pre-chewed,qualifier,,disgusting,,rare,2014.10.08
+a succulent,qualifier,,awesome,,uncommon,2014.10.09
+frobscottle,ingredient,,beverage; amazing; exotic,,mythic,2014.10.09
+snozzcumber,ingredient,,vegetable; gross; enticing,,mythic,2014.10.09
+mildew,ingredient,,gross; non-food,,uncommon,2014.10.09
+a bizarre,ingredient,,disgusting,,uncommon,2014.10.09
+an attempted,qualifier,,ruined,,uncommon,2014.10.09
