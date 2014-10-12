@@ -52,7 +52,53 @@ public class Player : MonoBehaviour {
 //			ChangeProfile(_profileStringId);
 //		}
 //	}
-	public Profile profileInstance;
+	private Profile _profileInstance;
+	public Profile ProfileInstance
+	{
+		get
+		{
+			return _profileInstance;
+		}
+		set
+		{
+
+			//Debug.Log ("Profile changed.");
+			if(InterfaceController.Instance)
+			{
+				//Assign item to unlock 
+				string itemToUnlock = "";
+				if(!(_profileInstance == null || _profileInstance.playerName == "Guest"))
+				{
+					itemToUnlock = _profileInstance.playerName;
+				}
+				//Assign item to lock
+				string itemToLock = "";
+				if(value.playerName != null && value.playerName != "Guest")
+				{
+					itemToLock = value.playerName;
+				}
+
+				foreach(ProfileMenuHandler profileMenu in InterfaceController.Instance.activeProfileMenus)
+				{
+					foreach(ProfileMenuItem profileMenuItem in profileMenu.activeMenuWidgets)
+					{
+						if(profileMenuItem.label.text == itemToLock)
+						{
+							Debug.Log ("Disable item");
+							profileMenuItem.label.color = InterfaceController.Instance.inactiveMenuItemColor;
+							profileMenuItem.buttonEnabled = false;
+						} else if(profileMenuItem.label.text == itemToUnlock)
+						{
+							Debug.Log ("Enable item.");
+							profileMenuItem.label.color = InterfaceController.Instance.activeMenuItemColor;
+							profileMenuItem.buttonEnabled = true;
+						}
+					}
+				}
+			}
+			_profileInstance = value;
+		}
+	}
 
 	public PlayerColor playerColor = PlayerColor.None;
 
@@ -383,7 +429,7 @@ public class Player : MonoBehaviour {
 	{
 		if(string.IsNullOrEmpty(profileStringId))
 		{
-			profileInstance = null;
+			ProfileInstance = null;
 		} else {
 
 			Profile matchingProfile = null;
@@ -398,16 +444,16 @@ public class Player : MonoBehaviour {
 		}
 			if(matchingProfile != null)
 			{
-				profileInstance = matchingProfile;
-				Debug.Log ("Existing profile: "+profileInstance.playerName+" set to player id:"+playerId);
+				ProfileInstance = matchingProfile;
+				Debug.Log ("Existing profile: "+ProfileInstance.playerName+" set to player id:"+playerId);
 			} else {
 		Debug.Log (profileStringId + " not found, creating new profile.");
-			profileInstance = UserDatabase.Instance.AddNewProfile(profileStringId);
+			ProfileInstance = UserDatabase.Instance.AddNewProfile(profileStringId);
 
 			}
 		}
-		playerNameLabelGame.text = profileInstance.playerName;
-		entryNameField.text = profileInstance.playerName;
+		playerNameLabelGame.text = ProfileInstance.playerName;
+		entryNameField.text = ProfileInstance.playerName;
 		//Debug.Log(profileStringId+" set to "+playerId+" @"+Time.deltaTime);
 		}
 

@@ -526,26 +526,26 @@ public class GameController : MonoBehaviour {
 				Debug.Log ("Pending hp: "+player.PendingHp);
 
 				//Eat, update profile
-				player.profileInstance.foodsEaten++;
-				if(activeFood.Quality > player.profileInstance.tastiestFoodEaten.Quality || player.profileInstance.tastiestFoodEaten.attributes.Count == 0)
+				player.ProfileInstance.foodsEaten++;
+				if(activeFood.Quality > player.ProfileInstance.tastiestFoodEaten.Quality || player.ProfileInstance.tastiestFoodEaten.attributes.Count == 0)
 				{
-					player.profileInstance.tastiestFoodEaten = activeFood;
+					player.ProfileInstance.tastiestFoodEaten = activeFood;
 				} 
-				if (activeFood.Quality < player.profileInstance.grossestFoodEaten.Quality || player.profileInstance.grossestFoodEaten.attributes.Count == 0)
+				if (activeFood.Quality < player.ProfileInstance.grossestFoodEaten.Quality || player.ProfileInstance.grossestFoodEaten.attributes.Count == 0)
 				{
-					player.profileInstance.grossestFoodEaten = activeFood;
+					player.ProfileInstance.grossestFoodEaten = activeFood;
 				}
 
 			} else {
 
 				//Didn't eat, update profile
-				if(activeFood.Quality > player.profileInstance.tastiestFoodMissed.Quality  || player.profileInstance.tastiestFoodMissed.attributes.Count == 0)
+				if(activeFood.Quality > player.ProfileInstance.tastiestFoodMissed.Quality  || player.ProfileInstance.tastiestFoodMissed.attributes.Count == 0)
 				{
-					player.profileInstance.tastiestFoodMissed = activeFood;
+					player.ProfileInstance.tastiestFoodMissed = activeFood;
 				}
-				if (activeFood.Quality < player.profileInstance.grossestFoodMissed.Quality || player.profileInstance.grossestFoodMissed.attributes.Count == 0)
+				if (activeFood.Quality < player.ProfileInstance.grossestFoodMissed.Quality || player.ProfileInstance.grossestFoodMissed.attributes.Count == 0)
 				{
-					player.profileInstance.grossestFoodMissed = activeFood;
+					player.ProfileInstance.grossestFoodMissed = activeFood;
 				}
 			}
 		}
@@ -569,7 +569,7 @@ public class GameController : MonoBehaviour {
 		foreach(Player player in registeredPlayers)
 		{
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Game);
-			player.playerNameLabelGame.text = player.profileInstance.playerName;
+			player.playerNameLabelGame.text = player.ProfileInstance.playerName;
 			player.playedInLastGame = true;
 
 		}
@@ -653,7 +653,7 @@ public class GameController : MonoBehaviour {
 		foreach(Player player in registeredPlayers)
 		{
 			PlayerResult record = new PlayerResult();
-			record.playerStringId = player.profileInstance.playerName;
+			record.playerStringId = player.ProfileInstance.playerName;
 			record.rank = player.Ranking;
 			record.score = player.Score;
 			record.remainingHp = player.Hp;
@@ -661,15 +661,15 @@ public class GameController : MonoBehaviour {
 			outputRecords.Add(record);
 
 			//Update profile stats
-			player.profileInstance.gamesPlayed++;
-			player.profileInstance.lifetimeScore += player.Score;
-			if(player.Score > player.profileInstance.bestScore  || player.profileInstance.gamesPlayed == 1)
+			player.ProfileInstance.gamesPlayed++;
+			player.ProfileInstance.lifetimeScore += player.Score;
+			if(player.Score > player.ProfileInstance.bestScore  || player.ProfileInstance.gamesPlayed == 1)
 			{
-				player.profileInstance.bestScore = player.Score;
+				player.ProfileInstance.bestScore = player.Score;
 			}
-			if(player.Score < player.profileInstance.worstScore || player.profileInstance.gamesPlayed == 1)
+			if(player.Score < player.ProfileInstance.worstScore || player.ProfileInstance.gamesPlayed == 1)
 			{
-				player.profileInstance.worstScore = player.Score;
+				player.ProfileInstance.worstScore = player.Score;
 			}
 
 		}

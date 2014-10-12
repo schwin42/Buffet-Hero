@@ -8,10 +8,11 @@ public class ProfileMenuHandler : MonoBehaviour {
 	public UIPanel playerPanel;
 	public GameObject menuWidgetPrefab;
 	public GameObject menuInputPrefab;
+	//public Color inactiveMenuItemColor;
 
 	public UIGrid menuGrid;
 
-	public List<GameObject> activeMenuWidgets = new List<GameObject>();
+	public List<ProfileMenuItem> activeMenuWidgets = new List<ProfileMenuItem>();
 	public UIInput activeInput;
 
 	//Runtime
@@ -22,6 +23,18 @@ public class ProfileMenuHandler : MonoBehaviour {
 	
 		player = GameController.Instance.possiblePlayers[int.Parse(playerPanel.gameObject.name.Substring(11))];
 
+	}
+
+	void OnEnable()
+	{
+		Debug.Log ("Profile menu enabled.");
+		InterfaceController.Instance.activeProfileMenus.Add (this);
+	}
+
+	void OnDisable()
+	{
+		Debug.Log ("Profile menu disabled.");
+		InterfaceController.Instance.activeProfileMenus.Remove(this);
 	}
 	
 	// Update is called once per frame
@@ -35,36 +48,68 @@ public class ProfileMenuHandler : MonoBehaviour {
 		if(gameObject.activeSelf)
 		{
 
-			foreach(GameObject profileItem in activeMenuWidgets)
+			foreach(ProfileMenuItem profileItem in activeMenuWidgets)
 			{
 				//Debug.Log ("Destroying "+profileItem);
-				Destroy(profileItem);
+				Destroy(profileItem.gameObject);
 			}
 			activeMenuWidgets.Clear();
 			gameObject.SetActive(false);
+			//StopCoroutine("MenuUpdate");
 		} else {
 			//Populate menu
-			//Debug.Log ("User profiles amount: "+UserDatabase.Instance.userInfo.profiles.Count);
+
+			List<string> lockedNames = new List<string>();
+			foreach(Player player in GameController.Instance.possiblePlayers)
+			{
+				if(player.ProfileInstance != null && player.ProfileInstance.playerName != "Guest")
+				{
+					lockedNames.Add (player.ProfileInstance.playerName);
+				}
+			}
+
 			for(int i = 1; i < UserDatabase.Instance.userInfo.profiles.Count; i++)
 			{
 				Profile profile = UserDatabase.Instance.userInfo.profiles[i];
-				GameObject profileWidget = Instantiate (menuWidgetPrefab) as GameObject;
-				profileWidget.name = "_"+profile.playerName;
-				UILabel profileLabel = profileWidget.GetComponentInChildren<UILabel>();
-				profileWidget.transform.parent = menuGrid.transform;
-				profileLabel.text = profile.playerName;
-				profileWidget.transform.localScale = Vector3.one;
-				profileWidget.transform.localRotation = Quaternion.identity;
-				menuGrid.repositionNow = true;
-				activeMenuWidgets.Add(profileWidget);
-			}
+				GameObject profileMenuGo = Instantiate (menuWidgetPrefab) as GameObject;
 
+				//Debug.Log (profileMenuItem);
+				profileMenuGo.name = "_"+profile.playerName;
+				UILabel profileLabel = profileMenuGo.GetComponentInChildren<UILabel>();
+
+				profileMenuGo.transform.parent = menuGrid.transform;
+				profileLabel.text = profile.playerName;
+				profileMenuGo.transform.localScale = Vector3.one;
+				profileMenuGo.transform.localRotation = Quaternion.identity;
+
+
+				//Cache components to script if applicable (for all but add new... and guest)
+				ProfileMenuItem profileMenuItem = profileMenuGo.GetComponent<ProfileMenuItem>();
+				if(profileMenuItem != null)
+				{
+					Debug.Log ("Adding to active");
+				profileMenuItem.label = profileLabel;
+				profileMenuItem.button = profileMenuGo.GetComponent<UIButton>();
+					Debug.Log (profileMenuItem.button);
+				activeMenuWidgets.Add(profileMenuItem);
+				}
+
+				//Disable button if already used
+				if(
+					lockedNames.Contains(profileMenuItem.label.text)
+					){
+				profileMenuItem.label.color = InterfaceController.Instance.inactiveMenuItemColor;
+				profileMenuItem.buttonEnabled = false;
+				}
+			}
+			menuGrid.repositionNow = true;
 			gameObject.SetActive(true);
+			//StartCoroutine("MenuUpdate");
 		}
 
 	}
 
-	public void MakeSelectionWithButton(UIButton button)
+	public void MakeSelectionWithButton(ProfileMenuItem button)
 	{
 		//AudioController.Instance.PlaySound(SoundEffect.Click);
 		string profileName = button.GetComponentInChildren<UILabel>().text;
@@ -122,4 +167,17 @@ public class ProfileMenuHandler : MonoBehaviour {
 			yield break;
 		}
 	}
+
+//	IEnumerator MenuUpdate()
+//	{
+//		while(true)
+//		{
+////			if(true)
+////			{
+////				profileLabel.color = inactiveMenuItemColor;
+////				profileWidget.GetComponent<UIButton>().enabled = false;
+////			}
+//			yield return 0;
+//		}
+//	}
 }

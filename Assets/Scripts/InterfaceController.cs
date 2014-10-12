@@ -47,7 +47,8 @@ public class InterfaceController : MonoBehaviour {
 	public Color[] letterRankColors = new Color[7];
 	public Color[] playerTrayColors = new Color[4]; //Red, yellow, green, blue
 	public Color[] highlightColors = new Color[4];
-
+	public Color activeMenuItemColor;
+	public Color inactiveMenuItemColor;
 
 	//Inspector
 	public GameObject promptPrefab;
@@ -69,6 +70,8 @@ public class InterfaceController : MonoBehaviour {
 	};
 	public GameUiState currentGameState = GameUiState.Uninitialized;
 	public bool displayedFirstScreen = false;
+	//public List<Profile> selectedProfiles = new List<Profile>();
+	public List<ProfileMenuHandler> activeProfileMenus = new List<ProfileMenuHandler>();
 
 	//public UIPanel[] playerPanels;
 
@@ -272,7 +275,7 @@ public class InterfaceController : MonoBehaviour {
 		{
 		case PlayerUiState.Entry:
 			Instance.HighlightControlType(player);
-			player.entryNameField.text = player.profileInstance.playerName == "Guest" ? Instance.selectProfileString : player.profileInstance.playerName;
+			player.entryNameField.text = player.ProfileInstance.playerName == "Guest" ? Instance.selectProfileString : player.ProfileInstance.playerName;
 			break;
 		case PlayerUiState.Ready:
 			//player.playerName = player.nameField.value;
@@ -357,11 +360,11 @@ public class InterfaceController : MonoBehaviour {
 			{
 				foreach(Player player in GameController.Instance.possiblePlayers)
 				{
-					if(string.IsNullOrEmpty(player.profileInstance.playerName))
+					if(player.ProfileInstance == null || string.IsNullOrEmpty(player.ProfileInstance.playerName))
 					{
 					player.ChangeProfile("Guest");
 					} else {
-						player.ChangeProfile(player.profileInstance.playerName);
+						player.ChangeProfile(player.ProfileInstance.playerName);
 					}
 				}
 
@@ -382,7 +385,7 @@ public class InterfaceController : MonoBehaviour {
 							//Debug.Log (player.name);
 						SetPlayerUiState(player, PlayerUiState.Ready);
 							player.playerChoice = PlayerChoice.Ready;
-						player.entryNameField.text = player.profileInstance.playerName;
+						player.entryNameField.text = player.ProfileInstance.playerName;
 						} else {
 							SetPlayerUiState(player, PlayerUiState.Join);
 							player.playerChoice = PlayerChoice.Inactive;
@@ -413,16 +416,16 @@ public class InterfaceController : MonoBehaviour {
 			{
 				Player player = GameController.Instance.registeredPlayers[i];
 				string valueOutput = "";
-				string titleOutput = player.profileInstance.playerName;
-				Food tastiestFoodEaten = player.profileInstance.tastiestFoodEaten;
+				string titleOutput = player.ProfileInstance.playerName;
+				Food tastiestFoodEaten = player.ProfileInstance.tastiestFoodEaten;
 				string tastiestEatenOutput = tastiestFoodEaten.Quality == 0 ? stats1NoFoodString : tastiestFoodEaten.Name + ": " + tastiestFoodEaten.Quality;
-				Food grossestFoodEaten = player.profileInstance.grossestFoodEaten;
+				Food grossestFoodEaten = player.ProfileInstance.grossestFoodEaten;
 				string grossestEatenOutput = grossestFoodEaten.Quality == 0 ? stats1NoFoodString : grossestFoodEaten.Name + ": " + grossestFoodEaten.Quality;
 				valueOutput = 
-					player.profileInstance.gamesPlayed + "\n" +
-						player.profileInstance.lifetimeScore + "\n" +
-						player.profileInstance.AverageFoodScore.ToString("F2") + "\n" +
-						player.profileInstance.bestScore;
+					player.ProfileInstance.gamesPlayed + "\n" +
+						player.ProfileInstance.lifetimeScore + "\n" +
+						player.ProfileInstance.AverageFoodScore.ToString("F2") + "\n" +
+						player.ProfileInstance.bestScore;
 						//player.profileInstance.tastiestFoodEaten.Name + ", " + player.profileInstance.tastiestFoodEaten.Quality + "\n" +
 						//player.profileInstance.grossestFoodMissed.Name + ", " + player.profileInstance.grossestFoodMissed.Quality;
 				stats1Values[player.playerId].text = valueOutput;
@@ -461,7 +464,7 @@ public class InterfaceController : MonoBehaviour {
 				Debug.Log ( "player scores name, registered players: "+playerScores[i].playerStringId+", "+
 				           GameController.Instance.registeredPlayers.Count);
 				Player[] query = (from player in GameController.Instance.registeredPlayers
-					where player.profileInstance.playerName == playerScores[i].playerStringId
+					where player.ProfileInstance.playerName == playerScores[i].playerStringId
 						select player).ToArray();
 				if(query.Length > 0)
 				{
@@ -516,7 +519,7 @@ Debug.Log("Query greater than 0");
 	public void WriteWinner(Player player)
 	{
 		foreach(UILabel winLabel in winLabels){
-		winLabel.text = player.profileInstance.playerName + " wins with "+player.Score+" Points!";
+		winLabel.text = player.ProfileInstance.playerName + " wins with "+player.Score+" Points!";
 		}
 	}
 

@@ -210,9 +210,9 @@ public class UserDatabase : MonoBehaviour {
 			for(int i = 0; i < _userInfo.profiles.Count; i++)
 			{
 				Profile profile = _userInfo.profiles[i];
-				if(player.profileInstance.playerName == profile.playerName)
+				if(player.ProfileInstance.playerName == profile.playerName)
 				{
-					_userInfo.profiles[i] = new Profile(player.profileInstance);
+					_userInfo.profiles[i] = new Profile(player.ProfileInstance);
 					break;
 				}
 			}
