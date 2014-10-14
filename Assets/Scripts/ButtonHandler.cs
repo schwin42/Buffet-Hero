@@ -26,38 +26,41 @@ public enum ButtonAction
 
 public class ButtonHandler : MonoBehaviour {
 
-	[System.NonSerialized]
-	public  Player player;
 
+	public bool isPlayerButton = true;
 	public ButtonAction buttonAction = ButtonAction.None;
+
+
+	public Player player;
+
 
 	// Use this for initialization
 	void Start () {
 	
 		//player = GetComponentInParent<Player>();
-		Transform target = transform;
-		int i = 0;
-		while(player == null && i < 20) //Arbitrary number to break infinite loops
-		{
-
-			Transform parent = target.parent;
-
-			if(parent == transform.root || parent.parent == null)
-			{
-				Debug.Log ("End catch");
-				break;
-			}
-
-			if(parent.name.Contains("Player"))
-			{
-				player = GameController.Instance.possiblePlayers[ int.Parse(parent.name[parent.name.Length - 1].ToString())];
-			} else {
-				target = transform.parent;
-			}
-			i++;
-		}
+//		Transform target = transform;
+//		int i = 0;
+//		while(player == null && i < 20) //Arbitrary number to break infinite loops
+//		{
+//
+//			Transform parent = target.parent;
+//
+//			if(parent == transform.root || parent.parent == null)
+//			{
+//				Debug.Log ("End catch");
+//				break;
+//			}
+//
+//			if(parent.name.Contains("Player"))
+//			{
+//				player = GameController.Instance.possiblePlayers[ int.Parse(parent.name[parent.name.Length - 1].ToString())];
+//			} else {
+//				target = transform.parent;
+//			}
+//			i++;
+//		}
 		//Debug.Log ("Unable to find player for : "+gameObject.name+", i="+i, gameObject);
-		//TODO: Better handling for button acquisition
+		if(isPlayerButton) SendMessageUpwards("AssignPlayerToButton", this);
 	}
 	
 	// Update is called once per frame
