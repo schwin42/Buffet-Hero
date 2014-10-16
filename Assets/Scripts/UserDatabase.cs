@@ -168,7 +168,7 @@ public class UserDatabase : MonoBehaviour {
 
 	UserInfo GetUserInfoFromBinary()
 	{
-
+		//print (Application.persistentDataPath);
 		string fileName = "UserInfo.dat";
 		string fullFileName = Application.persistentDataPath+"/"+fileName;
 		if(File.Exists(fullFileName))
