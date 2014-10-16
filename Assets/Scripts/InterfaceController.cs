@@ -28,6 +28,17 @@ public enum GameUiState
 	Rules = 7
 }
 
+[System.Serializable]
+public enum PopupUiState
+{
+	Uninitialized = -1,
+	NoPopup = 0,
+	Error = 1,
+	Confirm = 2,
+	Pause = 3,
+
+}
+
 public class InterfaceController : MonoBehaviour {
 
 	public static InterfaceController Instance;
@@ -69,18 +80,20 @@ public class InterfaceController : MonoBehaviour {
 		(PlayerUiState) (-1)
 	};
 	public GameUiState currentGameState = GameUiState.Uninitialized;
+	public PopupUiState currentPopupState = PopupUiState.Uninitialized;
 	public bool displayedFirstScreen = false;
 	//public List<Profile> selectedProfiles = new List<Profile>();
 	public List<ProfileMenuHandler> activeProfileMenus = new List<ProfileMenuHandler>();
 
 	//public UIPanel[] playerPanels;
 
-	public UILabel[] roundLabels;
+
 
 	public UIPanel[] mirrorPanels;
-
 	public UIPanel foregroundPanel;
+	public UIPanel popupPanel;
 
+	public UILabel[] roundLabels;
 	public UIButton[] nextButtons;
 
 	public List<UIPanel> uiLookup; //Panels by player id
@@ -102,6 +115,8 @@ public class InterfaceController : MonoBehaviour {
 	public ToggleRule rulesEatersInput;
 	public ToggleRule rulesHpInput;
 
+	//Popup
+	public UISprite popupDim;
 
 
 
@@ -344,7 +359,6 @@ public class InterfaceController : MonoBehaviour {
 			break;
 		}
 
-
 		//Add new elements
 		foreach(UIPanel panel in mirrorPanels)
 		{
@@ -443,11 +457,70 @@ public class InterfaceController : MonoBehaviour {
 			break;
 		}
 
-
+		//Update current state
 		currentGameState = targetState;
 	}
 
-	public void DisplayScores(List<PlayerResult> playerScores)
+	public void SetPopupUiState(PopupUiState targetState)
+	{
+		Debug.Log ("Switching to "+targetState+"from "+currentGameState+" @"+Time.frameCount);
+		//Cache old state
+		PopupUiState oldState = currentPopupState;
+		
+		UIPanel panel = popupPanel;
+
+		//Remove old state elements
+		if(oldState == PopupUiState.Uninitialized)
+		{
+			//Remove all panels
+			UIWidget[] stateWidgets = panel.GetComponentsInChildren<UIWidget>();
+			foreach(UIWidget widget in stateWidgets)
+			{
+				if(widget.name.Contains("Widget"))
+				{
+					widget.gameObject.SetActive(false);
+				}
+			}
+		} else if(oldState == PopupUiState.NoPopup)
+		{ 
+			//No widget to remove, do nothing
+		} else {
+			panel.transform.Find("Widget"+oldState.ToString()).gameObject.SetActive(false);
+		}
+
+		//Terminate last state
+		switch(oldState)
+		{
+		case PopupUiState.Pause:
+			Time.timeScale = 1f;
+			break;
+		}
+
+		//Add new elements
+		if(targetState != PopupUiState.NoPopup && targetState != PopupUiState.Uninitialized)
+		{
+		panel.transform.Find("Widget"+targetState.ToString()).gameObject.SetActive(true);
+		}
+
+		//Initialize new elements
+		if(targetState != PopupUiState.NoPopup)
+		{
+			popupDim.gameObject.SetActive(true);
+		} else {
+			popupDim.gameObject.SetActive(false);
+		}
+		switch(targetState)
+		{
+		case PopupUiState.Pause:
+			Time.timeScale = 0f;
+			break;
+		}
+
+		//Update current state
+		currentPopupState = targetState;
+	}
+		
+		public void DisplayScores(List<PlayerResult> playerScores)
 	{
 		string names0 = "";
 		string names1 = "";

@@ -683,8 +683,7 @@ public class GameController : MonoBehaviour {
 		//UserDatabase.Instance.PlayerGameRecords = outputRecords;
 
 
-		activePlayers.Clear();
-		humanPlayers.Clear();
+		TerminateGame();
 
 	}
 
@@ -710,6 +709,16 @@ public class GameController : MonoBehaviour {
 			player.playerChoice = PlayerChoice.Ready;
 			}
 		}
+	}
+
+	public void TerminateGame()
+	{
+		InterfaceController.Instance.HideFoodRank();
+		InterfaceController.Instance.HidePrompts();
+		UpdatePlayerStats();
+		activePlayers.Clear();
+		humanPlayers.Clear();
+		currentPhase = Phase.Pregame;
 	}
 
 

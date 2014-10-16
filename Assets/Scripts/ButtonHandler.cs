@@ -21,7 +21,10 @@ public enum ButtonAction
 	ProfilesScreen = 15,
 	RulesScreen = 16,
 	IncrementRule  = 17,
-	DecrementRule = 18
+	DecrementRule = 18,
+	ResumeGame = 19,
+	PauseGame = 20,
+	LeaveGame = 21
 }
 
 public class ButtonHandler : MonoBehaviour {
@@ -153,6 +156,17 @@ public class ButtonHandler : MonoBehaviour {
 			break;
 		case ButtonAction.DecrementRule:
 			SendMessageUpwards ("DecrementRule");
+			break;
+		case ButtonAction.PauseGame:
+			InterfaceController.Instance.SetPopupUiState(PopupUiState.Pause);
+			break;
+		case ButtonAction.ResumeGame:
+			InterfaceController.Instance.SetPopupUiState(PopupUiState.NoPopup);
+			break;
+		case ButtonAction.LeaveGame:
+			InterfaceController.Instance.SetPopupUiState(PopupUiState.NoPopup);
+			GameController.Instance.TerminateGame();
+			InterfaceController.Instance.SetGameUiState(GameUiState.Join);
 			break;
 		default:
 			Debug.LogError("Invalid button action: "+buttonAction);
