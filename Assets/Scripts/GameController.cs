@@ -621,7 +621,7 @@ public class GameController : MonoBehaviour {
 		if (currentRound < numberOfRounds - 1) {
 						BeginRound ();
 				} else {
-			currentPhase = Phase.GameOver;
+
 			EndGame();
 				}
 	}
@@ -641,6 +641,8 @@ public class GameController : MonoBehaviour {
 
 	public void EndGame()
 	{
+		currentPhase = Phase.GameOver;
+
 		//Determine winner
 		Player[] winQuery = registeredPlayers.OrderByDescending(player => player.Score).ToArray();
 		InterfaceController.Instance.WriteWinner(winQuery[0]);
@@ -683,7 +685,9 @@ public class GameController : MonoBehaviour {
 		//UserDatabase.Instance.PlayerGameRecords = outputRecords;
 
 
-		TerminateGame();
+		ResetAndHideGame();
+
+		currentPhase = Phase.GameOver;
 
 	}
 
@@ -713,12 +717,20 @@ public class GameController : MonoBehaviour {
 
 	public void TerminateGame()
 	{
+		ResetAndHideGame();
+		//Update player stats to clear hovering text
+
+		currentPhase = Phase.Pregame;
+	}
+
+	public void ResetAndHideGame()
+	{
 		InterfaceController.Instance.HideFoodRank();
 		InterfaceController.Instance.HidePrompts();
 		UpdatePlayerStats();
 		activePlayers.Clear();
 		humanPlayers.Clear();
-		currentPhase = Phase.Pregame;
+
 	}
 
 
