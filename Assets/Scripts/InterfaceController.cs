@@ -426,9 +426,11 @@ public class InterfaceController : MonoBehaviour {
 			DisplayScores(topResults);
 			break;
 		case GameUiState.Stats1:
-			for(int i = 0; i < GameController.Instance.registeredPlayers.Count; i++)
+			for(int i = 0; i < GameController.Instance.possiblePlayers.Count; i++)
 			{
-				Player player = GameController.Instance.registeredPlayers[i];
+				Player player = GameController.Instance.possiblePlayers[i];
+				if(GameController.Instance.registeredPlayers.Contains(player))
+				   {
 				string valueOutput = "";
 				string titleOutput = player.ProfileInstance.playerName;
 				Food tastiestFoodEaten = player.ProfileInstance.tastiestFoodEaten;
@@ -440,12 +442,25 @@ public class InterfaceController : MonoBehaviour {
 						player.ProfileInstance.lifetimeScore + "\n" +
 						player.ProfileInstance.AverageFoodScore.ToString("F2") + "\n" +
 						player.ProfileInstance.bestScore;
-						//player.profileInstance.tastiestFoodEaten.Name + ", " + player.profileInstance.tastiestFoodEaten.Quality + "\n" +
-						//player.profileInstance.grossestFoodMissed.Name + ", " + player.profileInstance.grossestFoodMissed.Quality;
 				stats1Values[player.playerId].text = valueOutput;
 				stats1Titles[player.playerId].text = titleOutput;
 				stats1tastiestEaten[player.playerId].text = tastiestEatenOutput;
 				stats1grossestEaten[player.playerId].text = grossestEatenOutput;
+				 } else {
+					//Zero out all player stats1 fields
+					//string valueOutput = "";
+					//string titleOutput = "";
+					//Food tastiestFoodEaten = player.ProfileInstance.tastiestFoodEaten;
+					//string tastiestEatenOutput = "";
+					//Food grossestFoodEaten = player.ProfileInstance.grossestFoodEaten;
+					//string grossestEatenOutput = "";
+					//valueOutput = "";
+					stats1Values[player.playerId].text = "";
+					stats1Titles[player.playerId].text = "";
+					stats1tastiestEaten[player.playerId].text = "";
+					stats1grossestEaten[player.playerId].text = "";
+
+				}
 
 			}
 			break;
