@@ -22,7 +22,7 @@ public class ProfileMenuItem : MonoBehaviour {
 	{
 		if(buttonEnabled)
 		{
-		SendMessageUpwards("MakeSelectionWithButton",this);
+			SendMessageUpwards("MakeSelectionWithButton", this);
 		}
 	}
 }

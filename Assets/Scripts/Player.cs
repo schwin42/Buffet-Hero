@@ -63,6 +63,8 @@ public class Player : MonoBehaviour {
 		{
 
 			//Debug.Log ("Profile changed.");
+			if(value != null)
+			{
 			if(InterfaceController.Instance)
 			{
 				//Assign item to unlock 
@@ -97,6 +99,7 @@ public class Player : MonoBehaviour {
 				}
 			}
 			_profileInstance = value;
+			}
 		}
 	}
 

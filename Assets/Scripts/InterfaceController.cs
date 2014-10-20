@@ -118,6 +118,9 @@ public class InterfaceController : MonoBehaviour {
 	//Popup
 	public UISprite popupDim;
 
+	//Other
+	public Collider blockingCollider;
+
 
 
 
@@ -641,6 +644,16 @@ Debug.Log("Query greater than 0");
 //	{
 //		player.profileInstance.playerName = profileName;
 //		player.nameField.text = profileName; 
+//	}
+
+//	public void SetBlockingCollider(bool enabled)
+//	{
+//		if(enabled)
+//		{
+//			blockingCollider.gameObject.SetActive(true);
+//		} else {
+//			blockingCollider.gameObject.SetActive(false);
+//		}
 //	}
 
 }
