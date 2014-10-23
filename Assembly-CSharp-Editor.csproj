@@ -133,11 +133,13 @@
      <Compile Include="Assets\NGUI\Scripts\Editor\UIWrapContentEditor.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.6.8.txt" />
+     <None Include="Assets\Plugins\Android\unityads\proguard-project.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text 2.shader" />
      <None Include="Assets\UIpack\Spritesheet\greenSheet.xml" />
      <None Include="Assets\NGUI\Examples\Models\Orc\Orc Skin.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo20.txt" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo14.txt" />
+     <None Include="Assets\Plugins\Android\unityads\build.xml" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text 1.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored 2.shader" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Masked Colored.shader" />
@@ -150,6 +152,7 @@
      <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />
      <None Include="Assets\StreamingAssets\build_info.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored 3.shader" />
+     <None Include="Assets\link.xml" />
      <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Normal.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 2.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text 3.shader" />
@@ -157,6 +160,7 @@
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 1.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 1.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored.shader" />
+     <None Include="Assets\Plugins\Android\unityads\res\values\strings.xml" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed.shader" />
@@ -171,6 +175,7 @@
      <None Include="Assets\UIpack\Spritesheet\blueSheet.xml" />
      <None Include="Assets\NGUI\Examples\Models\Orc Armor\Orc Armor.shader" />
      <None Include="Assets\NGUI\Examples\Resources\Localization.txt" />
+     <None Include="Assets\Plugins\Android\unityads\AndroidManifest.xml" />
  <Reference Include="UnityEditor.Graphs">
  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.Graphs.dll</HintPath>
  </Reference>

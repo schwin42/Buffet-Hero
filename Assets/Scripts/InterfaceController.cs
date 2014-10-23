@@ -116,7 +116,7 @@ public class InterfaceController : MonoBehaviour {
 	public ToggleRule rulesHpInput;
 
 	//Popup
-	public UISprite popupDim;
+	public GameObject popupDim;
 
 	//Other
 	public Collider blockingCollider;
@@ -523,9 +523,9 @@ public class InterfaceController : MonoBehaviour {
 		//Initialize new elements
 		if(targetState != PopupUiState.NoPopup)
 		{
-			popupDim.gameObject.SetActive(true);
+			popupDim.SetActive(true);
 		} else {
-			popupDim.gameObject.SetActive(false);
+			popupDim.SetActive(false);
 		}
 		switch(targetState)
 		{
@@ -634,7 +634,8 @@ Debug.Log("Query greater than 0");
 		//Acquire global UI
 		//gameStateWidgets[0] = 
 		SetGameUiState(GameUiState.Join);
-		
+
+		SetPopupUiState(PopupUiState.NoPopup);
 		
 		//UISprite backer = panel.transform.Find("Backer").GetComponent<UISprite>();
 		//backer.color = 
