@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Advertisements;
 
 public enum Phase
 {
@@ -59,6 +60,15 @@ public class GameController : MonoBehaviour {
 	public Food previousFood;
 	//public Dictionary<int, bool> playerChoices = new Dictionary<int, bool>(); //True indicates "eat"
 
+	//Match Stats
+	public Food tastiestFood;
+	public List<Player> tastiestFoodEatenBy;
+	public Food grossestFood;
+	public List<Player> grossestFoodEatenBy;
+	public Food quickestNab;
+	public float quickestNabTime;
+	public List<Player> quickestNabEatenBy;
+
 	//Debug
 	//public int trials = 1000;
 
@@ -77,31 +87,10 @@ public class GameController : MonoBehaviour {
 	void Start () {
 	
 
+		Advertisement.Initialize ("18656");
 		currentPhase = Phase.Pregame;
 		UserDatabase.Instance.LoadUserData();
 		InterfaceController.Instance.InitializeInterface();
-
-
-	//	players = 
-
-
-		//qualifierQueue
-
-		                        //Acquire objects
-		//GameObject camera = GameObject.Find ("UI Root/Camera");
-
-	
-
-		//BeginGame();
-
-		//GET AVERAGE SCORE
-//		for(int i = 0; i < numberOfTrials; i++)
-//		{
-//			Player.Instance.Eat();
-//		}
-//		Debug.Log ("Average score: "+Player.Instance.score / numberOfTrials);
-
-		//Runtrials ();
 
 	}
 	
@@ -124,7 +113,7 @@ public class GameController : MonoBehaviour {
 				EvaluateRound();
 		} else if(query.Count () > activePlayers.Count ())
 			{
-				Debug.Log("Something terrible has happened");
+				Debug.LogError("Something terrible has happened");
 			}
 
 			//Run out of food after 2
@@ -495,7 +484,12 @@ public class GameController : MonoBehaviour {
 
 		foreach(Player player in activePlayers)
 		{
+			if(player.controlType == ControlType.Human)
+			{
 			player.EnableButtons(true);
+			} else {
+				player.EnableButtons(false);
+			}
 		}
 	}
 
@@ -643,10 +637,14 @@ public class GameController : MonoBehaviour {
 	{
 		currentPhase = Phase.GameOver;
 
+		//Show ad before revealing score
+		if(InterfaceController.Instance.adsEnabled){
+		if(Advertisement.isReady()){ Advertisement.Show(); }
+		}
+
+
 		//Determine winner
 		Player[] winQuery = registeredPlayers.OrderByDescending(player => player.Score).ToArray();
-		InterfaceController.Instance.WriteWinner(winQuery[0]);
-		InterfaceController.Instance.SetGameUiState(GameUiState.Results);
 //		foreach(Player player in registeredPlayers)
 //		{
 //			player.playerChoice = PlayerChoice.Inactive;
@@ -662,6 +660,10 @@ public class GameController : MonoBehaviour {
 			record.gameId = UserDatabase.Instance.userInfo.totalGamesPlayed;
 			outputRecords.Add(record);
 
+			//UI
+			InterfaceController.Instance.WriteWinner(winQuery[0]);
+			StartCoroutine(DisplayWinner());
+
 			//Update profile stats
 			player.ProfileInstance.gamesPlayed++;
 			player.ProfileInstance.lifetimeScore += player.Score;
@@ -673,9 +675,7 @@ public class GameController : MonoBehaviour {
 			{
 				player.ProfileInstance.worstScore = player.Score;
 			}
-
 		}
-
 		//Save entries to user database
 		Debug.Log ("Writing to user database, output: "+outputRecords.Count);
 
@@ -691,6 +691,16 @@ public class GameController : MonoBehaviour {
 
 	}
 
+	IEnumerator DisplayWinner()
+	{
+		while(Advertisement.isShowing)
+		{
+			yield return 0;
+		}
+
+		InterfaceController.Instance.SetGameUiState(GameUiState.Results);
+	}
+	
 	public LetterRank GetFoodRank (Food food)
 	{
 		List<float> percentiles = Tools.Instance.percentiles;

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Advertisements;
 
 [System.Serializable]
 public enum PlayerUiState
@@ -24,6 +25,7 @@ public enum GameUiState
 	Pause = 3,
 	Stats0 = 4,
 	Stats1 = 5,
+	Stats2 = 8,
 	Settings = 6,
 	Rules = 7
 }
@@ -70,6 +72,7 @@ public class InterfaceController : MonoBehaviour {
 	//public UIWidget[] gameStateWidgets = new UIWidget[4];
 
 	//Status
+	public bool adsEnabled = true;
 	public UILabel[] activePrompts = new UILabel[2];
 	GameObject[] activeFoodRanks = new GameObject[2];
 	 PlayerUiState[] playerUiStates = new PlayerUiState[] //Start FSM at all players uninitialized
@@ -108,6 +111,9 @@ public class InterfaceController : MonoBehaviour {
 	public UILabel[] stats1Titles;
 	public UILabel[] stats1tastiestEaten;
 	public UILabel[] stats1grossestEaten;
+
+	//Stats2
+	public UILabel stats2Value;
 
 	//Rules
 	public ToggleRule rulesRoundsInput;
@@ -464,8 +470,47 @@ public class InterfaceController : MonoBehaviour {
 					stats1grossestEaten[player.playerId].text = "";
 
 				}
-
 			}
+			break;
+		case GameUiState.Stats2:
+			string tastiestFoodName = "";
+			string tastiestFoodValue = "";
+			string tastiestFoodEatenBy = "";
+			string grossestFoodName = "";
+			string grossestFoodValue = "";
+			string grossestFoodEatenBy = "";
+			string quickestNabFood = "";
+			string quickestNabTime = "";
+			string quickestNabEatenBy = "";
+			string mostFoodsEatenBy = "";
+			string mostFoodsQuantity = "";
+			string leastFoodsEatenBy = "";
+			string leastFoodsQuantity = "";
+			string outputString = string.Format(
+				HexTag(neutralDarkColor)+
+				"Tastiest Food - {0} ({1}) - {2}\n"+
+				"Grossest Food - {3} ({4}) - {5}\n"+
+				"Quickest Nab - {6} ({7}) - {8}\n"+
+				"Most Foods Eaten - {9} with {10}\n"+
+				"Least Foods Eaten - {11} with {12}"
+				, new string[13]
+				{
+				tastiestFoodName,
+				tastiestFoodValue,
+				tastiestFoodEatenBy,
+				grossestFoodName,
+				grossestFoodValue,
+				grossestFoodEatenBy,
+				quickestNabFood,
+				quickestNabTime,
+				quickestNabEatenBy,
+				mostFoodsEatenBy,
+				mostFoodsQuantity,
+				leastFoodsEatenBy,
+				leastFoodsQuantity
+			});
+
+			stats2Value.text = outputString;
 			break;
 		case GameUiState.Rules:
 			rulesServingsInput.ruleValue = GameController.Instance.servingsPerFood;
@@ -656,5 +701,10 @@ Debug.Log("Query greater than 0");
 //			blockingCollider.gameObject.SetActive(false);
 //		}
 //	}
+
+	public static string HexTag(Color color)
+	{
+		return "["+color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2")+"]";
+	}
 
 }
