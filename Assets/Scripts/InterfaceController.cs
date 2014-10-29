@@ -56,12 +56,13 @@ public class InterfaceController : MonoBehaviour {
 	public Color enabledTextYellowColor;
 	public Color neutralLightColor;
 	public Color neutralDarkColor;
-	public Color[] colors; 
+	//public Color[] colors; 
 	public Color[] letterRankColors = new Color[7];
 	public Color[] playerTrayColors = new Color[4]; //Red, yellow, green, blue
 	public Color[] highlightColors = new Color[4];
 	public Color activeMenuItemColor;
 	public Color inactiveMenuItemColor;
+	//public Color[] playerColors;
 
 	//Inspector
 	public GameObject promptPrefab;
