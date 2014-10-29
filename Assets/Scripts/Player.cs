@@ -18,14 +18,14 @@ public enum ControlType
 	Computer = 2
 }
 
-public enum PlayerColor
-{
-	None = -1,
-	Red = 2,
-	Blue = 3,
-	Yellow = 4,
-	Green = 5
-}
+//public enum PlayerColor
+//{
+//	None = -1,
+//	Red = 2,
+//	Blue = 3,
+//	Yellow = 4,
+//	Green = 5
+//}
 
 [System.Serializable]
 public class Plate
@@ -103,7 +103,7 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public PlayerColor playerColor = PlayerColor.None;
+	public Color playerColor;
 
 	public ControlType controlType = ControlType.Human;
 
@@ -202,6 +202,7 @@ public class Player : MonoBehaviour {
 	public PlayerChoice playerChoice = PlayerChoice.Inactive;
 	public bool computerDecisionRunning = false;
 	public bool playedInLastGame = false;
+	public float lastChoiceTimeElapsed;
 
 	//Computer
 	public static float computerDelayLowLimit = 1;
@@ -315,9 +316,10 @@ public class Player : MonoBehaviour {
 
 	public void Eat()
 	{
+		Choose ();
+
 		playerChoice = PlayerChoice.Eat;
 		plate.foods.Add (new Food(GameController.Instance.activeFood));
-		EnableButtons(false);
 		AudioController.Instance.PlaySound(SoundEffect.OrderFood);
 //		Food food = GameController.Instance.activeFood;
 //		//float foodValue = GameController.Instance.activeFood.Value;
@@ -368,11 +370,18 @@ public class Player : MonoBehaviour {
 
 	public void Pass()
 	{
+		Choose ();
 		playerChoice = PlayerChoice.Pass;
-		EnableButtons(false);
+
 //		InterfaceController.Instance.WriteToOutcome("Didn't eat");
 //		GameController.Instance.NextPrompt();
 		AudioController.Instance.PlaySound(SoundEffect.Swoop);
+	}
+
+	public void Choose()
+	{
+		lastChoiceTimeElapsed = Time.time - GameController.Instance.choiceStartTime;
+		EnableButtons(false);
 	}
 
 	public void EnableButtons(bool b)

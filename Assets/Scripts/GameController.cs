@@ -52,6 +52,7 @@ public class GameController : MonoBehaviour {
 
 	//Status
 	public int currentRound = -1;
+	public float choiceStartTime = -1;
 
 	//public int confirmedPlayers = 0;
 	public List<Player> humanPlayers = new List<Player>();
@@ -63,11 +64,11 @@ public class GameController : MonoBehaviour {
 	//Match Stats
 	public Food tastiestFood;
 	public List<Player> tastiestFoodEatenBy;
-	public Food grossestFood;
+	public Food grossestFood = null;
 	public List<Player> grossestFoodEatenBy;
 	public Food quickestNab;
 	public float quickestNabTime;
-	public List<Player> quickestNabEatenBy;
+	public Player quickestNabEatenBy;
 
 	//Debug
 	//public int trials = 1000;
@@ -369,6 +370,8 @@ public class GameController : MonoBehaviour {
 	//Register players
 	RegisterPlayers();
 
+		InitializeMatchStats();
+
 
 		//Set game ui state
 		InterfaceController.Instance.SetGameUiState(GameUiState.MainGame);
@@ -473,13 +476,8 @@ public class GameController : MonoBehaviour {
 			previousFood = activeFood;
 		}
 		activeFood = GetRandomFoodUsingQueue();
-		InterfaceController.Instance.DisplayPrompt(
-			//"You encounter: "+
-		                                           //"\n "+
-		                                           activeFood.Name);
-		//InterfaceController.Instance.WriteToOutcome("");
-		//InterfaceController.Instance.WriteToScore(Player.Instance.score);
-		//EvaluateRound();
+		InterfaceController.Instance.DisplayPrompt(activeFood.Name);
+
 		currentPhase = Phase.Choose;
 
 		foreach(Player player in activePlayers)
@@ -491,7 +489,11 @@ public class GameController : MonoBehaviour {
 				player.EnableButtons(false);
 			}
 		}
+
+		choiceStartTime = Time.time;
 	}
+
+
 
 	public void EvaluateRound()
 	{
@@ -500,22 +502,32 @@ public class GameController : MonoBehaviour {
 
 		//Show food ranking
 		InterfaceController.Instance.ShowFoodRank(GetFoodRank(activeFood));
-
-		foreach(Player player in activePlayers)
+		
+		List<Player> eatingPlayers = new List<Player>();
+		Player quickestPlayerOfRound = null;
+		for(int i = 0; i < activePlayers.Count; i++)
 		{
+			Player player = activePlayers[i];
 			//Debug.Log ("Player id: "+player.playerId);
 			if(player.playerChoice == PlayerChoice.Eat) //if player chose to eat
 			{
+				eatingPlayers.Add (player);
+				if(i == 0)
+				{
+					quickestPlayerOfRound = player;
+				} else {
+					if(player.lastChoiceTimeElapsed < quickestPlayerOfRound.lastChoiceTimeElapsed)
+					{
+						quickestPlayerOfRound = player;
+					}
+				}
+
 				//Score
 				Debug.Log ("Update score");
 				float qualityFloat = activeFood.Quality;
-				//string qualityString = qualityFloat >= 0 ? "+" + qualityFloat.ToString ("F0"): qualityFloat.ToString("F0");
-				//player.updateScoreLabel.text = qualityString;
 				player.PendingScore = qualityFloat;
 				//Health
 				float hpFloat = -activeFood.Damage;
-				//string hpString = hpFloat < 0 ? hpFloat.ToString ("F0"): "";
-				//player.updateHpLabel.text = hpString;
 				player.PendingHp = hpFloat;
 				Debug.Log ("Pending hp: "+player.PendingHp);
 
@@ -543,6 +555,44 @@ public class GameController : MonoBehaviour {
 				}
 			}
 		}
+
+		//Update running stats for match
+			if(eatingPlayers.Count > 0)
+			{
+				if(tastiestFood == null) //If no foods have been eaten previously
+				{
+					tastiestFood = activeFood;
+					tastiestFoodEatenBy = eatingPlayers;
+					grossestFood = activeFood;
+					grossestFoodEatenBy = eatingPlayers;
+					quickestNab = activeFood;
+					quickestNabEatenBy = quickestPlayerOfRound;
+					quickestNabTime = quickestPlayerOfRound.lastChoiceTimeElapsed;
+					quickestNab = activeFood;
+				} else {
+					if(activeFood.Quality > tastiestFood.Quality)
+					{
+						tastiestFood = activeFood;
+						tastiestFoodEatenBy = eatingPlayers;
+					}
+					if(activeFood.Quality < grossestFood.Quality)
+					{
+						grossestFood = activeFood;
+						grossestFoodEatenBy = eatingPlayers;
+					}
+				if(quickestPlayerOfRound.lastChoiceTimeElapsed < quickestNabTime)
+				{
+					quickestNabEatenBy = quickestPlayerOfRound;
+					quickestNabTime = quickestPlayerOfRound.lastChoiceTimeElapsed;
+					quickestNab = activeFood;
+				}
+				}
+			}
+//			public Food quickestNab;
+//			public float quickestNabTime;
+//			public List<Player> quickestNabEatenBy;
+
+
 		Debug.Log ("Evaluation ended for round"+currentRound+" @"+Time.frameCount);
 
 
@@ -741,6 +791,17 @@ public class GameController : MonoBehaviour {
 		activePlayers.Clear();
 		humanPlayers.Clear();
 
+	}
+
+	public void InitializeMatchStats()
+	{
+		  tastiestFood = null;
+		  tastiestFoodEatenBy = new List<Player>();
+		  grossestFood = null;
+		  grossestFoodEatenBy = new List<Player>();
+		  quickestNab = null;
+		  quickestNabTime = -1F;
+		  quickestNabEatenBy = null;
 	}
 
 

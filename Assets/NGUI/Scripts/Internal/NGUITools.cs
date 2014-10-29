@@ -109,6 +109,7 @@ static public class NGUITools
 			{
 				AudioSource source = mListener.audio;
 				if (source == null) source = mListener.gameObject.AddComponent<AudioSource>();
+				source.priority = 50;
 				source.pitch = pitch;
 				source.PlayOneShot(clip, volume);
 				return source;
@@ -210,7 +211,7 @@ static public class NGUITools
 		cam = Camera.main;
 		if (cam && (cam.cullingMask & layerMask) != 0) return cam;
 
-#if UNITY_4_3
+#if UNITY_4_3 || UNITY_FLASH
 		Camera[] cameras = NGUITools.FindActive<Camera>();
 		for (int i = 0, imax = cameras.Length; i < imax; ++i)
 #else
@@ -578,11 +579,15 @@ static public class NGUITools
 			}
 			else
 			{
+				panel = FindInParents<UIPanel>(go);
+				if (panel == null) return 0;
+
 				UIWidget[] widgets = go.GetComponentsInChildren<UIWidget>(true);
 
 				for (int i = 0, imax = widgets.Length; i < imax; ++i)
 				{
 					UIWidget w = widgets[i];
+					if (w.panel != panel) continue;
 #if UNITY_EDITOR
 					RegisterUndo(w, "Depth Change");
 #endif
@@ -632,7 +637,24 @@ static public class NGUITools
 
 	static public void NormalizeWidgetDepths ()
 	{
-		UIWidget[] list = FindActive<UIWidget>();
+		NormalizeWidgetDepths(FindActive<UIWidget>());
+	}
+
+	/// <summary>
+	/// Normalize the depths of all the widgets in the scene, making them start from 0 and remain in order.
+	/// </summary>
+
+	static public void NormalizeWidgetDepths (GameObject go)
+	{
+		NormalizeWidgetDepths(go.GetComponentsInChildren<UIWidget>());
+	}
+
+	/// <summary>
+	/// Normalize the depths of all the widgets in the scene, making them start from 0 and remain in order.
+	/// </summary>
+
+	static public void NormalizeWidgetDepths (UIWidget[] list)
+	{
 		int size = list.Length;
 
 		if (size > 0)
@@ -712,7 +734,18 @@ static public class NGUITools
 	{
 		// Find the existing UI Root
 		UIRoot root = (trans != null) ? NGUITools.FindInParents<UIRoot>(trans.gameObject) : null;
-		if (root == null && UIRoot.list.Count > 0) root = UIRoot.list[0];
+
+		if (root == null && UIRoot.list.Count > 0)
+		{
+			foreach (UIRoot r in UIRoot.list)
+			{
+				if (r.gameObject.layer == layer)
+				{
+					root = r;
+					break;
+				}
+			}
+		}
 
 		// If we are working with a different UI type, we need to treat it as a brand-new one instead
 		if (root != null)
@@ -740,12 +773,12 @@ static public class NGUITools
 			if (advanced3D)
 			{
 				go.name = "UI Root (3D)";
-				root.scalingStyle = UIRoot.Scaling.FixedSize;
+				root.scalingStyle = UIRoot.Scaling.Constrained;
 			}
 			else
 			{
 				go.name = "UI Root";
-				root.scalingStyle = UIRoot.Scaling.PixelPerfect;
+				root.scalingStyle = UIRoot.Scaling.Flexible;
 			}
 		}
 
@@ -882,7 +915,20 @@ static public class NGUITools
 		widget.width = 100;
 		widget.height = 100;
 		widget.depth = depth;
-		widget.gameObject.layer = go.layer;
+		return widget;
+	}
+
+	/// <summary>
+	/// Add a new widget of specified type.
+	/// </summary>
+
+	static public T AddWidget<T> (GameObject go, int depth) where T : UIWidget
+	{
+		// Create the widget and place it above other widgets
+		T widget = AddChild<T>(go);
+		widget.width = 100;
+		widget.height = 100;
+		widget.depth = depth;
 		return widget;
 	}
 
@@ -925,11 +971,14 @@ static public class NGUITools
 	static public T FindInParents<T> (GameObject go) where T : Component
 	{
 		if (go == null) return null;
-#if UNITY_FLASH
+		// Commented out because apparently it causes Unity 4.5.3 to lag horribly:
+		// http://www.tasharen.com/forum/index.php?topic=10882.0
+//#if UNITY_4_3
+ #if UNITY_FLASH
 		object comp = go.GetComponent<T>();
-#else
+ #else
 		T comp = go.GetComponent<T>();
-#endif
+ #endif
 		if (comp == null)
 		{
 			Transform t = go.transform.parent;
@@ -940,11 +989,14 @@ static public class NGUITools
 				t = t.parent;
 			}
 		}
-#if UNITY_FLASH
+ #if UNITY_FLASH
 		return (T)comp;
-#else
+ #else
 		return comp;
-#endif
+ #endif
+//#else
+//		return go.GetComponentInParent<T>();
+//#endif
 	}
 
 	/// <summary>
@@ -954,11 +1006,12 @@ static public class NGUITools
 	static public T FindInParents<T> (Transform trans) where T : Component
 	{
 		if (trans == null) return null;
-#if UNITY_FLASH
+#if UNITY_4_3
+ #if UNITY_FLASH
 		object comp = trans.GetComponent<T>();
-#else
+ #else
 		T comp = trans.GetComponent<T>();
-#endif
+ #endif
 		if (comp == null)
 		{
 			Transform t = trans.transform.parent;
@@ -969,10 +1022,13 @@ static public class NGUITools
 				t = t.parent;
 			}
 		}
-#if UNITY_FLASH
+ #if UNITY_FLASH
 		return (T)comp;
-#else
+ #else
 		return comp;
+ #endif
+#else
+		return trans.GetComponentInParent<T>();
 #endif
 	}
 
@@ -1425,29 +1481,39 @@ static public class NGUITools
 
 	static public Vector3[] GetSides (this Camera cam, float depth, Transform relativeTo)
 	{
-		float os = cam.orthographicSize;
-		float x0 = -os;
-		float x1 = os;
-		float y0 = -os;
-		float y1 = os;
+		if (cam.isOrthoGraphic)
+		{
+			float os = cam.orthographicSize;
+			float x0 = -os;
+			float x1 = os;
+			float y0 = -os;
+			float y1 = os;
 
-		Rect rect = cam.rect;
-		Vector2 size = screenSize;
-		float aspect = size.x / size.y;
-		aspect *= rect.width / rect.height;
-		x0 *= aspect;
-		x1 *= aspect;
+			Rect rect = cam.rect;
+			Vector2 size = screenSize;
+			float aspect = size.x / size.y;
+			aspect *= rect.width / rect.height;
+			x0 *= aspect;
+			x1 *= aspect;
 
-		// We want to ignore the scale, as scale doesn't affect the camera's view region in Unity
-		Transform t = cam.transform;
-		Quaternion rot = t.rotation;
-		Vector3 pos = t.position;
+			// We want to ignore the scale, as scale doesn't affect the camera's view region in Unity
+			Transform t = cam.transform;
+			Quaternion rot = t.rotation;
+			Vector3 pos = t.position;
 
-		mSides[0] = rot * (new Vector3(x0, 0f, depth)) + pos;
-		mSides[1] = rot * (new Vector3(0f, y1, depth)) + pos;
-		mSides[2] = rot * (new Vector3(x1, 0f, depth)) + pos;
-		mSides[3] = rot * (new Vector3(0f, y0, depth)) + pos;
-
+			mSides[0] = rot * (new Vector3(x0, 0f, depth)) + pos;
+			mSides[1] = rot * (new Vector3(0f, y1, depth)) + pos;
+			mSides[2] = rot * (new Vector3(x1, 0f, depth)) + pos;
+			mSides[3] = rot * (new Vector3(0f, y0, depth)) + pos;
+		}
+		else
+		{
+			mSides[0] = cam.ViewportToWorldPoint(new Vector3(0f, 0.5f, depth));
+			mSides[1] = cam.ViewportToWorldPoint(new Vector3(0.5f, 1f, depth));
+			mSides[2] = cam.ViewportToWorldPoint(new Vector3(1f, 0.5f, depth));
+			mSides[3] = cam.ViewportToWorldPoint(new Vector3(0.5f, 0f, depth));
+		}
+		
 		if (relativeTo != null)
 		{
 			for (int i = 0; i < 4; ++i)
@@ -1462,7 +1528,8 @@ static public class NGUITools
 
 	static public Vector3[] GetWorldCorners (this Camera cam)
 	{
-		return cam.GetWorldCorners(Mathf.Lerp(cam.nearClipPlane, cam.farClipPlane, 0.5f), null);
+		float depth = Mathf.Lerp(cam.nearClipPlane, cam.farClipPlane, 0.5f);
+		return cam.GetWorldCorners(depth, null);
 	}
 
 	/// <summary>
@@ -1489,28 +1556,38 @@ static public class NGUITools
 
 	static public Vector3[] GetWorldCorners (this Camera cam, float depth, Transform relativeTo)
 	{
-		float os = cam.orthographicSize;
-		float x0 = -os;
-		float x1 = os;
-		float y0 = -os;
-		float y1 = os;
+		if (cam.isOrthoGraphic)
+		{
+			float os = cam.orthographicSize;
+			float x0 = -os;
+			float x1 = os;
+			float y0 = -os;
+			float y1 = os;
 
-		Rect rect = cam.rect;
-		Vector2 size = screenSize;
-		float aspect = size.x / size.y;
-		aspect *= rect.width / rect.height;
-		x0 *= aspect;
-		x1 *= aspect;
+			Rect rect = cam.rect;
+			Vector2 size = screenSize;
+			float aspect = size.x / size.y;
+			aspect *= rect.width / rect.height;
+			x0 *= aspect;
+			x1 *= aspect;
 
-		// We want to ignore the scale, as scale doesn't affect the camera's view region in Unity
-		Transform t = cam.transform;
-		Quaternion rot = t.rotation;
-		Vector3 pos = t.position;
+			// We want to ignore the scale, as scale doesn't affect the camera's view region in Unity
+			Transform t = cam.transform;
+			Quaternion rot = t.rotation;
+			Vector3 pos = t.position;
 
-		mSides[0] = rot * (new Vector3(x0, y0, depth)) + pos;
-		mSides[1] = rot * (new Vector3(x0, y1, depth)) + pos;
-		mSides[2] = rot * (new Vector3(x1, y1, depth)) + pos;
-		mSides[3] = rot * (new Vector3(x1, y0, depth)) + pos;
+			mSides[0] = rot * (new Vector3(x0, y0, depth)) + pos;
+			mSides[1] = rot * (new Vector3(x0, y1, depth)) + pos;
+			mSides[2] = rot * (new Vector3(x1, y1, depth)) + pos;
+			mSides[3] = rot * (new Vector3(x1, y0, depth)) + pos;
+		}
+		else
+		{
+			mSides[0] = cam.ViewportToWorldPoint(new Vector3(0f, 0f, depth));
+			mSides[1] = cam.ViewportToWorldPoint(new Vector3(0f, 1f, depth));
+			mSides[2] = cam.ViewportToWorldPoint(new Vector3(1f, 1f, depth));
+			mSides[3] = cam.ViewportToWorldPoint(new Vector3(1f, 0f, depth));
+		}
 
 		if (relativeTo != null)
 		{

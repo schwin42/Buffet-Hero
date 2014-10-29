@@ -473,9 +473,13 @@ public class InterfaceController : MonoBehaviour {
 			}
 			break;
 		case GameUiState.Stats2:
-			string tastiestFoodName = "";
-			string tastiestFoodValue = "";
+			string tastiestFoodName = GameController.Instance.tastiestFood.Name;
+			string tastiestFoodValue = GameController.Instance.tastiestFood.Quality.ToString();
 			string tastiestFoodEatenBy = "";
+			foreach(Player player in GameController.Instance.tastiestFoodEatenBy)
+			{
+
+			}
 			string grossestFoodName = "";
 			string grossestFoodValue = "";
 			string grossestFoodEatenBy = "";
