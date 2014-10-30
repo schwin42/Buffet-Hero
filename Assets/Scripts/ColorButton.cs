@@ -50,6 +50,7 @@ public class ColorButton : MonoBehaviour {
 	{
 		sprite.height = pressedHeight;
 		sprite.spriteName = pressedSprite;
+		sprite.color = scheme.highlightedColor;
 		isDown = true;
 
 	}
@@ -58,6 +59,7 @@ public class ColorButton : MonoBehaviour {
 	{
 		sprite.height = normalHeight;
 		sprite.spriteName = normalSprite;
+		sprite.color = scheme.defaultColor;
 		isDown = false;
 	}
 

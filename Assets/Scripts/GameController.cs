@@ -82,6 +82,8 @@ public class GameController : MonoBehaviour {
 		formQueue = GetShuffledAttributes(AttributeType.Form);
 
 		possiblePlayers = GetComponentsInChildren<Player>().ToList();
+
+		InterfaceController.Instance.InitializeInterface();
 	}
 
 	// Use this for initialization
@@ -91,7 +93,7 @@ public class GameController : MonoBehaviour {
 		Advertisement.Initialize ("18656");
 		currentPhase = Phase.Pregame;
 		UserDatabase.Instance.LoadUserData();
-		InterfaceController.Instance.InitializeInterface();
+
 
 	}
 	
@@ -512,12 +514,18 @@ public class GameController : MonoBehaviour {
 			if(player.playerChoice == PlayerChoice.Eat) //if player chose to eat
 			{
 				eatingPlayers.Add (player);
-				if(i == 0)
+				if(quickestPlayerOfRound == null)
 				{
+					Debug.Log (player+" assigned as quickest player of round.");
 					quickestPlayerOfRound = player;
 				} else {
+					Debug.Log (quickestPlayerOfRound);
+					Debug.Log (player);
+					Debug.Log (quickestPlayerOfRound.lastChoiceTimeElapsed);
+					Debug.Log (player.lastChoiceTimeElapsed);
 					if(player.lastChoiceTimeElapsed < quickestPlayerOfRound.lastChoiceTimeElapsed)
 					{
+						Debug.Log ("i != 0. Quickest player assigned: "+player);
 						quickestPlayerOfRound = player;
 					}
 				}

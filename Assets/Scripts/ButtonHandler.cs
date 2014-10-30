@@ -2,6 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 
+public interface IPlayerAssignable
+{
+	void SetPlayer(Player player);
+}
+
 public enum ButtonAction
 {
 	None = 0,
@@ -27,7 +32,7 @@ public enum ButtonAction
 	LeaveGame = 21
 }
 
-public class ButtonHandler : MonoBehaviour {
+public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 
 
 	public bool isPlayerButton = true;
@@ -63,8 +68,8 @@ public class ButtonHandler : MonoBehaviour {
 //			i++;
 //		}
 		//Debug.Log ("Unable to find player for : "+gameObject.name+", i="+i, gameObject);
-		Debug.Log("Sending"+gameObject.name+" upwards"+isPlayerButton);
-		if(isPlayerButton) SendMessageUpwards("AssignPlayerToButton", this);
+		//Debug.Log("Sending"+gameObject.name+" upwards"+isPlayerButton);
+		if(isPlayerButton) SendMessageUpwards("AssignPlayerToInterface", this);
 	}
 	
 	// Update is called once per frame
@@ -74,7 +79,7 @@ public class ButtonHandler : MonoBehaviour {
 
 	public void OnClick()
 	{
-		//Debug.Log ("Click @" + GameController.Instance.currentRound);
+		Debug.Log ("Click @" + GameController.Instance.currentRound);
 		if(buttonAction != ButtonAction.Next){
 		AudioController.Instance.PlaySound(SoundEffect.Click);
 		}
@@ -173,5 +178,10 @@ public class ButtonHandler : MonoBehaviour {
 			Debug.LogError("Invalid button action: "+buttonAction);
 			break;
 		}
+	}
+
+	public void SetPlayer(Player returnedPlayer)
+	{
+		player = returnedPlayer;
 	}
 }

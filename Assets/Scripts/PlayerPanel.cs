@@ -28,18 +28,21 @@ public class PlayerPanel : MonoBehaviour {
 	
 	}
 
-	public void AssignPlayerToButton(ButtonHandler buttonHandler)
+	public void AssignPlayerToInterface(IPlayerAssignable iPlayerAssignable) 
+	//	ButtonHandler buttonHandler)
 	{
 		if(player != null)
 		{
-		buttonHandler.player = player;
+			iPlayerAssignable.SetPlayer(player);
+		//buttonHandler.player = player;
 		} else {
+			Debug.Log ("Not ideal activity for AssignPlayer");
 			//Handle case in which the player is requested before it is assigned from possible players in start
-			StartCoroutine("WaitForPlayerThenAssign", buttonHandler);
+			StartCoroutine("WaitForPlayerThenAssign", iPlayerAssignable);
 		}
 	}
 
-	IEnumerator WaitForPlayerThenAssign (ButtonHandler buttonHandler)
+	IEnumerator WaitForPlayerThenAssign (IPlayerAssignable iPlayerAssignable)
 	{
 		//Debug.Log ("Coroutine");
 		while (player == null)
@@ -48,7 +51,7 @@ public class PlayerPanel : MonoBehaviour {
 			yield return 0;
 		}
 
-		buttonHandler.player = player;
+		iPlayerAssignable.SetPlayer(player);;
 	}
 
 	public void SetPanelColor(ColorScheme scheme)

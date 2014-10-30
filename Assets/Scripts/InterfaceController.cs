@@ -50,7 +50,18 @@ public enum PopupUiState
 
 public class InterfaceController : MonoBehaviour {
 
-	public static InterfaceController Instance;
+	private static InterfaceController _instance;
+	public static InterfaceController Instance
+	{
+		get
+		{
+			if(_instance == null)
+			{
+			_instance = GameObject.FindObjectOfType<InterfaceController>();
+			}
+			return _instance;
+		}
+	}
 
 	//Inspector
 		//Configurable
@@ -141,7 +152,7 @@ public class InterfaceController : MonoBehaviour {
 
 	void Awake()
 	{
-		Instance = this;
+		_instance = this;
 	}
 
 	// Use this for initialization
