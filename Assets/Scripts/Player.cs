@@ -219,8 +219,8 @@ public class Player : MonoBehaviour {
 	public UISprite trayBacker;
 
 		//Entry state
-	public UIButton humanButton;
-	public UIButton computerButton;
+	public UISprite humanButton;
+	public UISprite computerButton;
 	public UILabel humanButtonLabel;
 	public UILabel computerButtonLabel;
 	public UILabel entryNameField;
@@ -407,8 +407,8 @@ public class Player : MonoBehaviour {
 		trayBacker = playerPanelUi.transform.Find("Backer").GetComponent<UISprite>();
 
 		//Entry
-		humanButton = playerPanelUi.transform.Find("EntryWidget/ButtonHuman").GetComponent<UIButton>();
-		computerButton = playerPanelUi.transform.Find("EntryWidget/ButtonComputer").GetComponent<UIButton>();
+		humanButton = playerPanelUi.transform.Find("EntryWidget/ButtonHuman").GetComponent<UISprite>();
+		computerButton = playerPanelUi.transform.Find("EntryWidget/ButtonComputer").GetComponent<UISprite>();
 		humanButtonLabel = playerPanelUi.transform.Find("EntryWidget/ButtonHuman/Label").GetComponent<UILabel>();
 		computerButtonLabel = playerPanelUi.transform.Find("EntryWidget/ButtonComputer/Label").GetComponent<UILabel>();
 		entryNameField = playerPanelUi.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();

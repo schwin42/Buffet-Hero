@@ -12,8 +12,11 @@ public class ColorButton : MonoBehaviour {
 	static string normalSprite = "grey_button07";
 	static string pressedSprite = "grey_button11";
 
+	//Status
+	public bool isDown = false;
+
 	//Instance
-	public Color color;
+	public ColorScheme scheme;
 
 	// Use this for initialization
 	void Start () {
@@ -47,6 +50,7 @@ public class ColorButton : MonoBehaviour {
 	{
 		sprite.height = pressedHeight;
 		sprite.spriteName = pressedSprite;
+		isDown = true;
 
 	}
 
@@ -54,6 +58,7 @@ public class ColorButton : MonoBehaviour {
 	{
 		sprite.height = normalHeight;
 		sprite.spriteName = normalSprite;
+		isDown = false;
 	}
 
 //	public void OnRelease ()

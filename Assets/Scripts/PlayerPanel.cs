@@ -9,7 +9,7 @@ public class PlayerPanel : MonoBehaviour {
 	public UISprite backer;
 
 	//Instance
-	public Color playerColor;
+	public ColorScheme playerScheme;
 
 
 	void Awake()
@@ -51,10 +51,10 @@ public class PlayerPanel : MonoBehaviour {
 		buttonHandler.player = player;
 	}
 
-	public void SetPanelColor(Color color)
+	public void SetPanelColor(ColorScheme scheme)
 	{
-		playerColor = color;
-		backer.color = color;
+		playerScheme = scheme;
+		backer.color = scheme.defaultColor;
 		InterfaceController.Instance.HighlightControlType(player);
 	}
 }

@@ -16,8 +16,9 @@ public class ColorSelect : MonoBehaviour {
 	void Start () {
 	
 		//Debug.Log ("Starting");
-		foreach(Color color in InterfaceController.Instance.playerTrayColors)
+		foreach(ColorScheme scheme in InterfaceController.Instance.playerSchemes)
 		{
+			Color color = scheme.defaultColor;
 			//Debug.Log ("for loop");
 			//Debug.Log (colorButtonPrefab);
 			GameObject colorButton = Instantiate(colorButtonPrefab) as GameObject;
@@ -27,7 +28,7 @@ public class ColorSelect : MonoBehaviour {
 			colorButton.transform.localScale = Vector3.one;
 			UISprite sprite = colorButton.GetComponent<UISprite>();
 			sprite.color = color;
-			colorButton.GetComponent<ColorButton>().color = color;
+			colorButton.GetComponent<ColorButton>().scheme = scheme;
 
 		}
 		grid.repositionNow = true;
@@ -46,6 +47,6 @@ public class ColorSelect : MonoBehaviour {
 			selectedButton.Up ();
 		}
 		selectedButton = colorButton;
-		SendMessageUpwards("SetPanelColor", selectedButton.color);
+		SendMessageUpwards("SetPanelColor", selectedButton.scheme);
 	}
 }

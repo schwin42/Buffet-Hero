@@ -31,6 +31,13 @@ public enum GameUiState
 }
 
 [System.Serializable]
+public class ColorScheme
+{
+	public Color defaultColor;
+	public Color highlightedColor;
+}
+
+[System.Serializable]
 public enum PopupUiState
 {
 	Uninitialized = -1,
@@ -58,7 +65,8 @@ public class InterfaceController : MonoBehaviour {
 	public Color neutralDarkColor;
 	//public Color[] colors; 
 	public Color[] letterRankColors = new Color[7];
-	public Color[] playerTrayColors = new Color[4]; //Red, yellow, green, blue
+	//public Color[] playerTrayColors = new Color[4]; //Red, yellow, green, blue
+	public ColorScheme[] playerSchemes = new ColorScheme[6];
 	public Color[] highlightColors = new Color[4];
 	public Color activeMenuItemColor;
 	public Color inactiveMenuItemColor;
@@ -643,16 +651,16 @@ Debug.Log("Query greater than 0");
 		Debug.Log (player);
 		if(player.controlType == ControlType.Human)
 		{
-			player.humanButton.defaultColor = player.playerPanelScript.playerColor;
+			player.humanButton.color = player.playerPanelScript.playerScheme.highlightedColor;
 			//	highlightColors[player.playerId];
-			player.computerButton.defaultColor = neutralLightColor;
+			player.computerButton.color = neutralLightColor;
 			player.humanButtonLabel.color = neutralLightColor;
 			player.computerButtonLabel.color = neutralDarkColor;
 		} else if(player.controlType == ControlType.Computer)
 		{
-			player.computerButton.defaultColor = player.playerPanelScript.playerColor;
+			player.computerButton.color = player.playerPanelScript.playerScheme.highlightedColor;
 			//	highlightColors[player.playerId];
-			player.humanButton.defaultColor = neutralLightColor;
+			player.humanButton.color = neutralLightColor;
 			player.computerButtonLabel.color = neutralLightColor;
 			player.humanButtonLabel.color = neutralDarkColor;
 		} else {
@@ -674,7 +682,7 @@ Debug.Log("Query greater than 0");
 			Player player = GameController.Instance.possiblePlayers[i];
 			player.EnableUi();
 			//player.trayBacker.color = playerTrayColors[player.playerId];
-			player.playerPanelScript.SetPanelColor(playerTrayColors[player.playerId]);
+			player.playerPanelScript.SetPanelColor(playerSchemes[player.playerId]);
 
 			//Start player FSMs
 			SetPlayerUiState(player, PlayerUiState.Join);
