@@ -46,10 +46,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\AdController.cs" />
-     <Compile Include="Assets\ColorButton.cs" />
-     <Compile Include="Assets\ColorSelect.cs" />
-     <Compile Include="Assets\InputHandler.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipItems.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipRandomItem.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UICursor.cs" />
@@ -186,20 +182,22 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UITexture.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
-     <Compile Include="Assets\NewProfile.cs" />
-     <Compile Include="Assets\PlayerPanel.cs" />
-     <Compile Include="Assets\ProfileMenuHandler.cs" />
-     <Compile Include="Assets\ProfileMenuItem.cs" />
      <Compile Include="Assets\Scripts\AudioController.cs" />
      <Compile Include="Assets\Scripts\ButtonHandler.cs" />
+     <Compile Include="Assets\Scripts\ColorButton.cs" />
+     <Compile Include="Assets\Scripts\ColorSelect.cs" />
      <Compile Include="Assets\Scripts\Database.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
+     <Compile Include="Assets\Scripts\InputHandler.cs" />
      <Compile Include="Assets\Scripts\InterfaceController.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\PlayerPanel.cs" />
+     <Compile Include="Assets\Scripts\ProfileMenuHandler.cs" />
+     <Compile Include="Assets\Scripts\ProfileMenuItem.cs" />
      <Compile Include="Assets\Scripts\Restaurant.cs" />
+     <Compile Include="Assets\Scripts\ToggleRule.cs" />
      <Compile Include="Assets\Scripts\Tools.cs" />
      <Compile Include="Assets\Scripts\UserDatabase.cs" />
-     <Compile Include="Assets\ToggleRule.cs" />
      <Compile Include="Assets\UnityAds\Advertisement.cs" />
      <Compile Include="Assets\UnityAds\Advertisements\Adapter.cs" />
      <Compile Include="Assets\UnityAds\Advertisements\DeviceInfo\DeviceInfo.cs" />
@@ -242,7 +240,6 @@
      <Compile Include="Assets\UnityAds\Advertisements\VideoAds\VideoAdAdapter.cs" />
      <Compile Include="Assets\UnityAds\ShowOptions.cs" />
      <Compile Include="Assets\UnityAds\ShowResult.cs" />
-     <Compile Include="Assets\UpdateVersion.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.6.8.txt" />
      <None Include="Assets\Plugins\Android\unityads\proguard-project.txt" />

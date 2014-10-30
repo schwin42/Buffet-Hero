@@ -103,7 +103,7 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public Color playerColor;
+	//public Color playerColor;
 
 	public ControlType controlType = ControlType.Human;
 
@@ -213,13 +213,16 @@ public class Player : MonoBehaviour {
 	public UIWidget[] stateWidgets = new UIWidget[5];
 
 	//UI
-	public UIPanel playerPanel;
+	public UIPanel playerPanelUi;
+	public PlayerPanel playerPanelScript;
 
 	public UISprite trayBacker;
 
 		//Entry state
 	public UIButton humanButton;
 	public UIButton computerButton;
+	public UILabel humanButtonLabel;
+	public UILabel computerButtonLabel;
 	public UILabel entryNameField;
 
 		//Game state
@@ -394,40 +397,44 @@ public class Player : MonoBehaviour {
 
 	public void EnableUi()
 	{
-		playerPanel = GameObject.Find ("UI Root/Camera/PanelPlayer"+playerId).GetComponent<UIPanel>();
+		playerPanelUi = GameObject.Find ("UI Root/Camera/PanelPlayer"+playerId).GetComponent<UIPanel>();
+		playerPanelScript = playerPanelUi.GetComponent<PlayerPanel>();
+		playerPanelScript.player = GameController.Instance.possiblePlayers[int.Parse(gameObject.name[gameObject.name.Length - 1].ToString())];
 
 		//UI
 
 		//General
-		trayBacker = playerPanel.transform.Find("Backer").GetComponent<UISprite>();
+		trayBacker = playerPanelUi.transform.Find("Backer").GetComponent<UISprite>();
 
 		//Entry
-		humanButton = playerPanel.transform.Find("EntryWidget/ButtonHuman").GetComponent<UIButton>();
-		computerButton = playerPanel.transform.Find("EntryWidget/ButtonComputer").GetComponent<UIButton>();
-		entryNameField = playerPanel.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();
+		humanButton = playerPanelUi.transform.Find("EntryWidget/ButtonHuman").GetComponent<UIButton>();
+		computerButton = playerPanelUi.transform.Find("EntryWidget/ButtonComputer").GetComponent<UIButton>();
+		humanButtonLabel = playerPanelUi.transform.Find("EntryWidget/ButtonHuman/Label").GetComponent<UILabel>();
+		computerButtonLabel = playerPanelUi.transform.Find("EntryWidget/ButtonComputer/Label").GetComponent<UILabel>();
+		entryNameField = playerPanelUi.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();
 
 
 
 		//Game
-		eatButton = playerPanel.transform.FindChild("GameWidget/Eat").GetComponent<ButtonHandler>();
-		passButtton = playerPanel.transform.FindChild("GameWidget/Pass").GetComponent<ButtonHandler>();
+		eatButton = playerPanelUi.transform.FindChild("GameWidget/Eat").GetComponent<ButtonHandler>();
+		passButtton = playerPanelUi.transform.FindChild("GameWidget/Pass").GetComponent<ButtonHandler>();
 		eatButton.player = this;
 		passButtton.player = this;
-		hpLabel = playerPanel.transform.FindChild("GameWidget/FieldBacker/LabelHPDisplay").GetComponent<UILabel>();
-		rankingLabel = playerPanel.transform.FindChild("GameWidget/FieldBacker/Ranking").GetComponent<UILabel>();
-		scoreLabel = playerPanel.transform.FindChild("GameWidget/FieldBacker/LabelScoreDisplay").GetComponent<UILabel>();
-		updateHpLabel = playerPanel.transform.FindChild("GameWidget/AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
-		updateScoreLabel = playerPanel.transform.FindChild("GameWidget/AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
-		playerNameLabelGame = playerPanel.transform.Find ("GameWidget/LabelPlayer").GetComponent<UILabel>();
+		hpLabel = playerPanelUi.transform.FindChild("GameWidget/FieldBacker/LabelHPDisplay").GetComponent<UILabel>();
+		rankingLabel = playerPanelUi.transform.FindChild("GameWidget/FieldBacker/Ranking").GetComponent<UILabel>();
+		scoreLabel = playerPanelUi.transform.FindChild("GameWidget/FieldBacker/LabelScoreDisplay").GetComponent<UILabel>();
+		updateHpLabel = playerPanelUi.transform.FindChild("GameWidget/AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
+		updateScoreLabel = playerPanelUi.transform.FindChild("GameWidget/AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
+		playerNameLabelGame = playerPanelUi.transform.Find ("GameWidget/LabelPlayer").GetComponent<UILabel>();
 
 
 		//Acquire state widgets
 		//UIWidget[] stateWidgets = new UIWidget[4];
-		stateWidgets[0] = playerPanel.transform.Find ("JoinWidget").GetComponent<UIWidget>();
-		stateWidgets[1] = playerPanel.transform.Find ("EntryWidget").GetComponent<UIWidget>();
-		stateWidgets[2] = playerPanel.transform.Find ("ReadyWidget").GetComponent<UIWidget>();
-		stateWidgets[3] = playerPanel.transform.Find ("GameWidget").GetComponent<UIWidget>();
-		stateWidgets[4] = playerPanel.transform.Find ("InactiveWidget").GetComponent<UIWidget>(); //Dummy widget
+		stateWidgets[0] = playerPanelUi.transform.Find ("JoinWidget").GetComponent<UIWidget>();
+		stateWidgets[1] = playerPanelUi.transform.Find ("EntryWidget").GetComponent<UIWidget>();
+		stateWidgets[2] = playerPanelUi.transform.Find ("ReadyWidget").GetComponent<UIWidget>();
+		stateWidgets[3] = playerPanelUi.transform.Find ("GameWidget").GetComponent<UIWidget>();
+		stateWidgets[4] = playerPanelUi.transform.Find ("InactiveWidget").GetComponent<UIWidget>(); //Dummy widget
 		//stateWidgets = stateWidgets;
 
 		

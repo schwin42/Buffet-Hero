@@ -63,6 +63,7 @@ public class ButtonHandler : MonoBehaviour {
 //			i++;
 //		}
 		//Debug.Log ("Unable to find player for : "+gameObject.name+", i="+i, gameObject);
+		Debug.Log("Sending"+gameObject.name+" upwards"+isPlayerButton);
 		if(isPlayerButton) SendMessageUpwards("AssignPlayerToButton", this);
 	}
 	

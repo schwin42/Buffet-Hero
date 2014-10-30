@@ -12,6 +12,9 @@ public class ColorButton : MonoBehaviour {
 	static string normalSprite = "grey_button07";
 	static string pressedSprite = "grey_button11";
 
+	//Instance
+	public Color color;
+
 	// Use this for initialization
 	void Start () {
 	

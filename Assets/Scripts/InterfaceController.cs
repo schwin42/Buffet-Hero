@@ -640,18 +640,21 @@ Debug.Log("Query greater than 0");
 
 	public void HighlightControlType(Player player)
 	{
+		Debug.Log (player);
 		if(player.controlType == ControlType.Human)
 		{
-			player.humanButton.defaultColor = highlightColors[player.playerId];
+			player.humanButton.defaultColor = player.playerPanelScript.playerColor;
+			//	highlightColors[player.playerId];
 			player.computerButton.defaultColor = neutralLightColor;
-			player.humanButton.GetComponentInChildren<UILabel>().color = neutralLightColor;
-			player.computerButton.GetComponentInChildren<UILabel>().color = neutralDarkColor;
+			player.humanButtonLabel.color = neutralLightColor;
+			player.computerButtonLabel.color = neutralDarkColor;
 		} else if(player.controlType == ControlType.Computer)
 		{
-			player.computerButton.defaultColor = highlightColors[player.playerId];
+			player.computerButton.defaultColor = player.playerPanelScript.playerColor;
+			//	highlightColors[player.playerId];
 			player.humanButton.defaultColor = neutralLightColor;
-			player.computerButton.GetComponentInChildren<UILabel>().color = neutralLightColor;
-			player.humanButton.GetComponentInChildren<UILabel>().color = neutralDarkColor;
+			player.computerButtonLabel.color = neutralLightColor;
+			player.humanButtonLabel.color = neutralDarkColor;
 		} else {
 			Debug.LogError ("Something bad happened");
 		}
@@ -670,8 +673,9 @@ Debug.Log("Query greater than 0");
 		{
 			Player player = GameController.Instance.possiblePlayers[i];
 			player.EnableUi();
-			player.trayBacker.color = playerTrayColors[player.playerId];
-			
+			//player.trayBacker.color = playerTrayColors[player.playerId];
+			player.playerPanelScript.SetPanelColor(playerTrayColors[player.playerId]);
+
 			//Start player FSMs
 			SetPlayerUiState(player, PlayerUiState.Join);
 			
