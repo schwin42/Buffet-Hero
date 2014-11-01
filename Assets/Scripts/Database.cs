@@ -264,6 +264,7 @@ public class Tag
 	public string tagType = "";
 	public float value = 0f;
 	public float magnitude = 0f;
+	public int absolute = 0;
 	public float[] damageRange = new float[] {0, 0};
 	public float price = 0f;
 	public float calories = 0f;
@@ -529,6 +530,9 @@ public class Database : MonoBehaviour {
 							break;
 						case "HelpTag":
 							recordTag.helpTag = recordStrings[j];
+							break;
+						case "Absolute":
+							recordTag.absolute = int.Parse(recordStrings[j]);
 							break;
 					default:
 						Debug.LogError ("Unhandled tag name: "+fieldLookup[j]);

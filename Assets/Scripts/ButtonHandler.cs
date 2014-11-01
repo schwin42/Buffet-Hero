@@ -20,6 +20,7 @@ public enum ButtonAction
 	ConfirmEntry = 8,
 	Stats0Screen = 10,
 	Stats1Screen = 11,
+	Stats2Screen = 22,
 	JoinScreen = 12,
 	ClearUserData = 13,
 	SettingsScreen = 14,
@@ -144,6 +145,9 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 			break;
 		case ButtonAction.Stats1Screen:
 			InterfaceController.Instance.SetGameUiState(GameUiState.Stats1);
+			break;
+		case ButtonAction.Stats2Screen:
+			InterfaceController.Instance.SetGameUiState(GameUiState.Stats2);
 			break;
 		case ButtonAction.JoinScreen:
 			InterfaceController.Instance.SetGameUiState(GameUiState.Join);
