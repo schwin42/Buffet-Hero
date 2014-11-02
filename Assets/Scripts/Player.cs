@@ -464,7 +464,7 @@ public class Player : MonoBehaviour {
 			if(matchingProfile != null)
 			{
 				ProfileInstance = matchingProfile;
-				Debug.Log ("Existing profile: "+ProfileInstance.playerName+" set to player id:"+playerId);
+				//Debug.Log ("Existing profile: "+ProfileInstance.playerName+" set to player id:"+playerId);
 			} else {
 		Debug.Log (profileStringId + " not found, creating new profile.");
 			ProfileInstance = UserDatabase.Instance.AddNewProfile(profileStringId);

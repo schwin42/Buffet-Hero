@@ -516,16 +516,16 @@ public class GameController : MonoBehaviour {
 				eatingPlayers.Add (player);
 				if(quickestPlayerOfRound == null)
 				{
-					Debug.Log (player+" assigned as quickest player of round.");
+					Debug.Log (player+" assigned as first quickest player of round. @"+Time.frameCount);
 					quickestPlayerOfRound = player;
 				} else {
-					Debug.Log (quickestPlayerOfRound);
-					Debug.Log (player);
-					Debug.Log (quickestPlayerOfRound.lastChoiceTimeElapsed);
-					Debug.Log (player.lastChoiceTimeElapsed);
+					//Debug.Log (quickestPlayerOfRound);
+					//Debug.Log (player);
+					//Debug.Log (quickestPlayerOfRound.lastChoiceTimeElapsed);
+					//Debug.Log (player.lastChoiceTimeElapsed);
 					if(player.lastChoiceTimeElapsed < quickestPlayerOfRound.lastChoiceTimeElapsed)
 					{
-						Debug.Log ("i != 0. Quickest player assigned: "+player);
+						Debug.Log ("i != 0. Quickest player assigned: "+player+"@"+Time.frameCount);
 						quickestPlayerOfRound = player;
 					}
 				}
@@ -573,6 +573,7 @@ public class GameController : MonoBehaviour {
 					tastiestFoodEatenBy = eatingPlayers;
 					grossestFood = activeFood;
 					grossestFoodEatenBy = eatingPlayers;
+				Debug.Log("First assigned to quickest @"+Time.frameCount);
 					quickestNab = activeFood;
 					quickestNabEatenBy = quickestPlayerOfRound;
 					quickestNabTime = quickestPlayerOfRound.lastChoiceTimeElapsed;
@@ -590,6 +591,8 @@ public class GameController : MonoBehaviour {
 					}
 				if(quickestPlayerOfRound.lastChoiceTimeElapsed < quickestNabTime)
 				{
+					Debug.Log ("Replacing old quickest time: " + quickestNabEatenBy.ProfileInstance.playerName +", "+quickestNabTime+", "+quickestNab.Name+" @"+Time.frameCount);
+					Debug.Log ("New fastest time: "+quickestPlayerOfRound.ProfileInstance.playerName+" @"+quickestPlayerOfRound.lastChoiceTimeElapsed);
 					quickestNabEatenBy = quickestPlayerOfRound;
 					quickestNabTime = quickestPlayerOfRound.lastChoiceTimeElapsed;
 					quickestNab = activeFood;

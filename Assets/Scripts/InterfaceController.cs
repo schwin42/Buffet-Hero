@@ -494,15 +494,20 @@ public class InterfaceController : MonoBehaviour {
 			}
 			break;
 		case GameUiState.Stats2:
+
+			//Cache colors
+			string neutralDarkTag = HexTag(neutralDarkColor);
+
+			//Acquire/ generate dynamic text strings
 			string tastiestFoodName = GameController.Instance.tastiestFood.Name;
 			string tastiestFoodValue = GameController.Instance.tastiestFood.Quality.ToString();
-			string tastiestFoodEatenBy = GetFormattedPlayerString(GameController.Instance.tastiestFoodEatenBy);
+			string tastiestFoodEatenBy = GetFormattedPlayerString(GameController.Instance.tastiestFoodEatenBy, neutralDarkTag);
 			string grossestFoodName = GameController.Instance.grossestFood.Name;
 			string grossestFoodValue = GameController.Instance.grossestFood.Quality.ToString();
-			string grossestFoodEatenBy = GetFormattedPlayerString(GameController.Instance.grossestFoodEatenBy);
-			string quickestNabFood = GameController.Instance.quickestNab.ToString();
-			string quickestNabTime = GameController.Instance.quickestNabTime.ToString();
-			string quickestNabEatenBy = GetFormattedPlayerString(GameController.Instance.quickestNabEatenBy);
+			string grossestFoodEatenBy = GetFormattedPlayerString(GameController.Instance.grossestFoodEatenBy, neutralDarkTag);
+			string quickestNabFood = GameController.Instance.quickestNab.Name.ToString();
+			string quickestNabTime = GameController.Instance.quickestNabTime.ToString("F2");
+			string quickestNabEatenBy = GetFormattedPlayerString(GameController.Instance.quickestNabEatenBy, neutralDarkTag);
 			List<Player> foodSortedPlayers = GameController.Instance.registeredPlayers.OrderByDescending(player => player.plate.foods.Count).ToList();
 			int mostFoodsEaten = foodSortedPlayers[0].plate.foods.Count;
 			int leastFoodsEaten = foodSortedPlayers[foodSortedPlayers.Count - 1].plate.foods.Count;
@@ -517,20 +522,21 @@ public class InterfaceController : MonoBehaviour {
 				}
 			}
 			string mostFoodsQuantity = mostFoodsEaten.ToString();
-			string mostFoodsEatenBy = GetFormattedPlayerString(mostFoodsEatenByList);
+			string mostFoodsEatenBy = GetFormattedPlayerString(mostFoodsEatenByList, neutralDarkTag);
 			List<Player> leastFoodsEatenByList = new List<Player>();
 			for (int i = foodSortedPlayers.Count - 1; i >= 0; i--)
 			{
 				if(foodSortedPlayers[i].plate.foods.Count == leastFoodsEaten)
 				{
-					mostFoodsEatenByList.Add (foodSortedPlayers[i]);
+					leastFoodsEatenByList.Add (foodSortedPlayers[i]);
 				} else {
 					break;
 				}
 			}
 			string leastFoodsQuantity = leastFoodsEaten.ToString();
-			string leastFoodsEatenBy = GetFormattedPlayerString(leastFoodsEatenByList);
-			string neutralDarkTag = HexTag(neutralDarkColor);
+			string leastFoodsEatenBy = GetFormattedPlayerString(leastFoodsEatenByList, neutralDarkTag);
+
+			//Combine dynamic strings with static structure to produce output string
 			string outputString = string.Format(
 				neutralDarkTag+
 				"Tastiest Food - {0} ({1}) - {2}\n"+
@@ -576,12 +582,12 @@ public class InterfaceController : MonoBehaviour {
 		currentGameState = targetState;
 	}
 
-	string GetFormattedPlayerString(Player player)
+	string GetFormattedPlayerString(Player player, string closingHexTag)
 	{
-		return HexTag(player.playerPanelScript.playerScheme.defaultColor)+player.ProfileInstance.playerName;
+		return HexTag(player.playerPanelScript.playerScheme.defaultColor)+player.ProfileInstance.playerName + closingHexTag;
 	}
 
-	string GetFormattedPlayerString(List<Player> players)
+	string GetFormattedPlayerString(List<Player> players, string closingHexTag)
 	{
 		string outputString = "";
 		for(int i = 0; i < players.Count; i++)
@@ -592,6 +598,8 @@ public class InterfaceController : MonoBehaviour {
 			if(i != players.Count - 1)
 			{
 				outputString += " ";
+			} else {
+				outputString += closingHexTag;
 			}
 			
 		}
