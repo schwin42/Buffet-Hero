@@ -543,7 +543,7 @@ public class InterfaceController : MonoBehaviour {
 				neutralDarkTag+
 				"Grossest Food - {3} ({4}) - {5}\n"+
 				neutralDarkTag+
-				"Quickest Nab - {6} ({7}) - {8}\n"+
+				"Quickest Nab - {6} - {8} in {7} seconds\n"+
 				neutralDarkTag+
 				"Most Foods Eaten - {9} with {10}\n"+
 				neutralDarkTag+
@@ -595,6 +595,7 @@ public class InterfaceController : MonoBehaviour {
 			Player player = players[i];
 
 			outputString += HexTag(player.playerPanelScript.playerScheme.defaultColor)+player.ProfileInstance.playerName;
+
 			if(i != players.Count - 1)
 			{
 				outputString += " ";

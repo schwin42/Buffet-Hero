@@ -26,9 +26,12 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 			startFromRightSide = true;
 			break;
 		case 1:
+		//	Debug.Log ("Player 1 reached");
 			if(elements.Count == 3)
 			{
+		//		Debug.Log("3 elements");
 			elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
+				StartCoroutine("BandAidFix");
 			}
 			break;
 		case 2:
@@ -83,5 +86,11 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 	public void SetPlayer(Player returnedPlayer)
 	{
 		player = returnedPlayer;
+	}
+
+	IEnumerator BandAidFix()
+	{
+		yield return 0;
+		elements[2].transform.localEulerAngles = new Vector3(0, 0, 0);
 	}
 }

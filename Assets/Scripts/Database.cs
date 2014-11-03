@@ -86,13 +86,28 @@ public class Food
 				//Debug.Log ("Quality not set.");
 			float netValue = 0f;
 			float netMagnitude = 0f;
+			int netAbsolute = 0;
 			foreach(Tag tag in Tags)
 			{
 				netValue += tag.value;
 				netMagnitude += tag.magnitude;
+				netAbsolute += tag.absolute;
 			}
 			//Debug.Log ("Net value, magnitude"+netValue + ", "+ netMagnitude);
-			float staticValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
+			float preAbsoluteValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
+					float staticValue = 0f;
+					if(netAbsolute == 0)
+					{
+						staticValue = preAbsoluteValue;
+					} else if(netAbsolute > 0)
+					{
+						staticValue = Mathf.Abs(preAbsoluteValue);
+					} else if(netAbsolute < 0)
+					{
+						staticValue = -Mathf.Abs(preAbsoluteValue);
+					} else {
+						Debug.LogError("Logic breach, repent!");
+					}
 				float output = 0f;
 				if(GameController.RandomConstant != 0f)
 			{
