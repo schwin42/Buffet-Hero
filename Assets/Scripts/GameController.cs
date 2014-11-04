@@ -343,6 +343,7 @@ public class GameController : MonoBehaviour {
 	{
 		//Debug.Log ("Get random food @" + currentRound);
 		Food food = new Food();
+		food.isEmpty = false;
 
 		food.attributes.Add (GetRandomAttributeFromQueue(AttributeType.Form));
 		food.attributes.Add (GetRandomAttributeFromQueue(AttributeType.Ingredient));
@@ -356,6 +357,7 @@ public class GameController : MonoBehaviour {
 	{
 		//Debug.Log ("Get random food @" + currentRound);
 		Food food = new Food();
+		food.isEmpty = false;
 		
 		food.attributes.Add (GetRandomAttributeFromData(AttributeType.Form));
 		food.attributes.Add (GetRandomAttributeFromData(AttributeType.Ingredient));
@@ -541,11 +543,11 @@ public class GameController : MonoBehaviour {
 
 				//Eat, update profile
 				player.ProfileInstance.foodsEaten++;
-				if(activeFood.Quality > player.ProfileInstance.tastiestFoodEaten.Quality || player.ProfileInstance.tastiestFoodEaten.attributes.Count == 0)
+				if(player.ProfileInstance.tastiestFoodEaten.isEmpty || activeFood.Quality > player.ProfileInstance.tastiestFoodEaten.Quality)
 				{
 					player.ProfileInstance.tastiestFoodEaten = activeFood;
 				} 
-				if (activeFood.Quality < player.ProfileInstance.grossestFoodEaten.Quality || player.ProfileInstance.grossestFoodEaten.attributes.Count == 0)
+				if (player.ProfileInstance.grossestFoodEaten.isEmpty || activeFood.Quality < player.ProfileInstance.grossestFoodEaten.Quality)
 				{
 					player.ProfileInstance.grossestFoodEaten = activeFood;
 				}
@@ -553,11 +555,11 @@ public class GameController : MonoBehaviour {
 			} else {
 
 				//Didn't eat, update profile
-				if(activeFood.Quality > player.ProfileInstance.tastiestFoodMissed.Quality  || player.ProfileInstance.tastiestFoodMissed.attributes.Count == 0)
+				if(player.ProfileInstance.tastiestFoodMissed.isEmpty || activeFood.Quality > player.ProfileInstance.tastiestFoodMissed.Quality)
 				{
 					player.ProfileInstance.tastiestFoodMissed = activeFood;
 				}
-				if (activeFood.Quality < player.ProfileInstance.grossestFoodMissed.Quality || player.ProfileInstance.grossestFoodMissed.attributes.Count == 0)
+				if (player.ProfileInstance.grossestFoodMissed.isEmpty || activeFood.Quality < player.ProfileInstance.grossestFoodMissed.Quality)
 				{
 					player.ProfileInstance.grossestFoodMissed = activeFood;
 				}
@@ -567,7 +569,7 @@ public class GameController : MonoBehaviour {
 		//Update running stats for match
 			if(eatingPlayers.Count > 0)
 			{
-				if(tastiestFood == null) //If no foods have been eaten previously
+				if(tastiestFood == null || tastiestFood.isEmpty) //If no foods have been eaten previously
 				{
 					tastiestFood = activeFood;
 					tastiestFoodEatenBy = eatingPlayers;
@@ -660,6 +662,7 @@ public class GameController : MonoBehaviour {
 			//Set starting stats
 			activePlayers[i].Hp = startingHp;
 			activePlayers[i].Score = 0;
+			activePlayers[i].plate.foods.Clear ();
 
 		}
 	}

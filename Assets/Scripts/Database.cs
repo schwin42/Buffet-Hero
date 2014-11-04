@@ -53,10 +53,13 @@ public enum Temperature
 [System.Serializable]
 public class Food
 {
+	public bool isEmpty = true;
+
 	public string Name 
 	{
 		get
 		{
+			if(!isEmpty){
 			string returnString = "";
 				for (int i = attributes.Count - 1; i >= 0; i--)
 			{
@@ -70,6 +73,10 @@ public class Food
 			//Debug.Log ("Food = "+returnString);
 			return returnString;
 			//return descriptor.name + " " + ingredient.name + " " + form.name;
+			} else {
+				Debug.LogError("Null food exception");
+				return "Empty";
+			}
 		}
 	}
 		
@@ -79,6 +86,7 @@ public class Food
 	{
 		get
 		{
+			if(!isEmpty){
 			if(_isRealized)
 			{
 			if(!_qualityIsSet)
@@ -124,6 +132,11 @@ public class Food
 			} else {
 				 return 0;
 			}
+			} else {
+				Debug.LogError("Null food exception");
+				return 0;
+			}
+
 		}
 	}
 
@@ -135,6 +148,7 @@ public class Food
 	{
 		get
 		{
+			if(!isEmpty){
 			if(!_damageIsSet)
 			{
 				float netDamage = 0f;
@@ -154,6 +168,10 @@ public class Food
 				return _damage;
 			}
 
+			} else {
+				Debug.LogError("Null food exception.");
+				return 0;
+			}
 		}
 	}
 
@@ -179,6 +197,7 @@ public class Food
 	public bool _isRealized = false;
 	public void Realize(bool b)
 	{
+		if(!isEmpty){
 		if(b)
 		{
 //			Tag _virtualTag = new Tag();
@@ -233,20 +252,29 @@ public class Food
 			virtualTags = new List<Tag>();
 			_isRealized = false;
 		}
+		} else {
+			Debug.LogError("Null food exception. Food not realized.");
+		}
+
 	}
 
+	//Used in get food functions in game controller
 	public Food (){}
 
+	//Copy food
 	public Food (Food food)
 	{
 		attributes = food.attributes;
 		virtualTags = food.virtualTags;
+		isEmpty = false;
 	}
 
+	//Construct food from attributes
 	public Food (List<FoodAttribute> _attributes)
 	{
 		attributes.AddRange(_attributes);
 		Realize (true);
+		isEmpty = false;
 	}
 
 	public List<FoodAttribute> attributes = new List<FoodAttribute>();

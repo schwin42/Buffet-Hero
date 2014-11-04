@@ -584,7 +584,13 @@ public class InterfaceController : MonoBehaviour {
 
 	string GetFormattedPlayerString(Player player, string closingHexTag)
 	{
+		if(player != null)
+		{
 		return HexTag(player.playerPanelScript.playerScheme.defaultColor)+player.ProfileInstance.playerName + closingHexTag;
+		} else {
+			Debug.LogError("No player to format @"+Time.frameCount);
+			return "";
+		}
 	}
 
 	string GetFormattedPlayerString(List<Player> players, string closingHexTag)
