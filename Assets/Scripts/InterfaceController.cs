@@ -68,6 +68,7 @@ public class InterfaceController : MonoBehaviour {
 	public int maxScoresToDisplay = 12;
 	public string selectProfileString = "Select Profile";
 	public string stats1NoFoodString = "None";
+	private Vector3 _winnerGoStartPosition = new Vector3(-1000F, -105F, 0F);
 
 		//Colors
 	public Color disabledTextColor;
@@ -86,6 +87,7 @@ public class InterfaceController : MonoBehaviour {
 	//Inspector
 	public GameObject promptPrefab;
 	public GameObject letterRankPrefab;
+	public UILabel winnerPrefab;
 	public Vector3 localPromptPosition = new Vector3(0, -105, 0);
 	public Vector3 localLetterRankPosition;
 
@@ -107,6 +109,8 @@ public class InterfaceController : MonoBehaviour {
 	public bool displayedFirstScreen = false;
 	//public List<Profile> selectedProfiles = new List<Profile>();
 	public List<ProfileMenuHandler> activeProfileMenus = new List<ProfileMenuHandler>();
+	public string winString = "";
+	public List<GameObject> activeWinnerGos = new List<GameObject>();
 
 	//public UIPanel[] playerPanels;
 
@@ -121,7 +125,7 @@ public class InterfaceController : MonoBehaviour {
 
 	public List<UIPanel> uiLookup; //Panels by player id
 	//public UIPanel[] playerPanels;
-	public UILabel[] winLabels;
+	//public UILabel[] winLabels;
 
 	public UILabel[] highScoreNames;
 	public UILabel[] highScoreAmounts;
@@ -386,6 +390,13 @@ public class InterfaceController : MonoBehaviour {
 			GameController.Instance.forcedEaters = rulesEatersInput.ruleValue;
 			GameController.Instance.startingHp = rulesHpInput.ruleValue;
 			break;
+		case GameUiState.Results:
+			for(int i = 0; i < activeWinnerGos.Count; i++)
+			{
+				Destroy (activeWinnerGos[i]);
+			}
+			activeWinnerGos.Clear ();
+			break;
 		}
 
 		//Add new elements
@@ -439,6 +450,20 @@ public class InterfaceController : MonoBehaviour {
 						SetPlayerUiState(player, PlayerUiState.Join);
 					}
 				}
+			}
+			break;
+		case GameUiState.Results:
+			foreach(UIPanel panel in mirrorPanels)
+			{
+				UILabel winnerLabel = Instantiate(winnerPrefab) as UILabel;
+				GameObject winnerGo = winnerLabel.gameObject;
+				//UILabel winnerLabel = winnerGo.GetComponent<UILabel>();
+				winnerLabel.text = winString;
+				winnerGo.transform.parent = panel.transform;
+				winnerGo.transform.localScale = Vector3.one;
+				winnerGo.transform.localEulerAngles = Vector3.zero;
+				winnerGo.transform.localPosition = _winnerGoStartPosition;
+				activeWinnerGos.Add (winnerGo);
 			}
 			break;
 		case GameUiState.Stats0:
@@ -746,9 +771,8 @@ Debug.Log("Query greater than 0");
 
 	public void WriteWinner(Player player)
 	{
-		foreach(UILabel winLabel in winLabels){
-		winLabel.text = player.ProfileInstance.playerName + " wins with "+player.Score+" Points!";
-		}
+		winString = player.ProfileInstance.playerName + " wins with "+player.Score+" Points!";
+		
 	}
 
 	public void InitializeInterface()
