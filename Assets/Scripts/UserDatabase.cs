@@ -108,6 +108,10 @@ public class UserDatabase : MonoBehaviour {
 			{
 				_instance = FindObjectOfType<UserDatabase>();
 				DontDestroyOnLoad(_instance.gameObject);
+				//Debug.Log ("Enabling mono reflection serializer in property");
+
+				System.Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
+				Debug.Log ("Mono reflection serializer = "+System.Environment.GetEnvironmentVariable("MONO_REFLECTION_SERIALIZER"));
 			}
 				return _instance;
 			}
@@ -146,6 +150,7 @@ public class UserDatabase : MonoBehaviour {
 		{
 			_instance = this;
 			DontDestroyOnLoad(gameObject);
+			Debug.Log ("Enabling mono reflection serializer in awake");
 			System.Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 		}
 	}
@@ -178,6 +183,7 @@ public class UserDatabase : MonoBehaviour {
 			FileStream fileStream = File.Open (fullFileName, FileMode.Open);
 			UserInfo resultOutput = (UserInfo)binaryFormatter.Deserialize(fileStream);
 			fileStream.Close();
+			Debug.Log ("User info successfully loaded. Profile count: "+resultOutput.profiles.Count);
 			return resultOutput;
 		} else {
 			Debug.Log("File not found: "+fullFileName+", creating...");
