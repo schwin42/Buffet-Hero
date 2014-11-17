@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Advertisements;
+using Soomla.Store;
 
 public enum Phase
 {
@@ -89,6 +90,10 @@ public class GameController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
+		SoomlaStore.Initialize(new StoreController());
+		StoreEvents.OnMarketPurchase += OnMarketPurchase;
+		
+
 
 		Advertisement.Initialize ("18656");
 		currentPhase = Phase.Pregame;
@@ -816,6 +821,19 @@ public class GameController : MonoBehaviour {
 		  quickestNab = null;
 		  quickestNabTime = -1F;
 		  quickestNabEatenBy = null;
+	}
+
+	public void OnMarketPurchase(PurchasableVirtualItem pvi, string payload, Dictionary<string, string> extra) {
+		// pvi is the PurchasableVirtualItem that was just purchased
+		if(pvi.ItemId == "no_ads") {
+
+		}
+		// payload is a text that you can give when you initiate the purchase operation and you want to receive back upon completion
+		// extra will contain platform specific information about the market purchase.
+		//      Android: The "extra" dictionary will contain "orderId" and "purchaseToken".
+		//      iOS: The "extra" dictionary will contain "receipt" and "token".
+		
+		// ... your game specific implementation here ...
 	}
 
 
