@@ -15,17 +15,17 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
+namespace Soomla {
 
-namespace Soomla {	
-	
 	/// <summary>
 	/// A reward is an entity which can be earned by the user for meeting certain
 	/// criteria in game progress.  For example - a user can earn a badge for completing
 	/// a mission. Dealing with <code>Reward</code>s is very similar to dealing with
 	/// <code>VirtualItem</code>s: grant a reward by giving it and recall a
 	/// reward by taking it.
-	/// 
+	///
 	/// In the Profile module, rewards can be attached to various actions. For example:
 	/// You can give your user 100 coins for logging in through Facebook.
 	/// </summary>
@@ -33,13 +33,13 @@ namespace Soomla {
 		private static string TAG = "SOOMLA Reward";
 
 		public Schedule Schedule;
-		
+
 		public bool Owned {
 			get {
 				return RewardStorage.IsRewardGiven(this);
 			}
 		}
-		
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -49,6 +49,8 @@ namespace Soomla {
 			: base(id, name, "")
 		{
 			Schedule = Schedule.AnyTimeOnce();
+
+			RewardsMap.AddOrUpdate(this.ID, this);
 		}
 
 		/// <summary>
@@ -64,6 +66,8 @@ namespace Soomla {
 			} else {
 				Schedule = null;
 			}
+
+			RewardsMap.AddOrUpdate(this.ID, this);
 		}
 
 		/// <summary>
@@ -74,8 +78,10 @@ namespace Soomla {
 			JSONObject obj = base.toJSONObject();
 			if (Schedule != null) {
 				obj.AddField(JSONConsts.SOOM_SCHEDULE, Schedule.toJSONObject());
+			} else {
+				obj.AddField(JSONConsts.SOOM_SCHEDULE, Schedule.AnyTimeOnce().toJSONObject());
 			}
-			
+
 			return obj;
 		}
 
@@ -89,16 +95,10 @@ namespace Soomla {
 
 			Reward reward = (Reward) Activator.CreateInstance(Type.GetType("Soomla." + className), new object[] { rewardObj });
 
+			RewardsMap.AddOrUpdate(reward.ID, reward);
+
 			return reward;
 		}
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-		public AndroidJavaObject toJNIObject() {
-			using(AndroidJavaClass jniRewardClass = new AndroidJavaClass("com.soomla.rewards.Reward")) {
-				return jniRewardClass.CallStatic<AndroidJavaObject>("fromJSONString", toJSONObject().print());
-			}
-		}
-#endif
 
 		public bool Take() {
 
@@ -106,12 +106,12 @@ namespace Soomla {
 				SoomlaUtils.LogDebug(TAG, "Reward not given. id: " + _id);
 				return false;
 			}
-			
+
 			if (takeInner()) {
 				RewardStorage.SetRewardStatus(this, false);
 				return true;
 			}
-			
+
 			return false;
 		}
 
@@ -125,12 +125,12 @@ namespace Soomla {
 				SoomlaUtils.LogDebug(TAG, "(Give) Reward is not approved by Schedule. id: " + _id);
 				return false;
 			}
-			
+
 			if (giveInner()) {
 				RewardStorage.SetRewardStatus(this, true);
 				return true;
 			}
-			
+
 			return false;
 		}
 
@@ -138,5 +138,21 @@ namespace Soomla {
 
 		protected abstract bool takeInner();
 
+
+		private static Dictionary<string, Reward> RewardsMap = new Dictionary<string, Reward>();
+		public static Reward GetReward(string rewardID) {
+			Reward reward = null;
+			RewardsMap.TryGetValue(rewardID, out reward);
+
+			return reward;
+		}
+
+		public static List<Reward> GetRewards(){
+			List<Reward> rewards = new List<Reward> ();
+			foreach(Reward reward in RewardsMap.Values)
+				rewards.Add(reward);
+
+			return rewards;
+		}
 	}
 }

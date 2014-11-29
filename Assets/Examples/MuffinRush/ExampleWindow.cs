@@ -16,396 +16,318 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using Soomla;
+using System.IO;
 
-namespace Soomla.Store.Example {
+using Soomla;
+using Soomla.Profile;
+using Soomla.Example;
+
+/// <summary>
+/// This class contains functions that initialize the game and that display the different screens of the game.
+/// </summary>
+public class ExampleWindow : MonoBehaviour {
+
+	private static ExampleWindow instance = null;
+
+	public string fontSuffix = "";
+	
+	private static bool isVisible = false;
+	private bool isInit = false;
+
+	private Provider targetProvider = Provider.FACEBOOK;
+	private Reward exampleReward = new BadgeReward("example_reward", "Example Social Reward");
+
 
 	/// <summary>
-	/// This class contains functions that initialize the game and that display the different screens of the game.
+	/// Initializes the game state before the game starts. 
 	/// </summary>
-	public class ExampleWindow : MonoBehaviour {
-
-		private static ExampleWindow instance = null;
-
-		private GUIState guiState = GUIState.WELCOME;
-		private Vector2 goodsScrollPosition = Vector2.zero;
-		private Vector2 productScrollPosition = Vector2.zero;
-		private bool isDragging = false;
-		private Vector2 startTouch = Vector2.zero;
-
-		public string fontSuffix = "";
-
-		private enum GUIState{
-			WELCOME,
-			PRODUCTS,
-			GOODS
+	void Awake(){
+		if(instance == null){ 	//making sure we only initialize one instance.
+			instance = this;
+			GameObject.DontDestroyOnLoad(this.gameObject);
+		} else {					//Destroying unused instances.
+			GameObject.Destroy(this);
 		}
+		
+		//FONT
+		//using max to be certain we have the longest side of the screen, even if we are in portrait.
+		if(Mathf.Max(Screen.width, Screen.height) > 640){ 
+			fontSuffix = "_2X"; //a nice suffix to show the fonts are twice as big as the original
+		}
+	}
 
-		private static bool isVisible = false;
+	private Texture2D tBackground;
+	private Texture2D tShed;
+	private Texture2D tBGBar;
+	
+	private Texture2D tShareDisable;
+	private Texture2D tShare;
+	private Texture2D tSharePress;
+	
+	private Texture2D tShareStoryDisable;
+	private Texture2D tShareStory;
+	private Texture2D tShareStoryPress;
+	
+	private Texture2D tUploadDisable;
+	private Texture2D tUpload;
+	private Texture2D tUploadPress;
+	
+	private Texture2D tConnect;
+	private Texture2D tConnectPress;
+	
+	private Texture2D tLogout;
+	private Texture2D tLogoutPress;
 
-		/// <summary>
-		/// Initializes the game state before the game starts.
-		/// </summary>
-		void Awake(){
-			if(instance == null){ 	//making sure we only initialize one instance.
-				instance = this;
-				GameObject.DontDestroyOnLoad(this.gameObject);
-			} else {					//Destroying unused instances.
-				GameObject.Destroy(this);
+	private Font fgoodDog;
+
+//	private bool bScreenshot = false;
+
+
+	/// <summary>
+	/// Starts this instance.
+	/// Use this for initialization.
+	/// </summary>
+	void Start () {
+
+		fgoodDog = (Font)Resources.Load("Fonts/GoodDog" + fontSuffix);
+
+		tBackground = (Texture2D)Resources.Load("Profile/BG");
+		tShed = (Texture2D)Resources.Load("Profile/Headline");
+		tBGBar = (Texture2D)Resources.Load("Profile/BG-Bar");
+
+		tShareDisable = (Texture2D)Resources.Load("Profile/BTN-Share-Disable");
+		tShare = (Texture2D)Resources.Load("Profile/BTN-Share-Normal");
+		tSharePress = (Texture2D)Resources.Load("Profile/BTN-Share-Press");
+
+		tShareStoryDisable = (Texture2D)Resources.Load("Profile/BTN-ShareStory-Disable");
+		tShareStory = (Texture2D)Resources.Load("Profile/BTN-ShareStory-Normal");
+		tShareStoryPress = (Texture2D)Resources.Load("Profile/BTN-ShareStory-Press");
+
+		tUploadDisable = (Texture2D)Resources.Load("Profile/BTN-Upload-Disable");
+		tUpload = (Texture2D)Resources.Load("Profile/BTN-Upload-Normal");
+		tUploadPress = (Texture2D)Resources.Load("Profile/BTN-Upload-Press");
+
+		tConnect = (Texture2D)Resources.Load("Profile/BTN-Connect");
+		tConnectPress = (Texture2D)Resources.Load("Profile/BTN-Connect-Press");
+
+		tLogout = (Texture2D)Resources.Load("Profile/BTN-LogOut");
+		tLogoutPress = (Texture2D)Resources.Load("Profile/BTN-LogOut-Press");
+
+
+		// examples of catching fired events
+		ProfileEvents.OnSoomlaProfileInitialized += () => {
+			Soomla.SoomlaUtils.LogDebug("ExampleWindow", "SoomlaProfile Initialized !");
+			isInit = true;
+		};
+
+		ProfileEvents.OnUserRatingEvent += () => {
+			Soomla.SoomlaUtils.LogDebug("ExampleWindow", "User opened rating page");
+		};
+		
+		ProfileEvents.OnLoginFinished += (UserProfile UserProfile, string payload) => {
+			Soomla.SoomlaUtils.LogDebug("ExampleWindow", "login finished for: " + UserProfile.toJSONObject().print());
+			SoomlaProfile.GetContacts(targetProvider);
+		};
+		
+		ProfileEvents.OnGetContactsFinished += (Provider provider, List<UserProfile> profiles, string payload) => {
+			Soomla.SoomlaUtils.LogDebug("ExampleWindow", "get contacts for: " + profiles.Count);
+			foreach (var profile in profiles) {
+				Soomla.SoomlaUtils.LogDebug("ExampleWindow", "Contact: " + profile.toJSONObject().print());
 			}
+		};
 
-			//FONT
-			//using max to be certain we have the longest side of the screen, even if we are in portrait.
-			if(Mathf.Max(Screen.width, Screen.height) > 640){
-				fontSuffix = "_2X"; //a nice suffix to show the fonts are twice as big as the original
-			}
-		}
+		SoomlaProfile.Initialize();
+//		SoomlaProfile.OpenAppRatingPage();
 
-		private Texture2D tImgDirect;
-		private Texture2D tLogoNew;
-		private Font fgoodDog;
-		private Font fgoodDogSmall;
-		private Font fTitle;
-		private Texture2D tWhitePixel;
-		private Texture2D tMuffins;
-		private Font fName;
-		private Font fDesc;
-		private Font fBuy;
-		private Texture2D tBack;
-		private Texture2D tGetMore;
-		private Font tTitle;
-		private Dictionary<string, Texture2D> itemsTextures;
+		#if UNITY_IPHONE
+		Handheld.SetActivityIndicatorStyle(iOSActivityIndicatorStyle.Gray);
+		#elif UNITY_ANDROID
+		Handheld.SetActivityIndicatorStyle(AndroidActivityIndicatorStyle.Small);
+		#endif
+	}
+	
+	/// <summary>
+	/// Sets the window to open, and sets the GUI state to welcome. 
+	/// </summary>
+	public static void OpenWindow(){
+		isVisible = true;
+	}
 
+	/// <summary>
+	/// Sets the window to closed. 
+	/// </summary>
+	public static void CloseWindow(){
+		isVisible = false;
+	}
 
-		/// <summary>
-		/// Starts this instance.
-		/// Use this for initialization.
-		/// </summary>
-		void Start () {
-			StoreEvents.OnSoomlaStoreInitialized += onSoomlaStoreInitialized;
-
-			tImgDirect = (Texture2D)Resources.Load("SoomlaStore/images/img_direct");
-			fgoodDog = (Font)Resources.Load("SoomlaStore/GoodDog" + fontSuffix);
-			fgoodDogSmall = (Font)Resources.Load("SoomlaStore/GoodDog_small" + fontSuffix);
-			tLogoNew = (Texture2D)Resources.Load("SoomlaStore/images/soomla_logo_new");
-			tWhitePixel = (Texture2D)Resources.Load("SoomlaStore/images/white_pixel");
-			fTitle = (Font)Resources.Load("SoomlaStore/Title" + fontSuffix);
-			tMuffins = (Texture2D)Resources.Load("SoomlaStore/images/Muffins");
-			fName = (Font)Resources.Load("SoomlaStore/Name" + fontSuffix);
-			fDesc = (Font)Resources.Load("SoomlaStore/Description" + fontSuffix);
-			fBuy = (Font)Resources.Load("SoomlaStore/Buy" + fontSuffix);
-			tBack = (Texture2D)Resources.Load("SoomlaStore/images/back");
-			tGetMore = (Texture2D)Resources.Load("SoomlaStore/images/GetMore");
-			tTitle = (Font)Resources.Load("SoomlaStore/Title" + fontSuffix);
-
-			SoomlaStore.Initialize(new MuffinRushAssets());
-		}
-
-		public void onSoomlaStoreInitialized() {
-
-			// some usage examples for add/remove currency
-			// some examples
-			if (StoreInfo.Currencies.Count>0) {
-				try {
-					StoreInventory.GiveItem(StoreInfo.Currencies[0].ItemId,4000);
-					SoomlaUtils.LogDebug("SOOMLA ExampleEventHandler", "Currency balance:" + StoreInventory.GetItemBalance(StoreInfo.Currencies[0].ItemId));
-				} catch (VirtualItemNotFoundException ex){
-					SoomlaUtils.LogError("SOOMLA ExampleEventHandler", ex.Message);
-				}
-			}
-
-			setupItemsTextures();
-		}
-
-		public void setupItemsTextures() {
-			itemsTextures = new Dictionary<string, Texture2D>();
-
-			foreach(VirtualGood vg in StoreInfo.Goods){
-				itemsTextures[vg.ItemId] = (Texture2D)Resources.Load("SoomlaStore/images/" + vg.Name);
-			}
-			foreach(VirtualCurrencyPack vcp in StoreInfo.CurrencyPacks){
-				itemsTextures[vcp.ItemId] = (Texture2D)Resources.Load("SoomlaStore/images/" + vcp.Name);
-			}
-		}
-
-		/// <summary>
-		/// Sets the window to open, and sets the GUI state to welcome.
-		/// </summary>
-		public static void OpenWindow(){
-			instance.guiState = GUIState.WELCOME;
-			isVisible = true;
-		}
-
-		/// <summary>
-		/// Sets the window to closed.
-		/// </summary>
-		public static void CloseWindow(){
-			isVisible = false;
-		}
-
-		/// <summary>
-		/// Implements the game behavior of MuffinRush.
-		/// Overrides the superclass function in order to provide functionality for our game.
-		/// </summary>
-		void Update () {
-			if(isVisible){
-				//code to be able to scroll without the scrollbars.
-				if(Input.GetMouseButtonDown(0)){
-					startTouch = Input.mousePosition;
-				}else if(Input.GetMouseButtonUp(0)){
-					isDragging = false;
-				}else if(Input.GetMouseButton(0)){
-					if(!isDragging){
-						if( Mathf.Abs(startTouch.y-Input.mousePosition.y) > 10f){
-							isDragging = true;
-						}
-					}else{
-						if(guiState == GUIState.GOODS){
-							goodsScrollPosition.y -= startTouch.y - Input.mousePosition.y;
-							startTouch = Input.mousePosition;
-						}else if(guiState == GUIState.PRODUCTS){
-							productScrollPosition.y -= startTouch.y - Input.mousePosition.y;
-							startTouch = Input.mousePosition;
-						}
-					}
-				}
-			}
-
-			if (Application.platform == RuntimePlatform.Android) {
-				if (Input.GetKeyUp(KeyCode.Escape)) {
-					//quit application on back button
-					Application.Quit();
-					return;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Calls the relevant function to display the correct screen of the game.
-		/// </summary>
-		void OnGUI(){
-			if(!isVisible){
+	/// <summary>
+	/// Implements the game behavior of MuffinRush. 
+	/// Overrides the superclass function in order to provide functionality for our game. 
+	/// </summary>
+	void Update () {
+		if (Application.platform == RuntimePlatform.Android) {
+			if (Input.GetKeyUp(KeyCode.Escape)) {
+				//quit application on back button
+				Application.Quit();
 				return;
 			}
-			//GUI.skin.verticalScrollbar.fixedWidth = 0;
-			//GUI.skin.verticalScrollbar.fixedHeight = 0;
-			//GUI.skin.horizontalScrollbar.fixedWidth = 0;
-			//GUI.skin.horizontalScrollbar.fixedHeight = 0;
-			GUI.skin.horizontalScrollbar = GUIStyle.none;
-			GUI.skin.verticalScrollbar = GUIStyle.none;
+		}
+	}
 
-			//disabling warnings because we use GUIStyle.none which result in warnings
-			if(guiState == GUIState.WELCOME){
-				welcomeScreen();
-			}else if(guiState == GUIState.GOODS){
-				goodsScreen();
-			}else if(guiState == GUIState.PRODUCTS){
-				currencyScreen();
-			}
+	/// <summary>
+	/// Calls the relevant function to display the correct screen of the game.
+	/// </summary>
+	void OnGUI(){
+		if(!isVisible){
+			return;
 		}
 
-		/// <summary>
-		/// Displays the welcome screen of the game.
-		/// </summary>
-		void welcomeScreen()
-		{
-			//drawing background, just using a white pixel here
-			GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),tImgDirect);
-			//changing the font and alignment the label, and making a backup so we can put it back.
-			Font backupFont = GUI.skin.label.font;
-			TextAnchor backupAlignment = GUI.skin.label.alignment;
-			GUI.skin.label.font = fgoodDog;
-			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-			//writing the text.
-			GUI.Label(new Rect(Screen.width/8,Screen.height/8f,Screen.width*6f/8f,Screen.height*0.3f),"Soomla Store\nExample");
-			//select the small font
-			GUI.skin.label.font = fgoodDogSmall;
-			GUI.Label(new Rect(Screen.width/8,Screen.height*7f/8f,Screen.width*6f/8f,Screen.height/8f),"Press the SOOMLA-bot to open store");
-			//set font back to original
-			GUI.skin.label.font = backupFont;
-			GUI.Label(new Rect(Screen.width*0.25f,Screen.height/2-50,Screen.width*0.5f,100),"[ Your game here ]");
-			//drawing button and testing if it has been clicked
-			if(GUI.Button(new Rect(Screen.width*2/6,Screen.height*5f/8f,Screen.width*2/6,Screen.width*2/6),tLogoNew)){
-				guiState = GUIState.GOODS;
-#if UNITY_ANDROID && !UNITY_EDITOR
-				SoomlaStore.StartIabServiceInBg();
+		GUI.skin.horizontalScrollbar = GUIStyle.none;
+		GUI.skin.verticalScrollbar = GUIStyle.none;
+		
+		welcomeScreen();
+	}
+
+	/// <summary>
+	/// Displays the welcome screen of the game. 
+	/// </summary>
+	void welcomeScreen()
+	{
+		Color backupColor = GUI.color;
+		float vertGap = 80f;
+
+		//drawing background, just using a white pixel here
+		GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),tBackground);
+		GUI.DrawTexture(new Rect(0,0,Screen.width,timesH(240f)), tShed, ScaleMode.StretchToFill, true);
+
+
+		float rowsTop = 300.0f;
+		float rowsHeight = 120.0f;
+
+		GUI.DrawTexture(new Rect(timesW(65.0f),timesH(rowsTop+10f),timesW(516.0f),timesH(102.0f)), tBGBar, ScaleMode.StretchToFill, true);
+
+		if (SoomlaProfile.IsLoggedIn(targetProvider)) {
+			GUI.skin.button.normal.background = tShare;
+			GUI.skin.button.hover.background = tShare;
+			GUI.skin.button.active.background = tSharePress;
+			if(GUI.Button(new Rect(timesW(50.0f),timesH(rowsTop),timesW(212.0f),timesH(120.0f)), "")){
+				SoomlaProfile.UpdateStatus(targetProvider, "I LOVE SOOMLA !  http://www.soom.la", null, exampleReward);
+			}
+		} else {
+			GUI.DrawTexture(new Rect(timesW(50.0f),timesH(rowsTop),timesW(212.0f),timesH(120.0f)), tShareDisable, 
+			                ScaleMode.StretchToFill, true);
+		}
+
+		GUI.color = Color.black;
+		GUI.skin.label.font = fgoodDog;
+		GUI.skin.label.fontSize = 30;
+		GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+		GUI.Label(new Rect(timesW(270.0f),timesH(rowsTop),timesW(516.0f-212.0f),timesH(120.0f)),"I Love SOOMLA!");
+		GUI.color = backupColor;
+
+
+		rowsTop += vertGap + rowsHeight;
+
+
+		GUI.DrawTexture(new Rect(timesW(65.0f),timesH(rowsTop+10f),timesW(516.0f),timesH(102.0f)), tBGBar, ScaleMode.StretchToFill, true);
+
+		if (SoomlaProfile.IsLoggedIn(targetProvider)) {
+			GUI.skin.button.normal.background = tShareStory;
+			GUI.skin.button.hover.background = tShareStory;
+			GUI.skin.button.active.background = tShareStoryPress;
+			if(GUI.Button(new Rect(timesW(50.0f),timesH(rowsTop),timesW(212.0f),timesH(120.0f)), "")){
+				SoomlaProfile.UpdateStory(targetProvider,
+				                          "The story of SOOMBOT (Profile Test App)",
+				                          "The story of SOOMBOT (Profile Test App)",
+				                          "SOOMBOT Story",
+				                          "DESCRIPTION",
+				                          "http://about.soom.la/soombots",
+				                          "http://about.soom.la/wp-content/uploads/2014/05/330x268-spockbot.png",
+				                          null,
+				                          exampleReward);
+			}
+		} else {
+			GUI.DrawTexture(new Rect(timesW(50.0f),timesH(rowsTop),timesW(212.0f),timesH(120.0f)), tShareStoryDisable, 
+			                ScaleMode.StretchToFill, true);
+		}
+		
+		GUI.color = Color.black;
+		GUI.skin.label.font = fgoodDog;
+		GUI.skin.label.fontSize = 25;
+		GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+		GUI.Label(new Rect(timesW(270.0f),timesH(rowsTop),timesW(516.0f-212.0f),timesH(120.0f)),"Full story of The SOOMBOT!");
+		GUI.color = backupColor;
+
+
+
+		rowsTop += vertGap + rowsHeight;
+		
+		
+		GUI.DrawTexture(new Rect(timesW(65.0f),timesH(rowsTop+10f),timesW(516.0f),timesH(102.0f)), tBGBar, ScaleMode.StretchToFill, true);
+		
+		if (SoomlaProfile.IsLoggedIn(targetProvider)) {
+			GUI.skin.button.normal.background = tUpload;
+			GUI.skin.button.hover.background = tUpload;
+			GUI.skin.button.active.background = tUploadPress;
+			if(GUI.Button(new Rect(timesW(50.0f),timesH(rowsTop),timesW(212.0f),timesH(120.0f)), "")){
+				string path = "";
+#if UNITY_IOS
+				path = Application.dataPath + "/Raw" + "BTN-Upload-Normal.png";
+#elif UNITY_ANDROID
+				path = "jar:file://" + Application.dataPath + "!/assets/" + "BTN-Upload-Normal.png";
 #endif
+				SoomlaProfile.UploadImage(targetProvider, "Awesome Test App of SOOMLA Profile!", path, null, exampleReward);
+//				SoomlaProfile.UploadCurrentScreenShot(this, targetProvider, "Awesome Test App of SOOMLA Profile!", "This a screenshot of the current state of SOOMLA's test app on my computer.", null);
 			}
-			//set alignment to backup
-			GUI.skin.label.alignment = backupAlignment;
+		} else {
+			GUI.DrawTexture(new Rect(timesW(50.0f),timesH(rowsTop),timesW(212.0f),timesH(120.0f)), tUploadDisable, 
+			                ScaleMode.StretchToFill, true);
 		}
+		
+		GUI.color = Color.black;
+		GUI.skin.label.font = fgoodDog;
+		GUI.skin.label.fontSize = 28;
+		GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+		GUI.Label(new Rect(timesW(270.0f),timesH(rowsTop),timesW(516.0f-212.0f),timesH(120.0f)),"Current Screenshot");
+		GUI.color = backupColor;
 
-		/// <summary>
-		/// Display the goods screen of the game's store.
-		/// </summary>
-		void goodsScreen()
-		{
-			//white background
-			GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height), tWhitePixel);
-			Color backupColor = GUI.color;
-			TextAnchor backupAlignment = GUI.skin.label.alignment;
-			Font backupFont = GUI.skin.label.font;
 
-			GUI.color = Color.red;
-			GUI.skin.label.alignment = TextAnchor.UpperLeft;
-			GUI.Label(new Rect(10,10,Screen.width-10,Screen.height-10),"SOOMLA Example Store");
-			GUI.color = Color.black;
-			GUI.skin.label.alignment = TextAnchor.UpperRight;
-			string cItemId = StoreInfo.Currencies[0].ItemId;
-			GUI.Label(new Rect(10,10,Screen.width-40,Screen.height),""+ StoreInventory.GetItemBalance(cItemId));
-			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-			GUI.skin.label.font = fTitle;
-			GUI.Label(new Rect(0,Screen.height/8f,Screen.width,Screen.height/8f),"Virtual Goods");
 
-			GUI.color = backupColor;
-			GUI.DrawTexture(new Rect(Screen.width-30,10,30,30), tMuffins);
-			float productSize = Screen.width*0.30f;
-			float totalHeight = StoreInfo.Goods.Count*productSize;
-			//Here we start a scrollView, the first rectangle is the position of the scrollView on the screen,
-			//the second rectangle is the size of the panel inside the scrollView.
-			//All rectangles after this point are relative to the position of the scrollView.
-			goodsScrollPosition = GUI.BeginScrollView(new Rect(0,Screen.height*2f/8f,Screen.width,Screen.height*5f/8f),goodsScrollPosition,new Rect(0,0,Screen.width,totalHeight));
-			float y = 0;
-			foreach(VirtualGood vg in StoreInfo.Goods){
-				GUI.color = backupColor;
-				if(GUI.Button(new Rect(0,y,Screen.width,productSize),"") && !isDragging){
-					Debug.Log("SOOMLA/UNITY wants to buy: " + vg.Name);
-					try {
-						StoreInventory.BuyItem(vg.ItemId);
-					} catch (Exception e) {
-						Debug.LogError ("SOOMLA/UNITY " + e.Message);
-					}
-				}
-				GUI.DrawTexture(new Rect(0,y,Screen.width,productSize),tWhitePixel);
-				//We draw a button so we can detect a touch and then draw an image on top of it.
-				//TODO
-				//Resources.Load(path) The path is the relative path starting from the Resources folder.
-				//Make sure the images used for UI, have the textureType GUI. You can change this in the Unity editor.
-				GUI.color = backupColor;
-				GUI.DrawTexture(new Rect(0+productSize/8f, y+productSize/8f,productSize*6f/8f,productSize*6f/8f), itemsTextures[vg.ItemId]);
-				GUI.color = Color.black;
-				GUI.skin.label.font = fName;
-				GUI.skin.label.alignment = TextAnchor.UpperLeft;
-				GUI.Label(new Rect(productSize,y,Screen.width,productSize/3f),vg.Name);
-				GUI.skin.label.font = fDesc;
-				GUI.Label(new Rect(productSize + 10f,y+productSize/3f,Screen.width-productSize-15f,productSize/3f),vg.Description);
-				//set price
-				if (vg.PurchaseType is PurchaseWithVirtualItem)
-					GUI.Label(new Rect(Screen.width/2f,y+productSize*2/3f,Screen.width,productSize/3f),"price:" + ((PurchaseWithVirtualItem)vg.PurchaseType).Amount);
-				else
-					GUI.Label(new Rect(Screen.width/2f,y+productSize*2/3f,Screen.width,productSize/3f),"price:$ " + ((PurchaseWithMarket)vg.PurchaseType).MarketItem.Price.ToString("0.00"));
-				GUI.Label(new Rect(Screen.width*3/4f,y+productSize*2/3f,Screen.width,productSize/3f), "Balance:" + StoreInventory.GetItemBalance(vg.ItemId));
+		if (SoomlaProfile.IsLoggedIn(targetProvider)) {
 
-				GUI.skin.label.alignment = TextAnchor.UpperRight;
-				GUI.skin.label.font = fBuy;
-				GUI.Label(new Rect(0,y,Screen.width-10,productSize),"Click to buy");
-				GUI.color = Color.grey;
-				GUI.DrawTexture(new Rect(0,y+productSize-1,Screen.width,1),tWhitePixel);
-				y+= productSize;
+			GUI.skin.button.normal.background = tLogout;
+			GUI.skin.button.hover.background = tLogout;
+			GUI.skin.button.active.background = tLogoutPress;
+			if(GUI.Button(new Rect(timesW(20.0f),timesH(950f),timesW(598.0f),timesH(141.0f)), "")){
+				SoomlaProfile.Logout(targetProvider);
 			}
-			GUI.EndScrollView();
-			//We have just ended the scroll view this means that all the positions are relative top-left corner again.
-			GUI.skin.label.alignment = backupAlignment;
-			GUI.color = backupColor;
-			GUI.skin.label.font = backupFont;
 
-			float height = Screen.height/8f;
-			float borderSize = height/8f;
-			float buttonHeight = height-2*borderSize;
-			float width = buttonHeight*180/95;
-			if(GUI.Button(new Rect(Screen.width*2f/7f-width/2f,Screen.height*7f/8f+borderSize,width,buttonHeight), "back")){
-				guiState = GUIState.WELCOME;
-#if UNITY_ANDROID && !UNITY_EDITOR
-				SoomlaStore.StopIabServiceInBg();
-#endif
+		} else if (isInit) {
+			GUI.skin.button.normal.background = tConnect;
+			GUI.skin.button.hover.background = tConnect;
+			GUI.skin.button.active.background = tConnectPress;
+			if(GUI.Button(new Rect(timesW(20.0f),timesH(950f),timesW(598.0f),timesH(141.0f)), "")){
+				SoomlaProfile.Login(targetProvider, null, exampleReward);
 			}
-			GUI.DrawTexture(new Rect(Screen.width*2f/7f-width/2f,Screen.height*7f/8f+borderSize,width,buttonHeight),tBack);
-			width = buttonHeight*227/94;
-			if(GUI.Button(new Rect(Screen.width*5f/7f-width/2f,Screen.height*7f/8f+borderSize,width,buttonHeight), "back")){
-				guiState = GUIState.PRODUCTS;
-			}
-			GUI.DrawTexture(new Rect(Screen.width*5f/7f-width/2f,Screen.height*7f/8f+borderSize,width,buttonHeight),tGetMore);
-		}
-
-		/// <summary>
-		/// Displays the currencies screen of the game's store.
-		/// </summary>
-		void currencyScreen()
-		{
-			//white background
-			GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),tWhitePixel);
-			Color backupColor = GUI.color;
-			TextAnchor backupAlignment = GUI.skin.label.alignment;
-			Font backupFont = GUI.skin.label.font;
-
-			GUI.color = Color.red;
-			GUI.skin.label.alignment = TextAnchor.UpperLeft;
-			GUI.Label(new Rect(10,10,Screen.width-10,Screen.height-10),"SOOMLA Example Store");
-			GUI.color = Color.black;
-			GUI.skin.label.alignment = TextAnchor.UpperRight;
-			string cItemId = StoreInfo.Currencies[0].ItemId;
-			GUI.Label(new Rect(10,10,Screen.width-40,Screen.height),""+ StoreInventory.GetItemBalance(cItemId));
-			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-			GUI.skin.label.font = tTitle;
-			GUI.Label(new Rect(0,Screen.height/8f,Screen.width,Screen.height/8f),"Virtual Currency Packs");
-
-			GUI.color = backupColor;
-			GUI.DrawTexture(new Rect(Screen.width-30,10,30,30),tMuffins);
-			float productSize = Screen.width*0.30f;
-			float totalHeight = StoreInfo.CurrencyPacks.Count*productSize;
-			//Here we start a scrollView, the first rectangle is the position of the scrollView on the screen,
-			//the second rectangle is the size of the panel inside the scrollView.
-			//All rectangles after this point are relative to the position of the scrollView.
-			productScrollPosition = GUI.BeginScrollView(new Rect(0,Screen.height*2f/8f,Screen.width,Screen.height*5f/8f),productScrollPosition,new Rect(0,0,Screen.width,totalHeight));
-			float y = 0;
-			foreach(VirtualCurrencyPack cp in StoreInfo.CurrencyPacks){
-				GUI.color = backupColor;
-				//We draw a button so we can detect a touch and then draw an image on top of it.
-				if(GUI.Button(new Rect(0,y,Screen.width,productSize),"") && !isDragging){
-					Debug.Log("SOOMLA/UNITY Wants to buy: " + cp.Name);
-					try {
-						StoreInventory.BuyItem(cp.ItemId);
-					} catch (Exception e) {
-						Debug.Log ("SOOMLA/UNITY " + e.Message);
-					}
-				}
-				GUI.DrawTexture(new Rect(0,y,Screen.width,productSize),tWhitePixel);
-				//Resources.Load(path) The path is the relative path starting from the Resources folder.
-				//Make sure the images used for UI, have the textureType GUI. You can change this in the Unity editor.
-				GUI.DrawTexture(new Rect(0+productSize/8f, y+productSize/8f,productSize*6f/8f,productSize*6f/8f),itemsTextures[cp.ItemId]);
-				GUI.color = Color.black;
-				GUI.skin.label.font = fName;
-				GUI.skin.label.alignment = TextAnchor.UpperLeft;
-				GUI.Label(new Rect(productSize,y,Screen.width,productSize/3f),cp.Name);
-				GUI.skin.label.font = fDesc;
-				GUI.Label(new Rect(productSize + 10f,y+productSize/3f,Screen.width-productSize-15f,productSize/3f),cp.Description);
-				string price = ((PurchaseWithMarket)cp.PurchaseType).MarketItem.MarketPriceAndCurrency;
-				if (string.IsNullOrEmpty(price)) {
-					price = ((PurchaseWithMarket)cp.PurchaseType).MarketItem.Price.ToString("0.00");
-				}
-				GUI.Label(new Rect(Screen.width*3/4f,y+productSize*2/3f,Screen.width,productSize/3f),"price:" + price);
-				GUI.skin.label.alignment = TextAnchor.UpperRight;
-				GUI.skin.label.font = fBuy;
-				GUI.Label(new Rect(0,y,Screen.width-10,productSize),"Click to buy");
-				GUI.color = Color.grey;
-				GUI.DrawTexture(new Rect(0,y+productSize-1,Screen.width,1),tWhitePixel);
-				y+= productSize;
-			}
-			GUI.EndScrollView();
-			//We have just ended the scroll view this means that all the positions are relative top-left corner again.
-			GUI.skin.label.alignment = backupAlignment;
-			GUI.color = backupColor;
-			GUI.skin.label.font = backupFont;
-
-			float height = Screen.height/8f;
-			float borderSize = height/8f;
-			float buttonHeight = height-2*borderSize;
-			float width = buttonHeight*180/95;
-			if(GUI.Button(new Rect(Screen.width/2f-width/2f,Screen.height*7f/8f+borderSize,width,buttonHeight), "back")){
-				guiState = GUIState.GOODS;
-			}
-			GUI.DrawTexture(new Rect(Screen.width/2f-width/2f,Screen.height*7f/8f+borderSize,width,buttonHeight),tBack);
 		}
 
 	}
+
+
+	private static string ScreenShotName(int width, int height) {
+		return string.Format("{0}/screen_{1}x{2}_{3}.png", 
+		                     Application.persistentDataPath, 
+		                     width, height, 
+		                     System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
+	}
+	
+	private float timesW(float f) {
+		return (float)(f/640.0)*Screen.width;
+	}
+	
+	private float timesH(float f) {
+		return (float)(f/1136.0)*Screen.height;
+	}
+
 }
+

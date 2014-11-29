@@ -25,7 +25,7 @@ namespace Soomla {
 			int idx = -1;
 			AndroidJNI.PushLocalFrame(100);
 			using(AndroidJavaClass jniRewardStorage = new AndroidJavaClass("com.soomla.data.RewardStorage")) {
-				idx = jniRewardStorage.CallStatic<int>("getLastSeqIdxGiven", reward.toJNIObject());
+				idx = jniRewardStorage.CallStatic<int>("getLastSeqIdxGiven", reward.ID);
 			}
 			AndroidJNI.PopLocalFrame(IntPtr.Zero);
 			return idx;
@@ -34,7 +34,7 @@ namespace Soomla {
 		override protected void _setLastSeqIdxGiven(SequenceReward reward, int idx) {
 			AndroidJNI.PushLocalFrame(100);
 			using(AndroidJavaClass jniRewardStorage = new AndroidJavaClass("com.soomla.data.RewardStorage")) {
-				jniRewardStorage.CallStatic("setLastSeqIdxGiven", reward.toJNIObject(), idx);
+				jniRewardStorage.CallStatic("setLastSeqIdxGiven", reward.ID, idx);
 			}
 			AndroidJNI.PopLocalFrame(IntPtr.Zero);
 		}
@@ -43,7 +43,7 @@ namespace Soomla {
 
 			AndroidJNI.PushLocalFrame(100);
 			using(AndroidJavaClass jniRewardStorage = new AndroidJavaClass("com.soomla.data.RewardStorage")) {
-				jniRewardStorage.CallStatic("setTimesGiven", reward.toJNIObject(), up, notify);
+				jniRewardStorage.CallStatic("setTimesGiven", reward.ID, up, notify);
 			}
 			AndroidJNI.PopLocalFrame(IntPtr.Zero);
 		}
@@ -52,7 +52,7 @@ namespace Soomla {
 			int times = 0;
 			AndroidJNI.PushLocalFrame(100);
 			using(AndroidJavaClass jniRewardStorage = new AndroidJavaClass("com.soomla.data.RewardStorage")) {
-				times = jniRewardStorage.CallStatic<int>("getTimesGiven", reward.toJNIObject());
+				times = jniRewardStorage.CallStatic<int>("getTimesGiven", reward.ID);
 			}
 			AndroidJNI.PopLocalFrame(IntPtr.Zero);
 			return times;
@@ -62,7 +62,7 @@ namespace Soomla {
 			long lastTime = 0;
 			AndroidJNI.PushLocalFrame(100);
 			using(AndroidJavaClass jniRewardStorage = new AndroidJavaClass("com.soomla.data.RewardStorage")) {
-				lastTime = jniRewardStorage.CallStatic<long>("getLastGivenTimeMillis", reward.toJNIObject());
+				lastTime = jniRewardStorage.CallStatic<long>("getLastGivenTimeMillis", reward.ID);
 			}
 			AndroidJNI.PopLocalFrame(IntPtr.Zero);
 

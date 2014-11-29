@@ -78,9 +78,10 @@ namespace Soomla {
 		public void onRewardGiven(string message) {
 			SoomlaUtils.LogDebug(TAG, "SOOMLA/UNITY onRewardGiven:" + message);
 			
-			JSONObject rewardObj = new JSONObject(message);
-			Reward reward = Reward.fromJSONObject(rewardObj);
-			CoreEvents.OnRewardGiven(reward);
+			JSONObject eventJSON = new JSONObject(message);
+			string rewardId = eventJSON["rewardId"].str;
+
+			CoreEvents.OnRewardGiven(Reward.GetReward(rewardId));
 		}
 
 		/// <summary>
@@ -90,16 +91,30 @@ namespace Soomla {
 		public void onRewardTaken(string message) {
 			SoomlaUtils.LogDebug(TAG, "SOOMLA/UNITY onRewardTaken:" + message);
 			
-			JSONObject rewardObj = new JSONObject(message);
-			Reward reward = Reward.fromJSONObject(rewardObj);
-			CoreEvents.OnRewardTaken(reward);
+			JSONObject eventJSON = new JSONObject(message);
+			string rewardId = eventJSON["rewardId"].str;
+			
+			CoreEvents.OnRewardTaken(Reward.GetReward(rewardId));
 		}
 
+		/// <summary>
+		/// Will be called on custom events. Used for internal operations.
+		/// </summary>
+		public void onCustomEvent(string message) {
+			SoomlaUtils.LogDebug(TAG, "SOOMLA/UNITY onCustomEvent:" + message);
+
+			JSONObject eventJSON = new JSONObject(message);
+			string name = eventJSON["name"].str;
+			Dictionary<string, string> extra = eventJSON["extra"].ToDictionary();
+
+			CoreEvents.OnCustomEvent(name, extra);
+		}
 
 		public delegate void Action();
 
 		public static Action<Reward> OnRewardGiven = delegate {};
 		public static Action<Reward> OnRewardTaken = delegate {};
+		public static Action<string, Dictionary<string, string>> OnCustomEvent = delegate {};
 
 	}
 }

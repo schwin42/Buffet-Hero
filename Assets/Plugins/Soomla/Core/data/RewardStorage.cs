@@ -141,7 +141,6 @@ namespace Soomla
 #endif
 		}
 
-
 		/** keys **/
 #if UNITY_EDITOR
 		private static string keyRewards(string rewardId, string postfix) {

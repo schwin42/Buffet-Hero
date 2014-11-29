@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 
 public class PostProcessScriptStarter : MonoBehaviour {
-	[PostProcessBuild]
+	[PostProcessBuild(1000)]
 	public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject) {
 #if UNITY_IOS
 		string buildToolsDir = Application.dataPath + @"/Soomla/Editor/build-tools";
@@ -19,8 +19,18 @@ public class PostProcessScriptStarter : MonoBehaviour {
 		foreach (FileInfo fi in files) {
 			Process proc = new Process();
 			proc.StartInfo.FileName = "python2.6";
-//			UnityEngine.Debug.Log("Trying to run: " + fi.FullName);
-			proc.StartInfo.Arguments = string.Format("\"{0}\" \"{1}\"", fi.FullName, pathToBuiltProject);
+
+			int prefixLength = "Soomla_".Length;
+			string targetModule = fi.Name.Substring(prefixLength, fi.Name.Length - ".py".Length - prefixLength);
+			Soomla.ISoomlaPostBuildTool tool = Soomla.SoomlaPostBuildTools.GetTool(targetModule);
+			string metaData = "";
+			if (tool != null) {
+				metaData = tool.GetToolMetaData(target);
+				metaData = (metaData != null) ? metaData : "";
+			}
+
+//			UnityEngine.Debug.Log("Trying to run: " + fi.FullName + " " + metaData);
+			proc.StartInfo.Arguments = string.Format("\"{0}\" \"{1}\" \"{2}\"", fi.FullName, pathToBuiltProject, metaData);
 			proc.StartInfo.UseShellExecute = false;
 			proc.StartInfo.RedirectStandardOutput = true;
 			proc.StartInfo.RedirectStandardError = true;

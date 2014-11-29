@@ -30,7 +30,8 @@ public enum ButtonAction
 	DecrementRule = 18,
 	ResumeGame = 19,
 	PauseGame = 20,
-	LeaveGame = 21
+	LeaveGame = 21,
+	PurchaseAdRemoval = 23
 }
 
 public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
@@ -177,6 +178,9 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 			InterfaceController.Instance.SetPopupUiState(PopupUiState.NoPopup);
 			GameController.Instance.TerminateGame();
 			InterfaceController.Instance.SetGameUiState(GameUiState.Join);
+			break;
+		case ButtonAction.PurchaseAdRemoval:
+			Soomla.Store.SoomlaStoreIOS.BuyMarketItem("01RemoveAds", "");
 			break;
 		default:
 			Debug.LogError("Invalid button action: "+buttonAction);
