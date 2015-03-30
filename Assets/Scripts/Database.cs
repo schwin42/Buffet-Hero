@@ -55,26 +55,22 @@ public class Food
 {
 	public bool isEmpty = true;
 
-	public string Name 
-	{
-		get
-		{
-			if(!isEmpty){
-			string returnString = "";
-				for (int i = attributes.Count - 1; i >= 0; i--)
-			{
+	public string Name {
+		get {
+			if (!isEmpty) {
+				string returnString = "";
+				for (int i = attributes.Count - 1; i >= 0; i--) {
 
-				returnString += attributes[i].name;
-				if(i > 0)
-				{
-					returnString += " ";
+					returnString += attributes [i].name;
+					if (i > 0) {
+						returnString += " ";
+					}
 				}
-			}
-			//Debug.Log ("Food = "+returnString);
-			return returnString;
-			//return descriptor.name + " " + ingredient.name + " " + form.name;
+				//Debug.Log ("Food = "+returnString);
+				return returnString;
+				//return descriptor.name + " " + ingredient.name + " " + form.name;
 			} else {
-				Debug.LogError("Null food exception");
+				Debug.LogError ("Null food exception");
 				return "Empty";
 			}
 		}
@@ -82,106 +78,88 @@ public class Food
 		
 	private float _quality;
 	private bool _qualityIsSet = false;
-	public float Quality
-	{
-		get
-		{
-			if(!isEmpty){
-			if(_isRealized)
-			{
-			if(!_qualityIsSet)
-			{
-				//Debug.Log ("Quality not set.");
-			float netValue = 0f;
-			float netMagnitude = 0f;
-			int netAbsolute = 0;
-			foreach(Tag tag in Tags)
-			{
-				netValue += tag.value;
-				netMagnitude += tag.magnitude;
-				netAbsolute += tag.absolute;
-			}
-			//Debug.Log ("Net value, magnitude"+netValue + ", "+ netMagnitude);
-			float preAbsoluteValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
-					float staticValue = 0f;
-					if(netAbsolute == 0)
-					{
-						staticValue = preAbsoluteValue;
-					} else if(netAbsolute > 0)
-					{
-						staticValue = Mathf.Abs(preAbsoluteValue);
-					} else if(netAbsolute < 0)
-					{
-						staticValue = -Mathf.Abs(preAbsoluteValue);
+
+	public float Quality {
+		get {
+			if (!isEmpty) {
+				if (_isRealized) {
+					if (!_qualityIsSet) {
+						float netValue = 0f;
+						float netMagnitude = 0f;
+						int netAbsolute = 0;
+						foreach (Tag tag in Tags) {
+							netValue += tag.value;
+							netMagnitude += tag.magnitude;
+							netAbsolute += tag.absolute;
+						}
+						float preAbsoluteValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
+						float staticValue = 0f;
+						if (netAbsolute == 0) {
+							staticValue = preAbsoluteValue;
+						} else if (netAbsolute > 0) {
+							staticValue = Mathf.Abs (preAbsoluteValue);
+						} else if (netAbsolute < 0) {
+							staticValue = -Mathf.Abs (preAbsoluteValue);
+						} else {
+							Debug.LogError ("Logic breach, repent!");
+						}
+						float output = 0f;
+						if (GameController.RandomConstant != 0f) {
+							output = Mathf.Round (staticValue * GameController.RandomConstant);
+						} else {
+							output = Mathf.Round (staticValue * GameController.ScoreConstant);
+						}
+						_quality = output;
+						_qualityIsSet = true;
+						return output;
 					} else {
-						Debug.LogError("Logic breach, repent!");
+						return _quality;
 					}
-				float output = 0f;
-				if(GameController.RandomConstant != 0f)
-			{
-			output = Mathf.Round (staticValue * GameController.RandomConstant);
-			} else {
-					output = Mathf.Round (staticValue * GameController.ScoreConstant);
+				} else {
+					return 0;
 				}
-				_quality = output;
-				_qualityIsSet = true;
-				return output;
-			 } else {
-				return _quality;
-			}
 			} else {
-				 return 0;
-			}
-			} else {
-				Debug.LogError("Null food exception");
+				Debug.LogError ("Null food exception");
 				return 0;
 			}
 
 		}
 	}
-
-	//public float Value = 0f;
 
 	private int _damage;
 	private bool _damageIsSet = false;
-	public float Damage
-	{
-		get
-		{
-			if(!isEmpty){
-			if(!_damageIsSet)
-			{
-				float netDamage = 0f;
-				foreach(Tag tag in Tags)
-				{
-					float difference = tag.damageRange[1] - tag.damageRange[0];
-					float random = UnityEngine.Random.value;
-					Debug.Log ("Random = "+random);
-					netDamage += (random * difference) + tag.damageRange[0];
+
+	public float Damage {
+		get {
+			if (!isEmpty) {
+				if (!_damageIsSet) {
+					float netDamage = 0f;
+					foreach (Tag tag in Tags) {
+						float difference = tag.damageRange [1] - tag.damageRange [0];
+						float random = UnityEngine.Random.value;
+						Debug.Log ("Random = " + random);
+						netDamage += (random * difference) + tag.damageRange [0];
+					}
+					Debug.Log ("Net damage" + netDamage);
+					_damage = Mathf.RoundToInt (netDamage * 10);
+					Debug.Log ("Recorded damage" + _damage);
+					_damageIsSet = true;
+					return _damage;
+				} else {
+					return _damage;
 				}
-				Debug.Log ("Net damage" +netDamage);
-				_damage = Mathf.RoundToInt(netDamage * 10);
-				Debug.Log ("Recorded damage"+_damage);
-				_damageIsSet = true;
-				return _damage;
-			} else {
-				return _damage;
-			}
 
 			} else {
-				Debug.LogError("Null food exception.");
+				Debug.LogError ("Null food exception.");
 				return 0;
 			}
 		}
 	}
 
-	public List<Tag> Tags
-	{
-		get
-		{
-			List<Tag> tags = new List<Tag>();
-			foreach (FoodAttribute attribute in attributes)
-			{
+	public List<Tag> Tags {
+		get {
+			List<Tag> tags = new List<Tag> ();
+			foreach (FoodAttribute attribute in attributes) {
 				tags.AddRange (attribute.tags);
 //				foreach(Tag tag in attribute.tags)
 //				{
@@ -195,71 +173,65 @@ public class Food
 	}
 
 	public bool _isRealized = false;
-	public void Realize(bool b)
+
+	public void Realize (bool b)
 	{
-		if(!isEmpty){
-		if(b)
-		{
+		if (!isEmpty) {
+			if (b) {
 //			Tag _virtualTag = new Tag();
 //			_virtualTag.name = "combination";
-			foreach(Tag tag in Tags)
-			{
-				//Database.Instance.testTag = tag;
-				if(tag.combinesPoorlyWith != null){
-				foreach(string tagString in tag.combinesPoorlyWith)
-				{
-					int hits = tag.GetHitsInFood(this, tagString);
-						if(hits > 0)
-						{
-					Tag virtualTag = new Tag();
-					virtualTag.value -= hits;
-					virtualTag.name = tag.name+ " combines poorly with "+tagString+" x"+hits;
-					virtualTags.Add (virtualTag);
+				foreach (Tag tag in Tags) {
+					//Database.Instance.testTag = tag;
+					if (tag.combinesPoorlyWith != null) {
+						foreach (string tagString in tag.combinesPoorlyWith) {
+							int hits = tag.GetHitsInFood (this, tagString);
+							if (hits > 0) {
+								Tag virtualTag = new Tag ();
+								virtualTag.value -= hits;
+								virtualTag.name = tag.name + " combines poorly with " + tagString + " x" + hits;
+								virtualTags.Add (virtualTag);
+							}
 						}
-				}
-				}
-				if(tag.combinesWellWith != null){
-				foreach(string tagString in tag.combinesWellWith)
-				{
-					int hits = tag.GetHitsInFood(this, tagString);
-						if(hits > 0)
-						{
-					Tag virtualTag = new Tag();
-					virtualTag.value += hits;
-					virtualTag.name = tag.name+ " combines well with "+tagString+" x"+hits;
-					virtualTags.Add (virtualTag);
+					}
+					if (tag.combinesWellWith != null) {
+						foreach (string tagString in tag.combinesWellWith) {
+							int hits = tag.GetHitsInFood (this, tagString);
+							if (hits > 0) {
+								Tag virtualTag = new Tag ();
+								virtualTag.value += hits;
+								virtualTag.name = tag.name + " combines well with " + tagString + " x" + hits;
+								virtualTags.Add (virtualTag);
+							}
 						}
-				}
-				}
-				if(tag.combinesDramaticallyWith != null){
-				foreach(string tagString in tag.combinesDramaticallyWith)
-				{
-					int hits = tag.GetHitsInFood(this, tagString);
-						if(hits > 0)
-						{
-					Tag virtualTag = new Tag();
-					virtualTag.magnitude += hits;
-					virtualTag.name = tag.name+ " combines dramatically with "+tagString+" x"+hits;
-					virtualTags.Add (virtualTag);
+					}
+					if (tag.combinesDramaticallyWith != null) {
+						foreach (string tagString in tag.combinesDramaticallyWith) {
+							int hits = tag.GetHitsInFood (this, tagString);
+							if (hits > 0) {
+								Tag virtualTag = new Tag ();
+								virtualTag.magnitude += hits;
+								virtualTag.name = tag.name + " combines dramatically with " + tagString + " x" + hits;
+								virtualTags.Add (virtualTag);
+							}
 						}
+					}
 				}
-				}
+				_isRealized = true;
+				float tempQuality = Quality; //Read quality to initialize value
+			} else {
+				virtualTags = new List<Tag> ();
+				_isRealized = false;
 			}
-			_isRealized = true;
-			float tempQuality = Quality;
-			//virtualTag.Add = _virtualTag;
 		} else {
-			virtualTags = new List<Tag>();
-			_isRealized = false;
-		}
-		} else {
-			Debug.LogError("Null food exception. Food not realized.");
+			Debug.LogError ("Null food exception. Food not realized.");
 		}
 
 	}
 
 	//Used in get food functions in game controller
-	public Food (){}
+	public Food ()
+	{
+	}
 
 	//Copy food
 	public Food (Food food)
@@ -272,13 +244,13 @@ public class Food
 	//Construct food from attributes
 	public Food (List<FoodAttribute> _attributes)
 	{
-		attributes.AddRange(_attributes);
+		attributes.AddRange (_attributes);
 		Realize (true);
 		isEmpty = false;
 	}
 
-	public List<FoodAttribute> attributes = new List<FoodAttribute>();
-	public List<Tag> virtualTags = new List<Tag>();
+	public List<FoodAttribute> attributes = new List<FoodAttribute> ();
+	public List<Tag> virtualTags = new List<Tag> ();
 	
 }
 
@@ -292,8 +264,8 @@ public class FoodAttribute
 	public string attributeSubtype;
 //	public float multiplier = 1f;
 //	public float modifier = 0f;
-	public List<Tag> tags = new List<Tag>();
-	public List<string> combinations = new List<string>();
+	public List<Tag> tags = new List<Tag> ();
+	public List<string> combinations = new List<string> ();
 	public string date = "";
 //	public Temperature temperature = Temperature.None;
 //	public float spice = 0f;
@@ -320,24 +292,22 @@ public class Tag
 	public string[] combinesDramaticallyWith;
 	public string helpTag = "";
 
-	public int GetHitsInFood(Food food, string tagString)
+	public int GetHitsInFood (Food food, string tagString)
 	{
 		var dataQuery = from dataTag in Database.Instance.tagData
 			where dataTag.name == tagString
 				select dataTag;
-		Tag[] matchingTagsInData = dataQuery.ToArray();
-		if(matchingTagsInData.Length == 0)
-		{
+		Tag[] matchingTagsInData = dataQuery.ToArray ();
+		if (matchingTagsInData.Length == 0) {
 			//Handle references and types
 			return 0;
 		} else {
 			var foodQuery = from foodTag in food.Tags
 				where foodTag.name == tagString && foodTag != this
 					select foodTag;
-			Tag[] matchingTagsInFood = foodQuery.ToArray();
+			Tag[] matchingTagsInFood = foodQuery.ToArray ();
 			int hits = 0;
-			for(int i = 0; i < matchingTagsInFood.Length; i++)
-			{
+			for (int i = 0; i < matchingTagsInFood.Length; i++) {
 				hits++;
 			}
 			return hits;
@@ -366,11 +336,11 @@ public class Tag
 #endregion
 
 
-public class Database : MonoBehaviour {
+public class Database : MonoBehaviour
+{
 
 	public static Database Instance;
-
-	static System.Random _random = new System.Random();
+	static System.Random _random = new System.Random ();
 
 	//Configurable
 
@@ -386,12 +356,12 @@ public class Database : MonoBehaviour {
 	//public Tag testTag;
 
 
-	public void Awake()
+	public void Awake ()
 	{
 		Instance = this;
 	}
 
-	public void Start()
+	public void Start ()
 	{
 		//LoadData();
 		//LoadTags (Application.dataPath + "/Data/" + tagsFile);
@@ -406,79 +376,72 @@ public class Database : MonoBehaviour {
 //		LoadTags(loadPath);
 //	}
 
-	public void LoadAttributes(string filePath)
+	public void LoadAttributes (string filePath)
 	{
-		Debug.Log ("Loading attributes from"+filePath);
-		string[] dataLines = File.ReadAllLines(filePath);
-		Dictionary<int, string> fieldLookup = new Dictionary<int, string>();
+		Debug.Log ("Loading attributes from" + filePath);
+		string[] dataLines = File.ReadAllLines (filePath);
+		Dictionary<int, string> fieldLookup = new Dictionary<int, string> ();
 
-		attributeData.Clear();
-		for(int i = 0; i < dataLines.Length; i++)
-		{
-			if(i == 0)
-			{
-				string [] fieldStrings = dataLines[0].Split(',');
+		attributeData.Clear ();
+		for (int i = 0; i < dataLines.Length; i++) {
+			if (i == 0) {
+				string [] fieldStrings = dataLines [0].Split (',');
 				
-				for(int j = 0; j < fieldStrings.Length; j++)
-				{
-					fieldLookup.Add (j, fieldStrings[j]);
+				for (int j = 0; j < fieldStrings.Length; j++) {
+					fieldLookup.Add (j, fieldStrings [j]);
 				}
 			} else {
 
 
-				FoodAttribute recordAttribute = new FoodAttribute(); 
-				string[] recordStrings = dataLines[i].Split(',');
-				for (int j = 0; j < fieldLookup.Count; j++)
-				{
-					switch(fieldLookup[j])
-					{
+				FoodAttribute recordAttribute = new FoodAttribute (); 
+				string[] recordStrings = dataLines [i].Split (',');
+				for (int j = 0; j < fieldLookup.Count; j++) {
+					switch (fieldLookup [j]) {
 					case "Name ID":
-						if(recordStrings[j].Contains('"'))
-					    {
+						if (recordStrings [j].Contains ('"')) {
 							//Debug.Log (recordStrings[j]);
 
 							string tripleQuotes = "\"\"\"";
 							string singleQuotes = "\"";
-							string outputString = recordStrings[j].Replace(tripleQuotes, singleQuotes);
+							string outputString = recordStrings [j].Replace (tripleQuotes, singleQuotes);
 							//Debug.Log (outputString);
 							recordAttribute.name = outputString;
 						} else {
-						recordAttribute.name = recordStrings[j];
+							recordAttribute.name = recordStrings [j];
 						}
 						break;
 					case "Attribute Type":
-						recordAttribute.attributeType = StringToAttributeType(recordStrings[j]);
+						recordAttribute.attributeType = StringToAttributeType (recordStrings [j]);
 						break;
 					case "Subtype":
-						recordAttribute.attributeSubtype = recordStrings[j];
+						recordAttribute.attributeSubtype = recordStrings [j];
 						break;
 					case "Tags":
-						string[] tagArray = Regex.Split(recordStrings[j], "; ");
-						List<string> tagList = new List<string>(tagArray);
+						string[] tagArray = Regex.Split (recordStrings [j], "; ");
+						List<string> tagList = new List<string> (tagArray);
 						var query = from tag in tagData
-							where tagList.Contains(tag.name)
+							where tagList.Contains (tag.name)
 								select tag;
-						if(tagArray.Length > query.Count ())
-						{
-							Debug.Log ("Missing tags on "+recordAttribute.name);
+						if (tagArray.Length > query.Count ()) {
+							Debug.Log ("Missing tags on " + recordAttribute.name);
 						}
-						recordAttribute.tags = query.ToList();
+						recordAttribute.tags = query.ToList ();
 						break;
 					case "Rank":
 						Debug.LogError ("No handling for rank.");
 						//recordAttribute.rank = StringToRank(recordStrings[j]);
 						break;
 					case "Rarity":
-						recordAttribute.rarity = recordStrings[j];
+						recordAttribute.rarity = recordStrings [j];
 						break;
 					case "Combinations":
-						recordAttribute.combinations = Regex.Split(recordStrings[j], "; ").ToList();
+						recordAttribute.combinations = Regex.Split (recordStrings [j], "; ").ToList ();
 						break;
 					case "Date Added":
-						recordAttribute.date = recordStrings[j];
+						recordAttribute.date = recordStrings [j];
 						break;
 					default:
-						Debug.LogError ("Unhandled field name: "+fieldLookup[j]);
+						Debug.LogError ("Unhandled field name: " + fieldLookup [j]);
 						break;
 					}
 					
@@ -489,118 +452,110 @@ public class Database : MonoBehaviour {
 		}
 	}
 
-	public void LoadTags(string filePath)
+	public void LoadTags (string filePath)
 	{
-		Debug.Log ("Loading tags from"+filePath);
-		string[] dataLines = File.ReadAllLines(filePath);
-		Dictionary<int, string> fieldLookup = new Dictionary<int, string>();
+		Debug.Log ("Loading tags from" + filePath);
+		string[] dataLines = File.ReadAllLines (filePath);
+		Dictionary<int, string> fieldLookup = new Dictionary<int, string> ();
 
-		tagData.Clear();
-		for(int i = 0; i < dataLines.Length; i++)
-		{
-			if(i == 0)
-			{
-				string [] fieldStrings = dataLines[0].Split(',');
+		tagData.Clear ();
+		for (int i = 0; i < dataLines.Length; i++) {
+			if (i == 0) {
+				string [] fieldStrings = dataLines [0].Split (',');
 				
-				for(int j = 0; j < fieldStrings.Length; j++)
-				{
-					fieldLookup.Add (j, fieldStrings[j]);
+				for (int j = 0; j < fieldStrings.Length; j++) {
+					fieldLookup.Add (j, fieldStrings [j]);
 				}
 			} else {
 				
-				Tag recordTag = new Tag(); 
-				string[] recordStrings = dataLines[i].Split(',');
-				for (int j = 0; j < fieldLookup.Count; j++)
-				{
-					if(recordStrings[j] != ""){
-					switch(fieldLookup[j])
-					{
-					case "Tag ID":
-						recordTag.name = recordStrings[j];
-						break;
-					case "Type":
-						recordTag.tagType = recordStrings[j];
-						break;
-					case "Value":
-						recordTag.value = StringToFloat(recordStrings[j]);
-						break;
-					case "Calories":
-						recordTag.calories = StringToFloat(recordStrings[j]);
-						break;
-					case "Magnitude":
-						recordTag.magnitude = StringToFloat(recordStrings[j]);
-						break;
-					case "Price":
-						recordTag.price = StringToFloat(recordStrings[j]);
-						break;
-					case "Spiciness":
-						recordTag.spiciness = StringToFloat(recordStrings[j]);
-						break;
-					case "Nausea":
-						recordTag.nausea = StringToFloat(recordStrings[j]);
-						break;
-					case "Anticipation":
-						recordTag.anticipation = StringToFloat(recordStrings[j]);
-						break;
-					case "Effect":
-						recordTag.description = recordStrings[j];
-						break;
-					case "Combines Well With":
+				Tag recordTag = new Tag (); 
+				string[] recordStrings = dataLines [i].Split (',');
+				for (int j = 0; j < fieldLookup.Count; j++) {
+					if (recordStrings [j] != "") {
+						switch (fieldLookup [j]) {
+						case "Tag ID":
+							recordTag.name = recordStrings [j];
+							break;
+						case "Type":
+							recordTag.tagType = recordStrings [j];
+							break;
+						case "Value":
+							recordTag.value = StringToFloat (recordStrings [j]);
+							break;
+						case "Calories":
+							recordTag.calories = StringToFloat (recordStrings [j]);
+							break;
+						case "Magnitude":
+							recordTag.magnitude = StringToFloat (recordStrings [j]);
+							break;
+						case "Price":
+							recordTag.price = StringToFloat (recordStrings [j]);
+							break;
+						case "Spiciness":
+							recordTag.spiciness = StringToFloat (recordStrings [j]);
+							break;
+						case "Nausea":
+							recordTag.nausea = StringToFloat (recordStrings [j]);
+							break;
+						case "Anticipation":
+							recordTag.anticipation = StringToFloat (recordStrings [j]);
+							break;
+						case "Effect":
+							recordTag.description = recordStrings [j];
+							break;
+						case "Combines Well With":
 					//	Debug.Log (recordStrings[j]);
-						string[] tagArray = Regex.Split(recordStrings[j], "; ");
+							string[] tagArray = Regex.Split (recordStrings [j], "; ");
 							//Debug.Log (tagArray[0]);
 							recordTag.combinesWellWith = tagArray;
 							//Debug.Log (recordTag.combinesWellWith[0]);
-						break;
-					case "Combines Poorly With":
-						recordTag.combinesPoorlyWith = Regex.Split(recordStrings[j], "; ");
 							break;
-					case "Combines Dramatically With":
-						recordTag.combinesDramaticallyWith = Regex.Split(recordStrings[j], "; ");
-						break;
-					case "Damage":
-							if(recordStrings[j].Contains(";")){
-								string[] damageStrings = Regex.Split (recordStrings[j], ";");
-							for(int k = 0; k < damageStrings.Length; k++)
-							{
-								recordTag.damageRange[k] = float.Parse(damageStrings[k]);
+						case "Combines Poorly With":
+							recordTag.combinesPoorlyWith = Regex.Split (recordStrings [j], "; ");
+							break;
+						case "Combines Dramatically With":
+							recordTag.combinesDramaticallyWith = Regex.Split (recordStrings [j], "; ");
+							break;
+						case "Damage":
+							if (recordStrings [j].Contains (";")) {
+								string[] damageStrings = Regex.Split (recordStrings [j], ";");
+								for (int k = 0; k < damageStrings.Length; k++) {
+									recordTag.damageRange [k] = float.Parse (damageStrings [k]);
+								}
+							} else {
+								Debug.Log ('"' + recordStrings [j] + '"');
+								recordTag.damageRange [0] = float.Parse (recordStrings [j]);
+								recordTag.damageRange [1] = float.Parse (recordStrings [j]);
 							}
-						} else {
-							Debug.Log ('"'+recordStrings[j]+'"');
-						recordTag.damageRange[0] = float.Parse(recordStrings[j]);
-						recordTag.damageRange[1] = float.Parse(recordStrings[j]);
-						}
 							break;
 						case "HelpTag":
-							recordTag.helpTag = recordStrings[j];
+							recordTag.helpTag = recordStrings [j];
 							break;
 						case "Absolute":
-							recordTag.absolute = int.Parse(recordStrings[j]);
+							recordTag.absolute = int.Parse (recordStrings [j]);
 							break;
-					default:
-						Debug.LogError ("Unhandled tag name: "+fieldLookup[j]);
-						break;
+						default:
+							Debug.LogError ("Unhandled tag name: " + fieldLookup [j]);
+							break;
+						}
 					}
-				}
 
 				}
 				var query = from tag in tagData
 					where tag.name == recordTag.name
 						select tag;
-				if(query.Count () > 0)
-				{
-					Debug.Log ("Tag "+recordTag.name+" already exists.");
+				if (query.Count () > 0) {
+					Debug.Log ("Tag " + recordTag.name + " already exists.");
 				} else {
-				tagData.Add (recordTag);
+					tagData.Add (recordTag);
 				}
 			}
 		}
-		}
+	}
 
-	public LetterRank StringToRank(string s)
+	public LetterRank StringToRank (string s)
 	{
-		switch (s)
-		{
+		switch (s) {
 		case "S":
 			return LetterRank.S;
 		case "A":
@@ -616,33 +571,31 @@ public class Database : MonoBehaviour {
 		case "F":
 			return LetterRank.F;
 		default:
-			Debug.LogError("Invalid rank: "+s);
+			Debug.LogError ("Invalid rank: " + s);
 			return LetterRank.None;
 		}
 	}
 
-	public float StringToFloat(string s)
+	public float StringToFloat (string s)
 	{
-		if(s != "")
-		{
-			return float.Parse(s);
+		if (s != "") {
+			return float.Parse (s);
 		} else {
 			return 0;
 		}
 	}
 
-	public AttributeType StringToAttributeType(string s)
+	public AttributeType StringToAttributeType (string s)
 	{
-		switch (s)
-		{
+		switch (s) {
 		case "qualifier":
-				return AttributeType.Qualifier;
+			return AttributeType.Qualifier;
 		case "ingredient":
-				return AttributeType.Ingredient;
+			return AttributeType.Ingredient;
 		case "form":
-				return AttributeType.Form;
+			return AttributeType.Form;
 		default:
-			Debug.LogError("Invalid attribute type: "+s);
+			Debug.LogError ("Invalid attribute type: " + s);
 			return AttributeType.None;
 		}
 	}
@@ -669,46 +622,45 @@ public class Database : MonoBehaviour {
 //		BinaryWriter binaryWriter = new BinaryWriter();
 //		FileStream fileStream = File.Create (Application.persistentDataPath
 //	}
-		//	{
-		//#if !UNITY_WINRT
-		//		BinaryFormatter binaryFormatter = new BinaryFormatter();
-		//		//Debug.Log (dataPath + binaryFileName);
-		//		FileStream fileStream = File.Create (Application.dataPath+"/Data/" + binaryFileName);
-		//
-		//		binaryFormatter.Serialize(fileStream, masterInfo);
-		//		fileStream.Close ();
-		//
-		//		Debug.Log ("Saved to binary @"+Time.frameCount);
-		//#endif
-		//	}
+	//	{
+	//#if !UNITY_WINRT
+	//		BinaryFormatter binaryFormatter = new BinaryFormatter();
+	//		//Debug.Log (dataPath + binaryFileName);
+	//		FileStream fileStream = File.Create (Application.dataPath+"/Data/" + binaryFileName);
+	//
+	//		binaryFormatter.Serialize(fileStream, masterInfo);
+	//		fileStream.Close ();
+	//
+	//		Debug.Log ("Saved to binary @"+Time.frameCount);
+	//#endif
+	//	}
 		
-		//	private void LoadAndDeserializeFromBinary()
-		//    {
-		//#if !UNITY_WINRT
-		//		string dataPath = Application.dataPath + "/Data/";
-		//        if(File.Exists (dataPath + binaryFileName))
-		//		{
-		//			BinaryFormatter binaryFormatter = new BinaryFormatter();
-		//			FileStream fileStream = File.Open (dataPath + binaryFileName, FileMode.Open);
-		//			masterInfo = (MasterInfo)binaryFormatter.Deserialize(fileStream);
-		//			fileStream.Close ();
-		//			Debug.Log ("Master info loaded from binary");
-		//		} else {
-		//			Debug.LogError ("Path not found: " + dataPath + binaryFileName);
-		//		}
-		//#endif
-		//    }
-	public static void Shuffle<T>(List<T> list)
+	//	private void LoadAndDeserializeFromBinary()
+	//    {
+	//#if !UNITY_WINRT
+	//		string dataPath = Application.dataPath + "/Data/";
+	//        if(File.Exists (dataPath + binaryFileName))
+	//		{
+	//			BinaryFormatter binaryFormatter = new BinaryFormatter();
+	//			FileStream fileStream = File.Open (dataPath + binaryFileName, FileMode.Open);
+	//			masterInfo = (MasterInfo)binaryFormatter.Deserialize(fileStream);
+	//			fileStream.Close ();
+	//			Debug.Log ("Master info loaded from binary");
+	//		} else {
+	//			Debug.LogError ("Path not found: " + dataPath + binaryFileName);
+	//		}
+	//#endif
+	//    }
+	public static void Shuffle<T> (List<T> list)
 	{
 		var random = _random;
-		for (int i = list.Count; i > 1; i--)
-		{
+		for (int i = list.Count; i > 1; i--) {
 			// Pick random element to swap.
-			int j = random.Next(i); // 0 <= j <= i-1
+			int j = random.Next (i); // 0 <= j <= i-1
 			// Swap.
-			T tmp = list[j];
-			list[j] = list[i - 1];
-			list[i - 1] = tmp;
+			T tmp = list [j];
+			list [j] = list [i - 1];
+			list [i - 1] = tmp;
 		}
 	}
 

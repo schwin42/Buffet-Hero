@@ -291,8 +291,6 @@ public class InterfaceController : MonoBehaviour {
 
 	public static void SetPlayerUiState(Player player, PlayerUiState targetState)
 	{
-		//Debug.Log (player.playerId);
-		           //+ "to "+targetState+" from "+Instance.playerUiStates[player.playerId]);
 		//Cache last state
 		PlayerUiState oldState = Instance.playerUiStates[player.playerId];
 
@@ -326,18 +324,14 @@ public class InterfaceController : MonoBehaviour {
 			player.entryNameField.text = player.ProfileInstance.playerName == "Guest" ? Instance.selectProfileString : player.ProfileInstance.playerName;
 			break;
 		case PlayerUiState.Ready:
-			//player.playerName = player.nameField.value;
-			//player.nameInput.value = "";
 			break;
 		case PlayerUiState.Join:
-			//player.playerNameLabel.text = "Player"+player.playerId;
 			player.playerChoice = PlayerChoice.Inactive;
 			break;
 		case PlayerUiState.Inactive:
 			player.trayBacker.gameObject.SetActive(false);
 			break;
 		}
-
 
 		//Record state
 		Instance.playerUiStates[player.playerId] = targetState;
@@ -346,11 +340,10 @@ public class InterfaceController : MonoBehaviour {
 
 	public void SetGameUiState(GameUiState targetState)
 	{
-		Debug.Log ("Switching to "+targetState+"from "+currentGameState+" @"+Time.frameCount);
+		Debug.Log ("Switching to "+targetState+" from "+currentGameState+" @"+Time.frameCount);
 		//Cache old state
 		GameUiState oldState = currentGameState;
 
-		//Debug.Log (targetState);
 		//Remove old state elements
 		if(oldState != GameUiState.Uninitialized)
 		{
@@ -457,7 +450,6 @@ public class InterfaceController : MonoBehaviour {
 			{
 				UILabel winnerLabel = Instantiate(winnerPrefab) as UILabel;
 				GameObject winnerGo = winnerLabel.gameObject;
-				//UILabel winnerLabel = winnerGo.GetComponent<UILabel>();
 				winnerLabel.text = winString;
 				winnerGo.transform.parent = panel.transform;
 				winnerGo.transform.localScale = Vector3.one;
@@ -749,18 +741,15 @@ Debug.Log("Query greater than 0");
 
 	public void HighlightControlType(Player player)
 	{
-		Debug.Log (player);
 		if(player.controlType == ControlType.Human)
 		{
 			player.humanButton.color = player.playerPanelScript.playerScheme.highlightedColor;
-			//	highlightColors[player.playerId];
 			player.computerButton.color = neutralLightColor;
 			player.humanButtonLabel.color = neutralLightColor;
 			player.computerButtonLabel.color = neutralDarkColor;
 		} else if(player.controlType == ControlType.Computer)
 		{
 			player.computerButton.color = player.playerPanelScript.playerScheme.highlightedColor;
-			//	highlightColors[player.playerId];
 			player.humanButton.color = neutralLightColor;
 			player.computerButtonLabel.color = neutralLightColor;
 			player.humanButtonLabel.color = neutralDarkColor;

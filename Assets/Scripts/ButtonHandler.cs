@@ -180,7 +180,7 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 			InterfaceController.Instance.SetGameUiState(GameUiState.Join);
 			break;
 		case ButtonAction.PurchaseAdRemoval:
-			Soomla.Store.SoomlaStoreIOS.BuyMarketItem("01RemoveAds", "");
+//			Soomla.Store.SoomlaStoreIOS.BuyMarketItem("01RemoveAds", "");
 			break;
 		default:
 			Debug.LogError("Invalid button action: "+buttonAction);

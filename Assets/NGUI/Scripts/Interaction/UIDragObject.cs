@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2014 Tasharen Entertainment
+// Copyright © 2011-2015 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -102,6 +102,8 @@ public class UIDragObject : MonoBehaviour
 			UIWidget w = target.GetComponent<UIWidget>();
 			if (w != null) contentRect = w;
 		}
+
+		mTargetPos = (target != null) ? target.position : Vector3.zero;
 	}
 
 	void OnDisable () { mStarted = false; }

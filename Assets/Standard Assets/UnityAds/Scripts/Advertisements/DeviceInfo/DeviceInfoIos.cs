@@ -11,7 +11,7 @@ namespace UnityEngine.Advertisements {
     }
   
     public override string getAdvertisingIdentifier() {
-      return iPhone.advertisingIdentifier;
+      return UnityEngine.iOS.Device.advertisingIdentifier;
     }
     
     [DllImport ("__Internal")]
