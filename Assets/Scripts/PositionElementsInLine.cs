@@ -29,9 +29,8 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 		//	Debug.Log ("Player 1 reached");
 			if(elements.Count == 3)
 			{
-		//		Debug.Log("3 elements");
-			elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
-				StartCoroutine("BandAidFix");
+				elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
+				StartCoroutine("ZeroOutColorBarRotation");
 			}
 			break;
 		case 2:
@@ -40,7 +39,8 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 			startFromRightSide = true;
 			if(elements.Count == 3)
 			{
-			elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
+				elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
+				StartCoroutine("ZeroOutColorBarRotation");
 			}
 			break;
 		default:
@@ -88,7 +88,7 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 		player = returnedPlayer;
 	}
 
-	IEnumerator BandAidFix()
+	IEnumerator ZeroOutColorBarRotation() //Workaround for color elements not being positioned correctly initially
 	{
 		yield return 0;
 		elements[2].transform.localEulerAngles = new Vector3(0, 0, 0);

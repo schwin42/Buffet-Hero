@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.Advertisements;
 
 public enum Phase
 {
@@ -82,7 +81,7 @@ public class GameController : MonoBehaviour
 	void Start ()
 	{
 
-		Advertisement.Initialize ("18656");
+//		Advertisement.Initialize ("18656");
 		currentPhase = Phase.Pregame;
 		UserDatabase.Instance.LoadUserData ();
 	}
@@ -544,11 +543,11 @@ public class GameController : MonoBehaviour
 		currentPhase = Phase.GameOver;
 
 		//Show ad before revealing score
-		if (InterfaceController.Instance.adsEnabled) {
-			if (Advertisement.isReady ()) {
-				Advertisement.Show ();
-			}
-		}
+//		if (InterfaceController.Instance.adsEnabled) {
+//			if (Advertisement.isReady ()) {
+//				Advertisement.Show ();
+//			}
+//		}
 
 
 		//Determine winner
@@ -569,7 +568,9 @@ public class GameController : MonoBehaviour
 
 			//UI
 			InterfaceController.Instance.WriteWinner (winQuery [0]);
-			StartCoroutine (DisplayWinner ());
+//			StartCoroutine (
+			DisplayWinner ();
+//				);
 
 			//Update profile stats
 			player.ProfileInstance.gamesPlayed++;
@@ -591,11 +592,12 @@ public class GameController : MonoBehaviour
 		currentPhase = Phase.GameOver;
 	}
 
-	IEnumerator DisplayWinner ()
+	void DisplayWinner ()
+//	IEnumerator DisplayWinner ()
 	{
-		while (Advertisement.isShowing) {
-			yield return 0;
-		}
+//		while (Advertisement.isShowing) {
+//			yield return 0;
+//		}
 
 		InterfaceController.Instance.SetGameUiState (GameUiState.Results);
 	}
