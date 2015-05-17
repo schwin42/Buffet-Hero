@@ -394,7 +394,7 @@ public class GameController : MonoBehaviour
 				//Health
 				float hpFloat = -activeFood.Damage;
 				player.PendingHp = hpFloat;
-				Debug.Log ("Pending hp: " + player.PendingHp);
+				//Debug.Log ("Pending hp: " + player.PendingHp);
 
 				//Ate, update profile
 				player.ProfileInstance.foodsEaten++;

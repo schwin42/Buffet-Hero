@@ -30,7 +30,7 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 			if(elements.Count == 3)
 			{
 				elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
-				//StartCoroutine("ZeroOutColorBarRotation");
+				StartCoroutine("ZeroOutColorBarRotation");
 			}
 			break;
 		case 2:

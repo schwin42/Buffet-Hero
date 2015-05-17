@@ -55,42 +55,54 @@ public class Food
 {
 	public string Name {
 		get {
-				string returnString = "";
-				for (int i = attributes.Count - 1; i >= 0; i--) {
+			string returnString = "";
+			for (int i = attributes.Count - 1; i >= 0; i--) {
 
-					returnString += attributes [i].name;
-					if (i > 0) {
-						returnString += " ";
-					}
+				returnString += attributes [i].name;
+				if (i > 0) {
+					returnString += " ";
 				}
-				//Debug.Log ("Food = "+returnString);
-				return returnString;
+			}
+			//Debug.Log ("Food = "+returnString);
+			return returnString;
 		}
 	}
 
-	public float? Quality { get; private set; }
+	private float netValue;
+	private float netMagnitude;
+	private float netAbsolute;
+
+	private float _quality;
+	public float? Quality { 
+		get {
+			return _quality;
+		}
+		private set {
+			_quality = value.Value;
+		}
+	}
 
 	private int _damage;
 	private bool _damageIsSet = false;
 
 	public float Damage {
 		get {
-				if (!_damageIsSet) {
-					float netDamage = 0f;
-					foreach (Tag tag in Tags) {
-						float difference = tag.damageRange [1] - tag.damageRange [0];
-						float random = UnityEngine.Random.value;
-						Debug.Log ("Random = " + random);
-						netDamage += (random * difference) + tag.damageRange [0];
-					}
-					Debug.Log ("Net damage" + netDamage);
-					_damage = Mathf.RoundToInt (netDamage * 10);
-					Debug.Log ("Recorded damage" + _damage);
-					_damageIsSet = true;
-					return _damage;
-				} else {
-					return _damage;
+			if (!_damageIsSet) {
+				float netDamage = 0f;
+				foreach (Tag tag in Tags) {
+					float difference = tag.damageRange [1] - tag.damageRange [0];
+					float random = UnityEngine.Random.value;
+					Debug.Log ("Random = " + random);
+					netDamage += (random * difference) + tag.damageRange [0];
 				}
+				Debug.Log ("Net damage" + netDamage);
+				_damage = Mathf.RoundToInt (netDamage * 10);
+				Debug.Log ("Recorded damage" + _damage);
+				_damageIsSet = true;
+				return _damage;
+			} else {
+				return _damage;
+			}
 
 			
 		}
@@ -111,12 +123,13 @@ public class Food
 
 	public void Realize ()
 	{
-		this.PopulateVirtualTags();
+		this.PopulateVirtualTags ();
 		this.DeriveQualityFromTags ();
 		_isRealized = true;
 	}
 
-	private void PopulateVirtualTags() {
+	private void PopulateVirtualTags ()
+	{
 		foreach (Tag tag in Tags) {
 			//Database.Instance.testTag = tag;
 			if (tag.combinesPoorlyWith != null) {
@@ -160,31 +173,34 @@ public class Food
 
 	private void DeriveQualityFromTags ()
 	{
-			float netValue = 0f;
-			float netMagnitude = 0f;
-			int netAbsolute = 0;
-			foreach (Tag tag in Tags) {
-				netValue += tag.value;
-				netMagnitude += tag.magnitude;
-				netAbsolute += tag.absolute;
-			}
-			float preAbsoluteValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
-			float postAbsoluteValue;
-			if (netAbsolute == 0) {
-				postAbsoluteValue = preAbsoluteValue;
-			} else if (netAbsolute > 0) {
-				postAbsoluteValue = Mathf.Abs (preAbsoluteValue);
-			} else {
-				postAbsoluteValue = -Mathf.Abs (preAbsoluteValue);
-			}
-			float output = 0f;
-			if (GameController.RandomConstant != 0f) {
-				output = Mathf.Round (postAbsoluteValue * GameController.RandomConstant);
-			} else {
-				output = Mathf.Round (postAbsoluteValue * GameController.ScoreConstant);
-			}
-			this.Quality = output;
+		float netValue = 0f;
+		float netMagnitude = 0f;
+		int netAbsolute = 0;
+		foreach (Tag tag in Tags) {
+			netValue += tag.value;
+			netMagnitude += tag.magnitude;
+			netAbsolute += tag.absolute;
 		}
+		this.netValue = netValue;
+		this.netMagnitude = netMagnitude;
+		this.netAbsolute = netAbsolute;
+		float preAbsoluteValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
+		float postAbsoluteValue;
+		if (netAbsolute == 0) {
+			postAbsoluteValue = preAbsoluteValue;
+		} else if (netAbsolute > 0) {
+			postAbsoluteValue = Mathf.Abs (preAbsoluteValue);
+		} else {
+			postAbsoluteValue = -Mathf.Abs (preAbsoluteValue);
+		}
+		float output = 0f;
+		if (GameController.RandomConstant != 0f) {
+			output = Mathf.Round (postAbsoluteValue * GameController.RandomConstant);
+		} else {
+			output = Mathf.Round (postAbsoluteValue * GameController.ScoreConstant);
+		}
+		this.Quality = output;
+	}
 
 	//Used in get food functions in game controller
 	public Food ()
