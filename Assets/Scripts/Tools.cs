@@ -57,12 +57,12 @@ public class Tools : MonoBehaviour {
 		List<float> percentilesOutput = new List<float>();
 		foodTrials = foodTrials.OrderBy(food => food.Quality).ToList();
 
-		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.95f)].Quality);
-		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.85f)].Quality);
-		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.65f)].Quality);
-		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.35f)].Quality);
-		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.15f)].Quality);
-		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.05f)].Quality);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.95f)].Quality.Value);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.85f)].Quality.Value);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.65f)].Quality.Value);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.35f)].Quality.Value);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.15f)].Quality.Value);
+		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.05f)].Quality.Value);
 //		percentilesOutput.Add(trials[(int)Mathf.Floor( trials.Count * 0.05f)].Quality);
 //		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.95f)].Value);
 //		percentilesOutput.Add(foodTrials[(int)Mathf.Floor( foodTrials.Count * 0.90f)].Value);

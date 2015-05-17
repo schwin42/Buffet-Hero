@@ -80,7 +80,7 @@ public class GameController : MonoBehaviour
 
 	void Start ()
 	{
-
+		print (Application.persistentDataPath);
 //		Advertisement.Initialize ("18656");
 		currentPhase = Phase.Pregame;
 		UserDatabase.Instance.LoadUserData ();
@@ -223,25 +223,23 @@ public class GameController : MonoBehaviour
 	public Food GetRandomFoodUsingQueue () //During runtime; for game use
 	{
 		Food food = new Food ();
-		food.isEmpty = false;
 
 		food.attributes.Add (GetRandomAttributeFromQueue (AttributeType.Form));
 		food.attributes.Add (GetRandomAttributeFromQueue (AttributeType.Ingredient));
 		food.attributes.Add (GetRandomAttributeFromQueue (AttributeType.Qualifier));
-		food.Realize (true);
+		food.Realize ();
 		return food;
 	}
 
 	public static Food GetRandomFoodUsingData () //Pre-runtime; for statistical use
 	{
 		Food food = new Food ();
-		food.isEmpty = false;
 		
 		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Form));
 		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Ingredient));
 		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Qualifier));
-		food.Realize (true);
-		//
+		food.Realize ();
+
 		return food;
 	}
 
@@ -391,29 +389,29 @@ public class GameController : MonoBehaviour
 
 				//Score
 				Debug.Log ("Update score");
-				float qualityFloat = activeFood.Quality;
+				float qualityFloat = activeFood.Quality.Value;
 				player.PendingScore = qualityFloat;
 				//Health
 				float hpFloat = -activeFood.Damage;
 				player.PendingHp = hpFloat;
 				Debug.Log ("Pending hp: " + player.PendingHp);
 
-				//Eat, update profile
+				//Ate, update profile
 				player.ProfileInstance.foodsEaten++;
-				if (player.ProfileInstance.tastiestFoodEaten.isEmpty || activeFood.Quality > player.ProfileInstance.tastiestFoodEaten.Quality) {
+				if (player.ProfileInstance.tastiestFoodEaten == null || activeFood.Quality > player.ProfileInstance.tastiestFoodEaten.Quality) {
 					player.ProfileInstance.tastiestFoodEaten = activeFood;
 				} 
-				if (player.ProfileInstance.grossestFoodEaten.isEmpty || activeFood.Quality < player.ProfileInstance.grossestFoodEaten.Quality) {
+				if (player.ProfileInstance.grossestFoodEaten == null || activeFood.Quality < player.ProfileInstance.grossestFoodEaten.Quality) {
 					player.ProfileInstance.grossestFoodEaten = activeFood;
 				}
 
 			} else {
 
 				//Didn't eat, update profile
-				if (player.ProfileInstance.tastiestFoodMissed.isEmpty || activeFood.Quality > player.ProfileInstance.tastiestFoodMissed.Quality) {
+				if (player.ProfileInstance.tastiestFoodMissed == null || activeFood.Quality > player.ProfileInstance.tastiestFoodMissed.Quality) {
 					player.ProfileInstance.tastiestFoodMissed = activeFood;
 				}
-				if (player.ProfileInstance.grossestFoodMissed.isEmpty || activeFood.Quality < player.ProfileInstance.grossestFoodMissed.Quality) {
+				if (player.ProfileInstance.grossestFoodMissed == null || activeFood.Quality < player.ProfileInstance.grossestFoodMissed.Quality) {
 					player.ProfileInstance.grossestFoodMissed = activeFood;
 				}
 			}
@@ -421,7 +419,7 @@ public class GameController : MonoBehaviour
 
 		//Update running stats for match
 		if (eatingPlayers.Count > 0) {
-			if (tastiestFood == null || tastiestFood.isEmpty) { //If no foods have been eaten previously
+			if (tastiestFood == null) { //If no foods have been eaten previously
 				tastiestFood = activeFood;
 				tastiestFoodEatenBy = eatingPlayers;
 				grossestFood = activeFood;
@@ -449,17 +447,11 @@ public class GameController : MonoBehaviour
 				}
 			}
 		}
-//			public Food quickestNab;
-//			public float quickestNabTime;
-//			public List<Player> quickestNabEatenBy;
-
 
 		Debug.Log ("Evaluation ended for round" + currentRound + " @" + Time.frameCount);
 
 
 		InterfaceController.Instance.EnableNextButtons (true);
-		//Debug
-		//EndRound ();
 	}
 
 	void RegisterPlayers ()
@@ -491,16 +483,6 @@ public class GameController : MonoBehaviour
 			if (activePlayers [i].controlType == ControlType.Human) {
 				humanPlayers.Add (activePlayers [i]);
 			}
-
-			//Set identification
-			//activePlayers[i].name = "Player "+i;
-			//activePlayers[i].playerId = i;
-
-			//Activate
-			//activePlayers[i].isActive = true;
-
-			//Set color
-			//activePlayers[i].playerColor = (PlayerColor)i;
 
 			//Set starting stats
 			activePlayers [i].Hp = startingHp;

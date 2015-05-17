@@ -1,5 +1,5 @@
 Tag ID,Type,Value,Magnitude,Absolute,Price,Spiciness,Damage,Anticipation,Calories,Effect,Combines Well With,Combines Poorly With,Combines Dramatically With,HelpTag
-alcoholic,effect,,,,,,1;2,1,,Gives Sauced status effect,,,,
+alcoholic,effect,1,,,,,1;2,1,,Gives Sauced status effect,,,,
 caffinated,effect,,,,,,,,,,,,,
 dangerous,effect,,,,,,3;5,,,May add harm or adverse effects,,,,
 deadly,effect,,,,,,8;12,,,,,,,
@@ -105,3 +105,4 @@ nice,novelty,1,,,,,,,,,,,,
 marinade,style,,,,,,,,,,meat,,,
 bad,quality,,,-1,,,,,,,,,,Must have negative value
 good,quality,,,1,,,,,,,,,,Must have positive value
+classic,taste,1,,,,,,,,,,,,

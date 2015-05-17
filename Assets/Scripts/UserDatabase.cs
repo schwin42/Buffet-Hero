@@ -35,10 +35,10 @@ public class Profile
 	public float bestScore = 0f;
 	public float worstScore = 0f;
 	//public float winPercentage = 0f;
-	public Food tastiestFoodEaten = new Food();
-	public Food grossestFoodEaten = new Food();
-	public Food tastiestFoodMissed = new Food();
-	public Food grossestFoodMissed = new Food();
+	public Food tastiestFoodEaten = null;
+	public Food grossestFoodEaten = null;
+	public Food tastiestFoodMissed = null;
+	public Food grossestFoodMissed = null;
 
 	public Profile () {}
 	public Profile (string profileName)

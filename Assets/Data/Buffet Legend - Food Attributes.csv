@@ -65,7 +65,7 @@ parfait,form,,dessert; sweet; cold; tasty,,uncommon,2014.09.14
 pho,form,,Vietnamese; entree,,common,2014.09.08
 pie,form,,sweet; American; dessert,fruit++,common,2014.09.04
 pierogi,form,,hot; European; enticing,,uncommon,2014.09.04
-pizza,form,,gooey; doughy; Italian; tasty,meat+; dairy+,common,2014.09.04
+pizza,form,,gooey; doughy; Italian; tasty; classic,meat+; dairy+,common,2014.09.04
 poutine,form,,entree; fancy; Canadian,,uncommon,2014.09.25
 pretzel,form,,doughy; salty,,uncommon,2014.09.04
 pudding,form,,dessert; sweet; creamy,,common,2014.09.10
@@ -121,7 +121,7 @@ calamari,ingredient,,seafood; fancy; Italian,,common,2014.09.26
 capsaicin,ingredient,,deadly; enticing,,rare,2014.09.25
 caramel,ingredient,,sweet; chewy,,common,2014.09.04
 carp,ingredient,,seafood; hot; cheap,,uncommon,2014.09.04
-chicken,ingredient,,meat; savory; hot; entree,,common,2014.09.04
+chicken,ingredient,,meat; savory; hot; entree; classic,,common,2014.09.04
 chili,ingredient,,hot; savory; chewy; American; entree,,uncommon,2014.09.04
 chipotle,ingredient,,Mexican; mild spice,,uncommon,2014.09.04
 chocolate,ingredient,,sweet; dessert,,common,2014.09.04
@@ -289,7 +289,7 @@ a pre-chewed,qualifier,,disgusting,,rare,2014.10.08
 a precocious,qualifier,,fancy,,uncommon,2014.09.04
 a pungent,qualifier,,potent; risky,,uncommon,2014.09.04
 a purely decorative,qualifier,,non-food; disgusting; bad,,uncommon,2014.09.14
-a putrid,qualifier,,spoiled; bad,,uncommon,2014.09.04
+a putrescent,qualifier,,spoiled; bad,,uncommon,2014.09.04
 a radical,qualifier,,American; delicious,,uncommon,2014.09.25
 a radioactive,qualifier,,dangerous; gross,,rare,2014.09.04
 a rancid,qualifier,,spoiled; gross; bad,,uncommon,2014.09.04
@@ -352,14 +352,21 @@ an unforgettable,qualifier,,powerful,,rare,2014.09.25
 an unforgivable,qualifier,,horrific; bad,,rare,2014.09.25
 not your mother's,qualifier,,dangerous; enticing,,rare,2014.09.04
 one hell of a,qualifier,,potent,,rare,2014.09.04
-the 42nd,qualifier,,potent,,rare,2014.09.25
 the last,qualifier,,enticing,,mythic,2014.09.04
 your mother's,qualifier,,nostalgic,,rare,2014.09.04
 a perfected,qualifier,,flawless,,rare,2014.10.16
 eclair,form,,dessert; fancy; French,,common,2014.10.19
 a heavenly,qualifier,,good; flawless,,rare,2014.10.19
-nugget,form,,crummy; American,,uncommon,2014.10.22
+nugget,form,,American; enticing,,uncommon,2014.10.22
 freedom,ingredient,,American; nice,,uncommon,2014.10.22
 a transcendent,qualifier,,good; amazing; dangerous,,mythic,2014.10.22
 short rib,ingredient,,delicious; meat; hot,,uncommon,2014.10.31
 jumbalaya,form,,American; entree; mild spice,,uncommon,2014.10.31
+a lumpy,qualifier,,crummy,,uncommon,2014.11.16
+soylent,ingredient,,crummy,,uncommon,2015.04.28
+moose,ingredient,,crummy; meat; hot,,uncommon,2015.05.06
+masala,form,,Indian; entree,,common,2015.05.06
+ramen,form,,Japanese; entree; hot,,common,2015.05.06
+sriracha,ingredient,,moderate spice; tasty,,common,2015.05.06
+stromboli,form,,Italian; fancy; hot; entree,,uncommon,2015.05.06
+jellyfish,ingredient,,unappetizing; fancy; seafood,,rare,2015.05.06

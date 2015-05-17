@@ -103,11 +103,7 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	//public Color playerColor;
-
 	public ControlType controlType = ControlType.Human;
-
-	//public bool isActive = false;
 
 	public Plate plate;
 

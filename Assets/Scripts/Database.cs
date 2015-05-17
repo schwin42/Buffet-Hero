@@ -53,11 +53,8 @@ public enum Temperature
 [System.Serializable]
 public class Food
 {
-	public bool isEmpty = true;
-
 	public string Name {
 		get {
-			if (!isEmpty) {
 				string returnString = "";
 				for (int i = attributes.Count - 1; i >= 0; i--) {
 
@@ -68,70 +65,16 @@ public class Food
 				}
 				//Debug.Log ("Food = "+returnString);
 				return returnString;
-				//return descriptor.name + " " + ingredient.name + " " + form.name;
-			} else {
-				Debug.LogError ("Null food exception");
-				return "Empty";
-			}
 		}
 	}
-		
-	private float _quality;
-	private bool _qualityIsSet = false;
 
-	public float Quality {
-		get {
-			if (!isEmpty) {
-				if (_isRealized) {
-					if (!_qualityIsSet) {
-						float netValue = 0f;
-						float netMagnitude = 0f;
-						int netAbsolute = 0;
-						foreach (Tag tag in Tags) {
-							netValue += tag.value;
-							netMagnitude += tag.magnitude;
-							netAbsolute += tag.absolute;
-						}
-						float preAbsoluteValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
-						float staticValue = 0f;
-						if (netAbsolute == 0) {
-							staticValue = preAbsoluteValue;
-						} else if (netAbsolute > 0) {
-							staticValue = Mathf.Abs (preAbsoluteValue);
-						} else if (netAbsolute < 0) {
-							staticValue = -Mathf.Abs (preAbsoluteValue);
-						} else {
-							Debug.LogError ("Logic breach, repent!");
-						}
-						float output = 0f;
-						if (GameController.RandomConstant != 0f) {
-							output = Mathf.Round (staticValue * GameController.RandomConstant);
-						} else {
-							output = Mathf.Round (staticValue * GameController.ScoreConstant);
-						}
-						_quality = output;
-						_qualityIsSet = true;
-						return output;
-					} else {
-						return _quality;
-					}
-				} else {
-					return 0;
-				}
-			} else {
-				Debug.LogError ("Null food exception");
-				return 0;
-			}
-
-		}
-	}
+	public float? Quality { get; private set; }
 
 	private int _damage;
 	private bool _damageIsSet = false;
 
 	public float Damage {
 		get {
-			if (!isEmpty) {
 				if (!_damageIsSet) {
 					float netDamage = 0f;
 					foreach (Tag tag in Tags) {
@@ -149,10 +92,7 @@ public class Food
 					return _damage;
 				}
 
-			} else {
-				Debug.LogError ("Null food exception.");
-				return 0;
-			}
+			
 		}
 	}
 
@@ -161,11 +101,6 @@ public class Food
 			List<Tag> tags = new List<Tag> ();
 			foreach (FoodAttribute attribute in attributes) {
 				tags.AddRange (attribute.tags);
-//				foreach(Tag tag in attribute.tags)
-//				{
-//					tags.Add (tag);
-//				}
-
 			}
 			tags.AddRange (virtualTags);
 			return tags; 
@@ -174,59 +109,82 @@ public class Food
 
 	public bool _isRealized = false;
 
-	public void Realize (bool b)
+	public void Realize ()
 	{
-		if (!isEmpty) {
-			if (b) {
-//			Tag _virtualTag = new Tag();
-//			_virtualTag.name = "combination";
-				foreach (Tag tag in Tags) {
-					//Database.Instance.testTag = tag;
-					if (tag.combinesPoorlyWith != null) {
-						foreach (string tagString in tag.combinesPoorlyWith) {
-							int hits = tag.GetHitsInFood (this, tagString);
-							if (hits > 0) {
-								Tag virtualTag = new Tag ();
-								virtualTag.value -= hits;
-								virtualTag.name = tag.name + " combines poorly with " + tagString + " x" + hits;
-								virtualTags.Add (virtualTag);
-							}
-						}
-					}
-					if (tag.combinesWellWith != null) {
-						foreach (string tagString in tag.combinesWellWith) {
-							int hits = tag.GetHitsInFood (this, tagString);
-							if (hits > 0) {
-								Tag virtualTag = new Tag ();
-								virtualTag.value += hits;
-								virtualTag.name = tag.name + " combines well with " + tagString + " x" + hits;
-								virtualTags.Add (virtualTag);
-							}
-						}
-					}
-					if (tag.combinesDramaticallyWith != null) {
-						foreach (string tagString in tag.combinesDramaticallyWith) {
-							int hits = tag.GetHitsInFood (this, tagString);
-							if (hits > 0) {
-								Tag virtualTag = new Tag ();
-								virtualTag.magnitude += hits;
-								virtualTag.name = tag.name + " combines dramatically with " + tagString + " x" + hits;
-								virtualTags.Add (virtualTag);
-							}
-						}
+		this.PopulateVirtualTags();
+		this.DeriveQualityFromTags ();
+		_isRealized = true;
+	}
+
+	private void PopulateVirtualTags() {
+		foreach (Tag tag in Tags) {
+			//Database.Instance.testTag = tag;
+			if (tag.combinesPoorlyWith != null) {
+				foreach (string tagString in tag.combinesPoorlyWith) {
+					int hits = tag.GetHitsInFood (this, tagString);
+					if (hits > 0) {
+						Tag virtualTag = new Tag ();
+						virtualTag.value -= hits;
+						virtualTag.name = tag.name + " combines poorly with " + tagString + " x" + hits;
+						Debug.Log (tag.name + " combines poorly with " + tagString + " x" + hits);
+						virtualTags.Add (virtualTag);
 					}
 				}
-				_isRealized = true;
-				float tempQuality = Quality; //Read quality to initialize value
-			} else {
-				virtualTags = new List<Tag> ();
-				_isRealized = false;
 			}
-		} else {
-			Debug.LogError ("Null food exception. Food not realized.");
+			if (tag.combinesWellWith != null) {
+				foreach (string tagString in tag.combinesWellWith) {
+					int hits = tag.GetHitsInFood (this, tagString);
+					if (hits > 0) {
+						Tag virtualTag = new Tag ();
+						virtualTag.value += hits;
+						virtualTag.name = tag.name + " combines well with " + tagString + " x" + hits;
+						Debug.Log (tag.name + " combines well with " + tagString + " x" + hits);
+						virtualTags.Add (virtualTag);
+					}
+				}
+			}
+			if (tag.combinesDramaticallyWith != null) {
+				foreach (string tagString in tag.combinesDramaticallyWith) {
+					int hits = tag.GetHitsInFood (this, tagString);
+					if (hits > 0) {
+						Tag virtualTag = new Tag ();
+						virtualTag.magnitude += hits;
+						virtualTag.name = tag.name + " combines dramatically with " + tagString + " x" + hits;
+						Debug.Log (tag.name + " combines dramatically with " + tagString + " x" + hits);
+						virtualTags.Add (virtualTag);
+					}
+				}
+			}
 		}
-
 	}
+
+	private void DeriveQualityFromTags ()
+	{
+			float netValue = 0f;
+			float netMagnitude = 0f;
+			int netAbsolute = 0;
+			foreach (Tag tag in Tags) {
+				netValue += tag.value;
+				netMagnitude += tag.magnitude;
+				netAbsolute += tag.absolute;
+			}
+			float preAbsoluteValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
+			float postAbsoluteValue;
+			if (netAbsolute == 0) {
+				postAbsoluteValue = preAbsoluteValue;
+			} else if (netAbsolute > 0) {
+				postAbsoluteValue = Mathf.Abs (preAbsoluteValue);
+			} else {
+				postAbsoluteValue = -Mathf.Abs (preAbsoluteValue);
+			}
+			float output = 0f;
+			if (GameController.RandomConstant != 0f) {
+				output = Mathf.Round (postAbsoluteValue * GameController.RandomConstant);
+			} else {
+				output = Mathf.Round (postAbsoluteValue * GameController.ScoreConstant);
+			}
+			this.Quality = output;
+		}
 
 	//Used in get food functions in game controller
 	public Food ()
@@ -238,15 +196,13 @@ public class Food
 	{
 		attributes = food.attributes;
 		virtualTags = food.virtualTags;
-		isEmpty = false;
 	}
 
 	//Construct food from attributes
 	public Food (List<FoodAttribute> _attributes)
 	{
 		attributes.AddRange (_attributes);
-		Realize (true);
-		isEmpty = false;
+		this.Realize ();
 	}
 
 	public List<FoodAttribute> attributes = new List<FoodAttribute> ();
@@ -262,13 +218,9 @@ public class FoodAttribute
 	public string rarity = "";
 	public AttributeType attributeType;
 	public string attributeSubtype;
-//	public float multiplier = 1f;
-//	public float modifier = 0f;
 	public List<Tag> tags = new List<Tag> ();
 	public List<string> combinations = new List<string> ();
 	public string date = "";
-//	public Temperature temperature = Temperature.None;
-//	public float spice = 0f;
 //	public string special = "";
 }
 
@@ -315,24 +267,6 @@ public class Tag
 	}
 }
 
-//[System.Serializable]
-//public class Ingredient : FoodAttribute
-//{
-//
-//}
-//
-//[System.Serializable]
-//public class Form : FoodAttribute
-//{
-//
-//}
-//
-//[System.Serializable]
-//public class Quality : FoodAttribute
-//{
-//	//public QualitySubtype subtype = QualitySubtype.None;
-//}
-
 #endregion
 
 
@@ -343,8 +277,6 @@ public class Database : MonoBehaviour
 	static System.Random _random = new System.Random ();
 
 	//Configurable
-
-
 	public static string attributesFile = "Buffet Legend - Food Attributes.csv";
 	public static string tagsFile = "Buffet Legend - Tags.csv";
 
@@ -599,23 +531,6 @@ public class Database : MonoBehaviour
 			return AttributeType.None;
 		}
 	}
-
-//	public Temperature StringToTemperature(string s)
-//	{
-//		switch(s)
-//		{
-//		case "hot":
-//			return Temperature.Hot;
-//		case "cold":
-//			return Temperature.Cold;
-//		case "":
-//			return Temperature.None;
-//		default:
-//			Debug.LogError("Invalid temperature: "+s);
-//			return Temperature.None;
-//		}
-//	}
-
 
 //	private void SerializeAndSaveToBinary()
 //	{
