@@ -319,16 +319,16 @@ public class GameController : MonoBehaviour
 			                                where player != playersByScore [i] && player.Score == playersByScore [i].Score
 			                                select player).ToArray ();
 			if (matchingScoresQuery.Length <= 0) {
-				Debug.Log ("No matching");
+				//Debug.Log ("No matching");
 				playersByScore [i].Ranking = nextRanking;
-				Debug.Log ("Player" + playersByScore [i].playerId + " set to " + nextRanking);
+				//Debug.Log ("Player" + playersByScore [i].playerId + " set to " + nextRanking);
 				nextRanking++;
 			} else {
-				Debug.Log ("Matches.");
+				//Debug.Log ("Matches.");
 				playersByScore [i].Ranking = nextRanking;
 				for (int j = 0; j < matchingScoresQuery.Length; j++) {
 					matchingScoresQuery [j].Ranking = nextRanking;
-					Debug.Log ("Player" + playersByScore [i].playerId + " set to " + nextRanking);
+					//Debug.Log ("Player" + playersByScore [i].playerId + " set to " + nextRanking);
 					i++;
 				}
 				nextRanking++;

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -39,11 +39,11 @@ public enum AttributeSubtype
 }
 
 [System.Serializable]
-public enum Temperature
-{
+public enum FoodCombination {
 	None = 0,
-	Hot = 1,
-	Cold = 2
+	CombinesPoorlyWith = 1,
+	CombinesWellWith = 2,
+	CombinesDramaticallyWith = 3
 }
 
 #endregion
@@ -71,8 +71,8 @@ public class Food
 	private float netValue;
 	private float netMagnitude;
 	private float netAbsolute;
-
 	private float _quality;
+
 	public float? Quality { 
 		get {
 			return _quality;
@@ -92,12 +92,12 @@ public class Food
 				foreach (Tag tag in Tags) {
 					float difference = tag.damageRange [1] - tag.damageRange [0];
 					float random = UnityEngine.Random.value;
-					Debug.Log ("Random = " + random);
+					//Debug.Log ("Random = " + random);
 					netDamage += (random * difference) + tag.damageRange [0];
 				}
-				Debug.Log ("Net damage" + netDamage);
+				//Debug.Log ("Net damage" + netDamage);
 				_damage = Mathf.RoundToInt (netDamage * 10);
-				Debug.Log ("Recorded damage" + _damage);
+				//Debug.Log ("Recorded damage" + _damage);
 				_damageIsSet = true;
 				return _damage;
 			} else {
@@ -128,47 +128,67 @@ public class Food
 		_isRealized = true;
 	}
 
-	private void PopulateVirtualTags ()
-	{
-		foreach (Tag tag in Tags) {
-			//Database.Instance.testTag = tag;
-			if (tag.combinesPoorlyWith != null) {
-				foreach (string tagString in tag.combinesPoorlyWith) {
-					int hits = tag.GetHitsInFood (this, tagString);
-					if (hits > 0) {
-						Tag virtualTag = new Tag ();
-						virtualTag.value -= hits;
-						virtualTag.name = tag.name + " combines poorly with " + tagString + " x" + hits;
-						Debug.Log (tag.name + " combines poorly with " + tagString + " x" + hits);
-						virtualTags.Add (virtualTag);
-					}
-				}
-			}
-			if (tag.combinesWellWith != null) {
-				foreach (string tagString in tag.combinesWellWith) {
-					int hits = tag.GetHitsInFood (this, tagString);
-					if (hits > 0) {
-						Tag virtualTag = new Tag ();
-						virtualTag.value += hits;
-						virtualTag.name = tag.name + " combines well with " + tagString + " x" + hits;
-						Debug.Log (tag.name + " combines well with " + tagString + " x" + hits);
-						virtualTags.Add (virtualTag);
-					}
-				}
-			}
-			if (tag.combinesDramaticallyWith != null) {
-				foreach (string tagString in tag.combinesDramaticallyWith) {
-					int hits = tag.GetHitsInFood (this, tagString);
-					if (hits > 0) {
-						Tag virtualTag = new Tag ();
-						virtualTag.magnitude += hits;
-						virtualTag.name = tag.name + " combines dramatically with " + tagString + " x" + hits;
-						Debug.Log (tag.name + " combines dramatically with " + tagString + " x" + hits);
-						virtualTags.Add (virtualTag);
-					}
-				}
+	private void PopulateVirtualTags () {
+		foreach(FoodAttribute attribute in this.attributes) {
+			foreach(Tag tag in attribute.tags) {
+				this.virtualTags.AddRange(GetVirtualTags (FoodCombination.CombinesPoorlyWith, attribute, tag));
+				this.virtualTags.AddRange(GetVirtualTags (FoodCombination.CombinesWellWith, attribute, tag));
+				this.virtualTags.AddRange(GetVirtualTags (FoodCombination.CombinesDramaticallyWith, attribute, tag));
 			}
 		}
+	}
+
+	private List<Tag> GetVirtualTags(FoodCombination foodCombination, FoodAttribute sourceAttribute, Tag sourceTag) {
+		string[] criteriaList;
+		switch(foodCombination) {
+		case FoodCombination.CombinesPoorlyWith:
+			criteriaList = sourceTag.combinesPoorlyWith;
+			break;
+		case FoodCombination.CombinesWellWith:
+			criteriaList = sourceTag.combinesWellWith;
+			break;
+		case FoodCombination.CombinesDramaticallyWith:
+			criteriaList = sourceTag.combinesDramaticallyWith;
+			break;
+		default:
+			Debug.LogError("Invalid food combination");
+			criteriaList = null;
+			break;
+		}
+		List<Tag> outputTags = new List<Tag>();
+		foreach (string searchString in criteriaList) {
+			int hits = this.GetHitsInFood (sourceAttribute, searchString);
+			if (hits > 0) {
+				Tag virtualTag = new Tag ();
+
+				switch(foodCombination) {
+				case FoodCombination.CombinesPoorlyWith:
+					virtualTag.value -= hits;
+					break;
+				case FoodCombination.CombinesWellWith:
+					virtualTag.value += hits;
+					break;
+				case FoodCombination.CombinesDramaticallyWith:
+					virtualTag.magnitude += hits;
+					break;
+				}
+				virtualTag.name = hits + "x " + sourceTag.name + " " + foodCombination.ToString() + " " + searchString;
+				outputTags.Add (virtualTag);
+			}
+		}
+		return outputTags;
+	}
+
+	private int GetHitsInFood (FoodAttribute sourceAttribute, string tagString) {
+		List<Tag> iterableTags = new List<Tag>();
+		foreach(FoodAttribute attribute in this.attributes) {
+			if(attribute == sourceAttribute) { //Count only tags on other attributes
+				continue;
+			}
+			iterableTags.AddRange(attribute.tags);
+		}
+		Tag[] matchingTags = iterableTags.Where(tag => tag.name == tagString).ToArray();
+		return matchingTags.Length;
 	}
 
 	private void DeriveQualityFromTags ()
@@ -260,27 +280,26 @@ public class Tag
 	public string[] combinesDramaticallyWith;
 	public string helpTag = "";
 
-	public int GetHitsInFood (Food food, string tagString)
-	{
-		var dataQuery = from dataTag in Database.Instance.tagData
-			where dataTag.name == tagString
-				select dataTag;
-		Tag[] matchingTagsInData = dataQuery.ToArray ();
-		if (matchingTagsInData.Length == 0) {
-			//Handle references and types
-			return 0;
-		} else {
-			var foodQuery = from foodTag in food.Tags
-				where foodTag.name == tagString && foodTag != this
-					select foodTag;
-			Tag[] matchingTagsInFood = foodQuery.ToArray ();
-			int hits = 0;
-			for (int i = 0; i < matchingTagsInFood.Length; i++) {
-				hits++;
-			}
-			return hits;
-		}
-	}
+//	public int GetHitsInFood (Food food, FoodAttribute sourceAttribute, string tagString)
+//	{
+//		Tag[] matchingTagsInData = (from dataTag in Database.Instance.tagData
+//			where dataTag.name == tagString
+//				select dataTag).ToArray();
+//		if (matchingTagsInData.Length == 0) {
+//			//Handle references and types
+//			return 0;
+//		} else {
+//			var foodQuery = from foodTag in food.Tags
+//				where foodTag.name == tagString && foodTag != this
+//					select foodTag;
+//			Tag[] matchingTagsInFood = foodQuery.ToArray ();
+//			int hits = 0;
+//			for (int i = 0; i < matchingTagsInFood.Length; i++) {
+//				hits++;
+//			}
+//			return hits;
+//		}
+//	}
 }
 
 #endregion
