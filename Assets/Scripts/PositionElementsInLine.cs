@@ -40,7 +40,7 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 			if(elements.Count == 3)
 			{
 				elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
-				StartCoroutine("ZeroOutColorBarRotation");
+				//StartCoroutine("ZeroOutColorBarRotation");
 			}
 			break;
 		default:
@@ -59,7 +59,7 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 
 		for(int i = 0; i < elements.Count; i++)
 		{
-			Debug.Log (i);
+			//Debug.Log (i);
 			Vector3 position = elements[i].transform.localPosition;
 			switch(i)
 			{
@@ -73,6 +73,7 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 
 				elements[i].transform.localPosition = new Vector3(startFromRightSide ? startingPositionRight - distance2 : startingPositionLeft + distance2, position.y, position.z);
 				break;
+
 			}
 		}
 
