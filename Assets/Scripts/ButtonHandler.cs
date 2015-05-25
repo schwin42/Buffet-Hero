@@ -81,7 +81,7 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 
 	public void OnClick()
 	{
-		Debug.Log ("Click @" + GameController.Instance.currentRound);
+		//Debug.Log ("Click @" + GameController.Instance.currentRound);
 		if(buttonAction != ButtonAction.Next){
 		AudioController.Instance.PlaySound(SoundEffect.Click);
 		}
@@ -95,7 +95,6 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 			player.Pass();
 			break;
 		case ButtonAction.Next:
-			Debug.Log ("Next");
 			if(GameController.Instance.currentPhase == Phase.Pregame)
 			{
 				if((from possiblePlayer in GameController.Instance.possiblePlayers
@@ -126,7 +125,6 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Join);
 			break;
 		case ButtonAction.ConfirmEntry:
-			//Debug.Break();
 			player.playerChoice = PlayerChoice.Ready;
 			InterfaceController.SetPlayerUiState(player, PlayerUiState.Ready);
 			break;

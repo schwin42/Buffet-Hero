@@ -213,15 +213,15 @@ public class InterfaceController : MonoBehaviour {
 
 	public void EnableButton(ButtonHandler buttonHandler, bool b)
 	{
-		Debug.Log (buttonHandler.ToString(), buttonHandler.gameObject);
+		//Debug.Log (buttonHandler.ToString(), buttonHandler.gameObject);
 		UIButton uiButton = buttonHandler.GetComponent<UIButton>();
 		//Debug.Log("Enable button: "+uiButton.gameObject.transform.parent.gameObject);
 		UILabel uiLabel = uiButton.transform.Find("Label").GetComponent<UILabel>();
 
 		if(b)
 		{
-			Debug.Log (buttonHandler.player.playerId);
-			Debug.Log (uiLabel.ToString());
+			//Debug.Log (buttonHandler.player.playerId);
+			//Debug.Log (uiLabel.ToString());
 			uiButton.isEnabled = true;
 			uiLabel.color = enabledTextYellowColor;
 		} else {
@@ -515,8 +515,8 @@ public class InterfaceController : MonoBehaviour {
 			string neutralDarkTag = HexTag(neutralDarkColor);
 
 			//Acquire/ generate dynamic text strings
-			string tastiestFoodName = GameController.Instance.tastiestFood.Name;
-			string tastiestFoodValue = GameController.Instance.tastiestFood.Quality.ToString();
+			string tastiestFoodName = GameController.Instance.TastiestFood.Name;
+			string tastiestFoodValue = GameController.Instance.TastiestFood.Quality.ToString();
 			string tastiestFoodEatenBy = GetFormattedPlayerString(GameController.Instance.tastiestFoodEatenBy, neutralDarkTag);
 			string grossestFoodName = GameController.Instance.grossestFood.Name;
 			string grossestFoodValue = GameController.Instance.grossestFood.Quality.ToString();

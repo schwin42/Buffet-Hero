@@ -307,8 +307,15 @@ public class Tag
 
 public class Database : MonoBehaviour
 {
-
-	public static Database Instance;
+	public static Database _instance;
+	public static Database Instance {
+		get {
+			if(_instance == null) {
+				_instance = FindObjectOfType<Database>();
+			}
+			return _instance;
+		}
+	}
 	static System.Random _random = new System.Random ();
 
 	//Configurable
@@ -325,7 +332,7 @@ public class Database : MonoBehaviour
 
 	public void Awake ()
 	{
-		Instance = this;
+		_instance = this;
 	}
 
 	public void Start ()

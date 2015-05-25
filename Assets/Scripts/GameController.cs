@@ -54,7 +54,16 @@ public class GameController : MonoBehaviour
 	//public Dictionary<int, bool> playerChoices = new Dictionary<int, bool>(); //True indicates "eat"
 
 	//Match Stats
-	public Food tastiestFood;
+	private Food _tastiestFood;
+	public Food TastiestFood {
+		get {
+			return _tastiestFood;
+		}
+		private set {
+			_tastiestFood = value;
+			print ("tastiest food set to: " + value);
+		}
+	}
 	public List<Player> tastiestFoodEatenBy;
 	public Food grossestFood = null;
 	public List<Player> grossestFoodEatenBy;
@@ -80,8 +89,9 @@ public class GameController : MonoBehaviour
 
 	void Start ()
 	{
-		print (Application.persistentDataPath);
+//		print (Application.persistentDataPath);
 //		Advertisement.Initialize ("18656");
+
 		currentPhase = Phase.Pregame;
 		UserDatabase.Instance.LoadUserData ();
 	}
@@ -338,7 +348,7 @@ public class GameController : MonoBehaviour
 
 	public void NextFood ()
 	{
-		Debug.Log ("Next food for: " + currentRound);	
+		//Debug.Log ("Next food for: " + currentRound);	
 		if (activeFood != null) {
 			previousFood = activeFood;
 		}
@@ -388,7 +398,7 @@ public class GameController : MonoBehaviour
 				}
 
 				//Score
-				Debug.Log ("Update score");
+				//Debug.Log ("Update score");
 				float qualityFloat = activeFood.Quality.Value;
 				player.PendingScore = qualityFloat;
 				//Health
@@ -416,22 +426,31 @@ public class GameController : MonoBehaviour
 				}
 			}
 		}
+		UpdateRunningStats(eatingPlayers, quickestPlayerOfRound);
 
-		//Update running stats for match
+		Debug.Log ("Evaluation ended for round" + currentRound + " @" + Time.frameCount);
+
+
+		InterfaceController.Instance.EnableNextButtons (true);
+	}
+
+	void UpdateRunningStats(List<Player> eatingPlayers, Player quickestPlayerOfRound) {
+		print ("Update running stats");
 		if (eatingPlayers.Count > 0) {
-			if (tastiestFood == null) { //If no foods have been eaten previously
-				tastiestFood = activeFood;
+			print ("Eating players > 0");
+			if (TastiestFood == null) { //If no foods have been eaten previously
+				Debug.Log ("No foods eaten previously" + Time.frameCount);
+				TastiestFood = activeFood;
 				tastiestFoodEatenBy = eatingPlayers;
 				grossestFood = activeFood;
 				grossestFoodEatenBy = eatingPlayers;
-				Debug.Log ("First assigned to quickest @" + Time.frameCount);
 				quickestNab = activeFood;
 				quickestNabEatenBy = quickestPlayerOfRound;
 				quickestNabTime = quickestPlayerOfRound.lastChoiceTimeElapsed;
 				quickestNab = activeFood;
 			} else {
-				if (activeFood.Quality > tastiestFood.Quality) {
-					tastiestFood = activeFood;
+				if (activeFood.Quality > TastiestFood.Quality) {
+					TastiestFood = activeFood;
 					tastiestFoodEatenBy = eatingPlayers;
 				}
 				if (activeFood.Quality < grossestFood.Quality) {
@@ -447,11 +466,6 @@ public class GameController : MonoBehaviour
 				}
 			}
 		}
-
-		Debug.Log ("Evaluation ended for round" + currentRound + " @" + Time.frameCount);
-
-
-		InterfaceController.Instance.EnableNextButtons (true);
 	}
 
 	void RegisterPlayers ()
@@ -504,14 +518,15 @@ public class GameController : MonoBehaviour
 		if (currentRound < numberOfRounds - 1) {
 			BeginRound ();
 		} else {
-
 			EndGame ();
 		}
 	}
 
 	List<FoodAttribute> GetShuffledAttributes (AttributeType type)
 	{
-		
+		if(Database.Instance == null) {
+			print("instance = null");
+		}
 		var query = from attribute in Database.Instance.attributeData
 			where attribute.attributeType == type
 				select attribute;
@@ -624,7 +639,8 @@ public class GameController : MonoBehaviour
 
 	public void InitializeMatchStats ()
 	{
-		tastiestFood = null;
+		print ("Initializing match stats");
+		TastiestFood = null;
 		tastiestFoodEatenBy = new List<Player> ();
 		grossestFood = null;
 		grossestFoodEatenBy = new List<Player> ();
