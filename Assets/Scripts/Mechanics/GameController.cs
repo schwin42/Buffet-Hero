@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour
 	//public Color[] letterRankColors = new Color[7];
 
 	//Generated
-	public static float ScoreConstant = 25f;
+	//public static float ScoreConstant = 25f;
 	private float scoreWobble = 10f;
 	public static float RandomConstant = 0f;
 
@@ -199,37 +199,6 @@ public class GameController : MonoBehaviour
 		return attribute;
 	}
 
-	public static FoodAttribute GetRandomAttributeFromData (AttributeType attributeType)
-	{
-		FoodAttribute attribute = null;
-		FoodAttribute[] query;
-
-		switch (attributeType) {
-		case AttributeType.Qualifier:
-			query = (from element in Database.Instance.attributeData
-				where element.attributeType == AttributeType.Qualifier
-					select element).ToArray ();
-			attribute = query [Mathf.FloorToInt (Random.value * query.Count ())];
-			break;
-		case AttributeType.Ingredient:
-			query = (from element in Database.Instance.attributeData
-			             where element.attributeType == AttributeType.Ingredient
-			             select element).ToArray ();
-			attribute = query [Mathf.FloorToInt (Random.value * query.Count ())];
-			break;
-		case AttributeType.Form:
-			query = (from element in Database.Instance.attributeData
-			             where element.attributeType == AttributeType.Form
-			             select element).ToArray ();
-			attribute = query [Mathf.FloorToInt (Random.value * query.Count ())];
-			break;
-		default:
-			Debug.LogError ("Invalid attribute type: " + attributeType);
-			break;
-		}
-		return attribute;
-	}
-
 	public Food GetRandomFoodUsingQueue () //During runtime; for game use
 	{
 		Food food = new Food ();
@@ -238,18 +207,6 @@ public class GameController : MonoBehaviour
 		food.attributes.Add (GetRandomAttributeFromQueue (AttributeType.Ingredient));
 		food.attributes.Add (GetRandomAttributeFromQueue (AttributeType.Qualifier));
 		food.Realize ();
-		return food;
-	}
-
-	public static Food GetRandomFoodUsingData () //Pre-runtime; for statistical use
-	{
-		Food food = new Food ();
-		
-		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Form));
-		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Ingredient));
-		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Qualifier));
-		food.Realize ();
-
 		return food;
 	}
 
@@ -298,8 +255,8 @@ public class GameController : MonoBehaviour
 
 
 		//Set score constant for next food
-		RandomConstant = ((Random.value * scoreWobble) - scoreWobble / 2) + ScoreConstant;
-		Debug.Log ("Random constant: " + RandomConstant + ", Score Constant" + ScoreConstant);
+		RandomConstant = ((Random.value * scoreWobble) - scoreWobble / 2) + Database.SCORE_CONSTANT; //TODO Restore randomness!
+		Debug.Log ("Random constant: " + RandomConstant + ", Score Constant" + Database.SCORE_CONSTANT);
 
 		NextFood ();
 	}
@@ -527,7 +484,7 @@ public class GameController : MonoBehaviour
 		if(Database.Instance == null) {
 			print("instance = null");
 		}
-		var query = from attribute in Database.Instance.attributeData
+		var query = from attribute in Database.Instance.AttributeData
 			where attribute.attributeType == type
 				select attribute;
 		List <FoodAttribute> attributes = query.ToList ();

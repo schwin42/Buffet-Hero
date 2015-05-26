@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+
 public class Tools : MonoBehaviour {
 
 	public static Tools Instance;
@@ -19,9 +20,13 @@ public class Tools : MonoBehaviour {
 	public string[] viewCombinedAttributes = new string[3];
 	public Food selectedFood;
 
-	public string tagTypeQuery;
-	public List<string> queryOuput = new List<string>();
+	//TODO Incomplete
+	//public string tagTypeQuery;
+//	public List<string> queryOuput = new List<string>();
 
+	public string tagTypeQuery;
+	public List<string> tagTypeResults;
+	public List<Food> trialFoods;
 
 
 	void Awake () {
@@ -42,7 +47,7 @@ public class Tools : MonoBehaviour {
 		List<Food> foodTrials = new List<Food>();
 		for(int i = 0; i < numberOfTrials; i++)
 		{
-			Food food = GameController.GetRandomFoodUsingData();
+			Food food = Database.GetRandomFoodFromData();
 			foodTrials.Add (food);
 
 			//Debug
@@ -78,24 +83,61 @@ public class Tools : MonoBehaviour {
 		return percentilesOutput;
 	}
 	
-	public void RunTrials()
+	public List<Food> RunTrials()
 	{
 		//GET RANDOM FOOD N TIMES
-		Dictionary<string, int> trialLog = new Dictionary<string, int>();
+		Dictionary<Food, int> trialLog = new Dictionary<Food, int>();
 		for(int i = 0; i < numberOfTrials; i++)
 		{
-			Food food = GameController.Instance.GetRandomFoodUsingQueue();
-			if(trialLog.ContainsKey(food.Name))
+			Food food = Database.GetRandomFoodFromData();
+			if(trialLog.ContainsKey(food))
 			{
-				trialLog[food.Name] += 1;
+				trialLog[food] += 1;
 			} else {
-				trialLog.Add (food.Name, 1);
+				trialLog.Add (food, 1);
 			}
 		}
-		Dictionary<string, int> orderedLog = trialLog.OrderByDescending(trial => trial.Value).ToDictionary(trial => trial.Key, trial => trial.Value);
-		foreach(KeyValuePair<string, int> pair in orderedLog)
+		Dictionary<Food, int> orderedDict = trialLog.OrderByDescending(trial => trial.Value).ToDictionary(trial => trial.Key, trial => trial.Value);
+		List<Food> orderedList = new List<Food>();
+		foreach(KeyValuePair<Food, int> pair in orderedDict)
 		{
-			Debug.Log (pair.Key + " appeared "+pair.Value+" times");
+			Debug.Log (pair.Key.Name + " appeared "+pair.Value+" times");
+			orderedList.Add (pair.Key);
 		}
+		return orderedList;
+	}
+
+	public List<string> GetTagTypeResults() {
+		//print("Running GTTR");
+		//List<string> outputStrings = new List<string>();
+		Dictionary<string, int> outputDict = new Dictionary<string, int>();
+		//for each tag of specified tag type
+//		List<Tag> tagsOfQueriedType = new List<Tag>();
+//		foreach(Tag tag1 in Database.Instance.TagData) {
+//			print("Tag type, target string, # of tags available: " + tag1.TagType + ", " + this.tagTypeQuery + ", " + Database.Instance.TagData.Count);
+//
+//			tagsOfQueriedType.Add (tag1);
+//		}
+		List<Tag> tagsOfQueriedType = Database.Instance.TagData.Where(t => t.TagType == this.tagTypeQuery).ToList();
+		print ("tags of queried" + tagsOfQueriedType.Count);
+		foreach(Tag tag in tagsOfQueriedType) {
+			//Get hits in attributes
+			//int hits = Database.Instance.AttributeData.Where(a => 
+			int hits = Database.Instance.AttributeData.Where(a => Database.TagListContainsId(a.tags, tag.Id)).Count();
+			//Print tags and hits to string
+			outputDict.Add (tag.Id, hits);
+//			outputStrings.Add (hits+ " - " + tag.Id);
+		}
+		//Sort by descending hits
+		var sortedOutputDict = outputDict.OrderByDescending(kp => kp.Value);
+		List<string> outputStrings = new List<string>();
+		foreach(KeyValuePair<string, int> pair in sortedOutputDict) {
+			print ("%" + pair.Value / Database.Instance.TagData.Count);
+			outputStrings.Add (pair.Key + " - " + pair.Value + " - " + (((float)pair.Value) / ((float)Database.Instance.TagData.Count) * 100F).ToString("F2") + "%");
+		}
+		//outputStrings = outputStrings.OrderByDescending(s => s).ToList();
+
+		//Return string
+		return outputStrings;
 	}
 }

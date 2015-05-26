@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
+using Random = UnityEngine.Random;
 
 #region Enums
 
@@ -172,7 +173,7 @@ public class Food
 					virtualTag.magnitude += hits;
 					break;
 				}
-				virtualTag.name = hits + "x " + sourceTag.name + " " + foodCombination.ToString() + " " + searchString;
+				virtualTag.Id = hits + "x " + sourceTag.Id + " " + foodCombination.ToString() + " " + searchString;
 				outputTags.Add (virtualTag);
 			}
 		}
@@ -187,7 +188,7 @@ public class Food
 			}
 			iterableTags.AddRange(attribute.tags);
 		}
-		Tag[] matchingTags = iterableTags.Where(tag => tag.name == tagString).ToArray();
+		Tag[] matchingTags = iterableTags.Where(tag => tag.Id == tagString).ToArray();
 		return matchingTags.Length;
 	}
 
@@ -214,11 +215,11 @@ public class Food
 			postAbsoluteValue = -Mathf.Abs (preAbsoluteValue);
 		}
 		float output = 0f;
-		if (GameController.RandomConstant != 0f) {
-			output = Mathf.Round (postAbsoluteValue * GameController.RandomConstant);
-		} else {
-			output = Mathf.Round (postAbsoluteValue * GameController.ScoreConstant);
-		}
+		//if (GameController.RandomConstant != 0f) { //TODO Restore randomness!
+		//	output = Mathf.Round (postAbsoluteValue * GameController.RandomConstant);
+		//} else {
+			output = Mathf.Round (postAbsoluteValue * Database.SCORE_CONSTANT);
+		//}
 		this.Quality = output;
 	}
 
@@ -263,8 +264,8 @@ public class FoodAttribute
 [System.Serializable]
 public class Tag
 {
-	public string name = "";
-	public string tagType = "";
+	public string Id = "";
+	public string TagType = "";
 	public float value = 0f;
 	public float magnitude = 0f;
 	public int absolute = 0;
@@ -279,27 +280,6 @@ public class Tag
 	public string[] combinesPoorlyWith;
 	public string[] combinesDramaticallyWith;
 	public string helpTag = "";
-
-//	public int GetHitsInFood (Food food, FoodAttribute sourceAttribute, string tagString)
-//	{
-//		Tag[] matchingTagsInData = (from dataTag in Database.Instance.tagData
-//			where dataTag.name == tagString
-//				select dataTag).ToArray();
-//		if (matchingTagsInData.Length == 0) {
-//			//Handle references and types
-//			return 0;
-//		} else {
-//			var foodQuery = from foodTag in food.Tags
-//				where foodTag.name == tagString && foodTag != this
-//					select foodTag;
-//			Tag[] matchingTagsInFood = foodQuery.ToArray ();
-//			int hits = 0;
-//			for (int i = 0; i < matchingTagsInFood.Length; i++) {
-//				hits++;
-//			}
-//			return hits;
-//		}
-//	}
 }
 
 #endregion
@@ -307,7 +287,7 @@ public class Tag
 
 public class Database : MonoBehaviour
 {
-	public static Database _instance;
+	private static Database _instance;
 	public static Database Instance {
 		get {
 			if(_instance == null) {
@@ -319,12 +299,13 @@ public class Database : MonoBehaviour
 	static System.Random _random = new System.Random ();
 
 	//Configurable
-	public static string attributesFile = "Buffet Legend - Food Attributes.csv";
-	public static string tagsFile = "Buffet Legend - Tags.csv";
+	private const string ATTRIBUTES_FILE = "Buffet Legend - Food Attributes.csv";
+	private const string TAGS_FILE = "Buffet Legend - Tags.csv";
+	public const int SCORE_CONSTANT = 25;
 
 	//Data
-	public List<Tag> tagData;
-	public List<FoodAttribute> attributeData;
+	public List<Tag> TagData;
+	public List<FoodAttribute> AttributeData;
 
 	//Debug
 	//public Tag testTag;
@@ -335,28 +316,16 @@ public class Database : MonoBehaviour
 		_instance = this;
 	}
 
-	public void Start ()
-	{
-		//LoadData();
-		//LoadTags (Application.dataPath + "/Data/" + tagsFile);
-		//LoadAttributes(Application.dataPath + "/Data/" + attributesFile);
-	}
+	public void OnStart() {}
 
-//	public void LoadData()
-//	{
-//		string loadPath = Application.dataPath + "/Data/" + attributesFile;
-//		LoadAttributes(loadPath);
-//		loadPath = Application.dataPath + "/Data/" + tagsFile;
-//		LoadTags(loadPath);
-//	}
-
-	public void LoadAttributes (string filePath)
+	public void LoadAttributes ()
 	{
+		string filePath = Application.dataPath + "/Data/" + ATTRIBUTES_FILE;
 		Debug.Log ("Loading attributes from" + filePath);
 		string[] dataLines = File.ReadAllLines (filePath);
 		Dictionary<int, string> fieldLookup = new Dictionary<int, string> ();
 
-		attributeData.Clear ();
+		AttributeData.Clear ();
 		for (int i = 0; i < dataLines.Length; i++) {
 			if (i == 0) {
 				string [] fieldStrings = dataLines [0].Split (',');
@@ -393,8 +362,8 @@ public class Database : MonoBehaviour
 					case "Tags":
 						string[] tagArray = Regex.Split (recordStrings [j], "; ");
 						List<string> tagList = new List<string> (tagArray);
-						var query = from tag in tagData
-							where tagList.Contains (tag.name)
+						var query = from tag in TagData
+							where tagList.Contains (tag.Id)
 								select tag;
 						if (tagArray.Length > query.Count ()) {
 							Debug.Log ("Missing tags on " + recordAttribute.name);
@@ -420,19 +389,20 @@ public class Database : MonoBehaviour
 					}
 					
 				}
-				attributeData.Add (recordAttribute);
+				AttributeData.Add (recordAttribute);
 			}
 			
 		}
 	}
 
-	public void LoadTags (string filePath)
+	public void LoadTags ()
 	{
+		string filePath = Application.dataPath + "/Data/" + TAGS_FILE;
 		Debug.Log ("Loading tags from" + filePath);
 		string[] dataLines = File.ReadAllLines (filePath);
 		Dictionary<int, string> fieldLookup = new Dictionary<int, string> ();
 
-		tagData.Clear ();
+		TagData.Clear ();
 		for (int i = 0; i < dataLines.Length; i++) {
 			if (i == 0) {
 				string [] fieldStrings = dataLines [0].Split (',');
@@ -448,10 +418,10 @@ public class Database : MonoBehaviour
 					if (recordStrings [j] != "") {
 						switch (fieldLookup [j]) {
 						case "Tag ID":
-							recordTag.name = recordStrings [j];
+							recordTag.Id = recordStrings [j];
 							break;
 						case "Type":
-							recordTag.tagType = recordStrings [j];
+							recordTag.TagType = recordStrings [j];
 							break;
 						case "Value":
 							recordTag.value = StringToFloat (recordStrings [j]);
@@ -515,13 +485,13 @@ public class Database : MonoBehaviour
 					}
 
 				}
-				var query = from tag in tagData
-					where tag.name == recordTag.name
+				var query = from tag in TagData
+					where tag.Id == recordTag.Id
 						select tag;
 				if (query.Count () > 0) {
-					Debug.Log ("Tag " + recordTag.name + " already exists.");
+					Debug.Log ("Tag " + recordTag.Id + " already exists.");
 				} else {
-					tagData.Add (recordTag);
+					TagData.Add (recordTag);
 				}
 			}
 		}
@@ -621,10 +591,45 @@ public class Database : MonoBehaviour
 		}
 	}
 
-//	public float GetRandomInRange(float lowerLimit, float upperLimit)
-//	{
-//
-//	}
+	public static Food GetRandomFoodFromData () //Pre-runtime; for statistical use
+	{
+		Food food = new Food ();
+		
+		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Form));
+		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Ingredient));
+		food.attributes.Add (GetRandomAttributeFromData (AttributeType.Qualifier));
+		food.Realize ();
+		
+		return food;
+	}
 
+	public static FoodAttribute GetRandomAttributeFromData (AttributeType resultType)
+	{
+		List<FoodAttribute> matchingAttributes = Instance.AttributeData.Where(attribute => attribute.attributeType == resultType).ToList();
+		return GetRandomCollectionMember<FoodAttribute>(matchingAttributes);
+	}
 
+	public static FoodAttribute GetRandomAttributeFromData (AttributeType resultType, string tagId) {
+		List<FoodAttribute> matchingAttributes = Instance.AttributeData.Where(attribute => attribute.attributeType == resultType && TagListContainsId(attribute.tags, tagId)).ToList();
+		return GetRandomCollectionMember<FoodAttribute>(matchingAttributes);
+	}
+
+	public static T GetRandomCollectionMember<T> (IEnumerable<T> enumerable) {
+		//var list = Instance.TagData.Where (t => t.Id == "");
+		//print ("Random range: " + Random.Range(0,1));
+		float rawRandomValue = Random.value;
+		print ("Random = " + rawRandomValue);
+		if(rawRandomValue != 1) {
+			return  enumerable.ToList()[Mathf.FloorToInt (rawRandomValue * enumerable.Count())];
+		} else {
+			return enumerable.ToList() [enumerable.Count() - 1];
+		}
+	}
+
+	///<param name="sourceTags">Tag data to query</param>
+	/// <param name="targetId">Tag name to match</param>
+	///<returns>Whether any tags matched that tag name</returns> 
+	public static bool TagListContainsId (List<Tag> sourceTags, string targetId) {
+		return sourceTags.Where(t => t.Id == targetId).ToList().Count() > 0;
+	}
 }

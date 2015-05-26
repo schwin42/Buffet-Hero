@@ -21,8 +21,8 @@ public class DatabaseEditor : Editor {
 		DrawDefaultInspector();
 		if(GUILayout.Button(loadButtonContent))
 		{
-			database.LoadTags (Application.dataPath + "/Data/" + Database.tagsFile);
-			database.LoadAttributes(Application.dataPath + "/Data/" + Database.attributesFile);
+			database.LoadTags ();
+			database.LoadAttributes();
 		}
 		serializedObject.ApplyModifiedProperties();
 

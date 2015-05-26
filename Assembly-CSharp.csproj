@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_5_0_2;UNITY_5_0;UNITY_5;ENABLE_LICENSE_RENAME;ENABLE_NEW_BUGREPORTER;ENABLE_2D_PHYSICS;ENABLE_4_6_FEATURES;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_NEW_HIERARCHY;ENABLE_PHYSICS;ENABLE_PHYSICS_PHYSX3;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_AUDIOMIXER_SUSPEND;ENABLE_NONPRO;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;UNITY_STANDALONE_OSX;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_GAMECENTER;ENABLE_TEXTUREID_MAP;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_OSX</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_5_0_2;UNITY_5_0;UNITY_5;ENABLE_LICENSE_RENAME;ENABLE_NEW_BUGREPORTER;ENABLE_2D_PHYSICS;ENABLE_4_6_FEATURES;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_NEW_HIERARCHY;ENABLE_PHYSICS;ENABLE_PHYSICS_PHYSX3;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_AUDIOMIXER_SUSPEND;ENABLE_NONPRO;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;PLATFORM_SUPPORTS_MONO;UNITY_IPHONE;ENABLE_RUNTIME_GI;ENABLE_SUBSTANCE;ENABLE_GAMECENTER;ENABLE_NETWORK;UNITY_IPHONE_API;UNITY_IOS;ENABLE_TEXTUREID_MAP;PLAYERCONNECTION_LISTENS_FIXED_PORT;DEBUGGER_LISTENS_FIXED_PORT;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_OSX</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -46,6 +46,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Chef.cs" />
+     <Compile Include="Assets\ChefCharacterization.cs" />
+     <Compile Include="Assets\ChefUi.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipItems.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\EquipRandomItem.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UICursor.cs" />
@@ -181,24 +184,24 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UITexture.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
-     <Compile Include="Assets\Scripts\AudioController.cs" />
-     <Compile Include="Assets\Scripts\ButtonHandler.cs" />
-     <Compile Include="Assets\Scripts\ColorButton.cs" />
-     <Compile Include="Assets\Scripts\ColorSelect.cs" />
-     <Compile Include="Assets\Scripts\Database.cs" />
-     <Compile Include="Assets\Scripts\GameController.cs" />
-     <Compile Include="Assets\Scripts\InputHandler.cs" />
-     <Compile Include="Assets\Scripts\InterfaceController.cs" />
-     <Compile Include="Assets\Scripts\Player.cs" />
-     <Compile Include="Assets\Scripts\PlayerPanel.cs" />
-     <Compile Include="Assets\Scripts\PositionElementsInLine.cs" />
-     <Compile Include="Assets\Scripts\ProfileMenuHandler.cs" />
-     <Compile Include="Assets\Scripts\ProfileMenuItem.cs" />
-     <Compile Include="Assets\Scripts\Restaurant.cs" />
-     <Compile Include="Assets\Scripts\StoreController.cs" />
-     <Compile Include="Assets\Scripts\ToggleRule.cs" />
-     <Compile Include="Assets\Scripts\Tools.cs" />
-     <Compile Include="Assets\Scripts\UserDatabase.cs" />
+     <Compile Include="Assets\Scripts\Experimental\StoreController.cs" />
+     <Compile Include="Assets\Scripts\Mechanics\GameController.cs" />
+     <Compile Include="Assets\Scripts\Model\Database.cs" />
+     <Compile Include="Assets\Scripts\Model\Player.cs" />
+     <Compile Include="Assets\Scripts\Model\Restaurant.cs" />
+     <Compile Include="Assets\Scripts\Model\UserDatabase.cs" />
+     <Compile Include="Assets\Scripts\UI\AudioController.cs" />
+     <Compile Include="Assets\Scripts\UI\ButtonHandler.cs" />
+     <Compile Include="Assets\Scripts\UI\ColorButton.cs" />
+     <Compile Include="Assets\Scripts\UI\ColorSelect.cs" />
+     <Compile Include="Assets\Scripts\UI\InputHandler.cs" />
+     <Compile Include="Assets\Scripts\UI\InterfaceController.cs" />
+     <Compile Include="Assets\Scripts\UI\PlayerPanel.cs" />
+     <Compile Include="Assets\Scripts\UI\PositionElementsInLine.cs" />
+     <Compile Include="Assets\Scripts\UI\ProfileMenuHandler.cs" />
+     <Compile Include="Assets\Scripts\UI\ProfileMenuItem.cs" />
+     <Compile Include="Assets\Scripts\UI\ToggleRule.cs" />
+     <Compile Include="Assets\Scripts\Utility\Tools.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.8.1.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />

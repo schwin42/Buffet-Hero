@@ -2,38 +2,39 @@ Name ID,Attribute Type,Subtype,Tags,Combinations,Rarity,Date Added
 beer,form,,alcoholic; cold; beverage,,common,2014.09.04
 biscuit,form,,grain,,common,2014.09.04
 bisque,form,,entree; tasty; French,,uncommon,2014.09.11
-brownie,form,,dessert; hot,,common,2014.09.19
+brownie,form,,dessert; hot; American,,common,2014.09.19
 burger,form,,savory; hot; American,,common,2014.09.04
 burrito,form,,Mexican; hot; savory; entree,,common,2014.09.04
 calzone,form,,Italian; grain; enticing,,uncommon,2014.09.04
-casserole,form,,gooey; salty; hot,,common,2014.09.04
-chalupa,form,,grain; cheap,,uncommon,2014.09.04
-cheesecake,form,,sweet; creamy; awesome; dessert,,uncommon,2014.09.04
+casserole,form,,gooey; salty; hot; French; American,,common,2014.09.04
+chalupa,form,,grain; cheap; corporate,,uncommon,2014.09.04
+cheesecake,form,,sweet; creamy; awesome; dessert; American; Canadian; Greek; German,,uncommon,2014.09.04
 chimichanga,form,,Mexican; hot; delicious; savory; entree,,uncommon,2014.09.04
-chowder,form,,entree; hot,,common,2014.09.26
+chowder,form,,entree; hot; American,,common,2014.09.26
 churro,form,,sweet; Mexican; dessert,,uncommon,2014.09.04
-cobbler,form,,dessert,fruit++,uncommon,2014.09.30
+cobbler,form,,dessert; American,fruit++,uncommon,2014.09.30
 coffee,form,,bitter; liquid; beverage,,common,2014.09.04
 compote,form,,French; tasty; dessert,,uncommon,2014.09.18
 cookie,form,,dessert; sweet; doughy,,common,2014.09.08
 corn dog,form,,cheap; tasty; hot; savory,,uncommon,2014.09.04
-creampuff,form,,dessert; grain,,uncommon,2014.09.22
+creampuff,form,,dessert; grain; sweet,,uncommon,2014.09.22
 creme brulee,form,,sweet; creamy; dessert,,uncommon,2014.09.04
 crepe,form,,fancy; French,,uncommon,2014.09.04
 croissant,form,,fancy; doughy; sweet; French; grain,,uncommon,2014.09.04
 croquembouche,form,,awesome; dessert; French; grain,,rare,2014.09.22
 croquette,form,,fancy; savory; hot; entree,,rare,2014.09.04
-cupcake,form,,dessert; grain; sweet,,common,2014.09.10
-curry,form,,entree; Indian; hot,,common,2014.09.04
+cupcake,form,,dessert; grain; sweet; American,,common,2014.09.10
+onigiri,form,,Japanese; grain,,,
+curry,form,,entree; Indian; hot; Thai; Vietnamese; Japanese; Chinese,,common,2014.09.04
 daiquiri,form,,fancy; alcoholic; sweet; cold; beverage,,uncommon,2014.09.04
-donut,form,,sweet; dessert,,common,2014.09.04
+donut,form,,sweet; dessert; American,,common,2014.09.04
 dumpling,form,,delicious; grain; entree,,uncommon,2014.09.18
 elixir,form,,beverage; powerful,,rare,2014.09.10
-empanada,form,,European; hot; doughy,meat+; dairy+; dessert+,uncommon,2014.09.04
+empanada,form,,Spanish; hot; doughy,meat+; dairy+; dessert+,uncommon,2014.09.04
 enchilada,form,,Mexican; grain; hot,,common,2014.09.10
 enema,form,,non-food; terrifying,,uncommon,2014.09.08
 frankfurter,form,,savory; hot; entree; American,,common,2014.09.04
-frappuccino,form,,dessert; sweet; beverage; tasty,,uncommon,2014.09.14
+frappuccino,form,,dessert; sweet; beverage; tasty; corporate,,uncommon,2014.09.14
 french fries,form,,salty; hot; entree; American,,common,2014.09.04
 frittata,form,,hot; fancy; entree; Italian,,rare,2014.09.04
 froyo,form,,cold; creamy; dessert,,uncommon,2014.09.04
@@ -41,15 +42,15 @@ gelato,form,,sweet; cold; fancy; enticing; dessert; Italian,,rare,2014.09.04
 gnocchi,form,,Italian; fancy; entree,,uncommon,2014.09.04
 gumbo,form,,entree; hot; American,,uncommon,2014.09.26
 haggis,form,,crummy; meat; Scottish; entree,,rare,2014.09.04
-hot pocket,form,,cheap; hot; crummy,,common,2014.09.04
+hot pocket,form,,cheap; hot; crummy; corporate,,common,2014.09.04
 jerky,form,,savory; salty; chewy; entree,,common,2014.09.04
 juice,form,,liquid; cold; beverage,,common,2014.09.04
-kabob,form,,hot; Indian,,common,2014.09.04
-lasagna,form,,Italian; savory,,common,2014.09.04
-latke,form,,European; entree; hot,,common,2014.09.30
-loaf,form,,doughy; hot; American; crummy,,common,2014.09.04
+kabob,form,,hot; Indian; Middle Eastern; Chinese; Greek,,common,2014.09.04
+lasagne,form,,Italian; savory,,common,2014.09.04
+latke,form,,German; entree; hot; Middle Eastern; Russian,,common,2014.09.30
+loaf,form,,doughy; hot; crummy,,common,2014.09.04
 mac & cheese,form,,American; hot; savory; entree,,common,2014.09.10
-macaroon,form,,dessert; sweet; fancy,,uncommon,2014.09.04
+macaroon,form,,dessert; sweet; fancy; Italian; French; British; American; German,,uncommon,2014.09.04
 medallion,form,,fancy; delicious,,rare,2014.09.30
 melange,form,,fancy; awesome,,rare,2014.09.04
 mess,form,,disaster,,uncommon,2014.09.10
@@ -60,23 +61,23 @@ muffin,form,,breakfast; doughy; sweet; American,,common,2014.09.08
 omelette,form,,hot; savory; French; entree,meat+; dairy+,common,2014.09.04
 paella,form,,Spanish; entree,,uncommon,2014.09.11
 pancake,form,,sweet; hot; breakfast,,common,2014.09.04
-panini,form,,hot; crispy,,common,2014.09.04
+panini,form,,hot; crispy; Italian; American,,common,2014.09.04
 parfait,form,,dessert; sweet; cold; tasty,,uncommon,2014.09.14
 pho,form,,Vietnamese; entree,,common,2014.09.08
 pie,form,,sweet; American; dessert,fruit++,common,2014.09.04
-pierogi,form,,hot; European; enticing,,uncommon,2014.09.04
-pizza,form,,gooey; doughy; Italian; tasty; classic,meat+; dairy+,common,2014.09.04
+pierogi,form,,hot; European; enticing; German; Russian; Canadian; American,,uncommon,2014.09.04
+pizza,form,,gooey; doughy; Italian; tasty; classic; American,meat+; dairy+,common,2014.09.04
 poutine,form,,entree; fancy; Canadian,,uncommon,2014.09.25
 pretzel,form,,doughy; salty,,uncommon,2014.09.04
 pudding,form,,dessert; sweet; creamy,,common,2014.09.10
 quesadilla,form,,Mexican; hot; savory; entree; grain,,common,2014.09.10
-rind,form,,bland; cheap,,uncommon,2014.09.04
+rind,form,,gross; cheap,,uncommon,2014.09.04
 risotto,form,,Italian; fancy; grain,,uncommon,2014.09.11
 salad,form,,boring; cold,,common,2014.09.04
 samosa,form,,Indian; entree; tasty,,uncommon,2014.10.11
 sandwich,form,,grain; tasty,meat+; dairy+,common,2014.09.04
 sausage,form,,savory; hot; Italian,,uncommon,2014.09.04
-scone,form,,grain; tasty,,uncommon,2014.09.14
+scone,form,,grain; tasty; British; American; Canadian; Scottish,,uncommon,2014.09.14
 smoothie,form,,sweet; creamy; cold; breakfast,,uncommon,2014.09.04
 soda,form,,beverage,,common,2014.09.26
 souffle,form,,French; fancy; dairy,,uncommon,2014.09.22
@@ -93,7 +94,7 @@ tea,form,,liquid; beverage,,common,2014.09.04
 torta,form,,Mexican; grain,,common,2014.09.04
 tostada,form,,Mexican; grain,,common,2014.09.04
 truffle,form,,fancy; enticing; vegan; tasty,,rare,2014.09.04
-waffle,form,,sweet; spongy; breakfast,,common,2014.09.04
+waffle,form,,sweet; spongy; breakfast; French; German; American,,common,2014.09.04
 wellington,form,,doughy; hot; British; fancy; grain,,rare,2014.09.04
 """chicken""",ingredient,,crummy; risky; meat,,rare,2014.09.04
 a bizarre,qualifier,,disgusting,,uncommon,2014.10.09
@@ -246,7 +247,7 @@ a day-old,qualifier,freshness,stale,,common,2014.09.04
 a decadent,qualifier,,delicious,,uncommon,2014.09.04
 a deconstructed,qualifier,,fancy,,uncommon,2014.09.18
 a decoy,qualifier,,disgusting,,rare,2014.09.14
-a deep-fried,qualifier,,crispy; awesome; cheap,,common,2014.09.04
+a deep-fried,qualifier,,crispy; tasty; fried,,common,2014.09.04
 a deluxe,qualifier,,potent; tasty,,uncommon,2014.09.19
 a demonic,qualifier,,powerful; dangerous,,mythic,2014.09.19
 a dodgy,qualifier,,British; risky,,common,2014.09.25

@@ -176,6 +176,7 @@ public class UserDatabase : MonoBehaviour {
 		//print (Application.persistentDataPath);
 		string fileName = "UserInfo.dat";
 		string fullFileName = Application.persistentDataPath+"/"+fileName;
+		print (fullFileName);
 		if(File.Exists(fullFileName))
 		{
 			Debug.Log ("Loading "+fileName+" from "+fullFileName);

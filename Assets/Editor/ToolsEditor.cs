@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEditor;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ public class ToolsEditor : Editor {
 	public GUIContent derivePercentilesButton = new GUIContent("Derive Percentiles");
 	public GUIContent submitTagTypeQueryButton = new GUIContent("Submit Tag Type Query");
 	public GUIContent displayFoodButton = new GUIContent("Display Food");
+	public GUIContent runTrialsButton = new GUIContent("Run Trials");
 
 	public Tools tools;
 
@@ -27,11 +28,16 @@ public class ToolsEditor : Editor {
 		}
 		if(GUILayout.Button(submitTagTypeQueryButton))
 		{
-			SubmitTagTypeQuery();
+			//SubmitTagTypeQuery();
+			tools.tagTypeResults = tools.GetTagTypeResults();
 		}
 		if(GUILayout.Button(displayFoodButton))
 		{
 			DisplayFood();
+		}
+		if(GUILayout.Button(runTrialsButton))
+		{
+			tools.trialFoods = tools.RunTrials();
 		}
 
 		DrawDefaultInspector();
@@ -43,7 +49,7 @@ public class ToolsEditor : Editor {
 	public void DisplayFood()
 	{
 		//List<FoodAttribute> outputAttributes = new List<Food>();
-		List<FoodAttribute> attributeMatches = (from attribute in Database.Instance.attributeData
+		List<FoodAttribute> attributeMatches = (from attribute in Database.Instance.AttributeData
 			where tools.viewCombinedAttributes.Contains(attribute.name)
 				select attribute).ToList();
 //		foreach(string attributeString in tools.viewCombinedAttributes)
