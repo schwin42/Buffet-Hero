@@ -4,6 +4,20 @@ using System.Linq;
 
 public class ChefCharacterization : MonoBehaviour
 {
+
+	private static ChefCharacterization _instance;
+	public static ChefCharacterization Instance {
+		get {
+			if(_instance == null) {
+				_instance = FindObjectOfType<ChefCharacterization>();
+			}
+			return _instance;
+		}
+	}
+
+	public int NumberOfRounds = 3;
+	public int CurrentRound = 0;
+
 	private const int GOOD_ANSWER_COUNT = 2;
 	private const int NEUTRAL_ANSWER_COUNT = 8;
 	private const int BAD_ANSWER_COUNT = 2;
@@ -16,7 +30,10 @@ public class ChefCharacterization : MonoBehaviour
 	public List<FoodAttribute> NeutralAnswers;
 	public List<FoodAttribute> BadAnswers;
 
-	
+	public void Awake() {
+		_instance = this;
+	}
+
 	public void Start ()
 	{
 		//Test RNG
@@ -39,36 +56,28 @@ public class ChefCharacterization : MonoBehaviour
 //			//print ("Id, count" + pair.Key + ", " + pair.Value);
 //		}
 
-		//Get possible nationalities
-		List<Tag> nationalities = new List<Tag>();
-		foreach(Tag tag in Database.Instance.TagData) {
-			if(Database.TagListContainsId(nationalities, tag.Id) || tag.TagType != "nationality") {
-				continue;
-			}
-			nationalities.Add(tag);
-		}
-		Database.Shuffle(nationalities);
-
-		this.chef.Liked.Clear();
-		this.chef.Liked.Add(nationalities[0].Id);
-		this.chef.Disliked.Clear();
-		this.chef.Disliked.Add(nationalities[1].Id);
+		StartGame();
 
 
-		GenerateAnswers ();
 
-		string uiString = "";
-		foreach (FoodAttribute answer in this.Answers) {
-				uiString += answer.name + "\n";
-		}
-		ChefUi.Instance.WriteToText0 (uiString);
+
+//		string uiString = "";
+//		foreach (FoodAttribute answer in this.Answers) {
+//				uiString += answer.Id + "\n";
+//		}
+		//ChefUi.Instance.WriteToText0 (uiString);
 	}
 
 	private void GenerateAnswers ()
 	{
 		this.Answers = new List<FoodAttribute> ();
+		this.GoodAnswers = new List<FoodAttribute>();
+		this.NeutralAnswers = new List<FoodAttribute>();
+		this.BadAnswers = new List<FoodAttribute>();
+
 		for (int i = 0; i < GOOD_ANSWER_COUNT; i++) {
 			FoodAttribute assignableAttribute = GetUniqueAttribute (this.Answers, AttributeType.Form, this.chef.Liked [0]);
+			//print ("Attribute id = " + assignableAttribute.Id);
 			this.Answers.Add (assignableAttribute);
 			this.GoodAnswers.Add (assignableAttribute);
 		}
@@ -83,28 +92,76 @@ public class ChefCharacterization : MonoBehaviour
 			this.BadAnswers.Add (assignableAttribute);
 		}
 
-
 		Database.Shuffle (this.Answers);
 	}
 
 	private FoodAttribute GetUniqueAttribute (List<FoodAttribute> destinationList, AttributeType targetType, string targetTagId = null)
 	{
-			FoodAttribute prospectiveAttribute = null;
+		FoodAttribute prospectiveAttribute = null;
 		int i = 0;
 		while (prospectiveAttribute == null || destinationList.Contains(prospectiveAttribute)) {
 			if (targetTagId != null) {
 				print ("i, target tag" + i + ", " + targetTagId);
-					prospectiveAttribute = Database.GetRandomAttributeFromData (targetType, targetTagId);
+				prospectiveAttribute = Database.GetRandomAttributeFromData (targetType, targetTagId);
 			} else {
-					prospectiveAttribute = Database.GetRandomAttributeFromData (targetType);
+				prospectiveAttribute = Database.GetRandomAttributeFromData (targetType);
 			}
-			if(i > 100) {
-				Debug.LogError("Stack overflow");
+			if (i > 100) {
+				Debug.LogError ("Stack overflow");
 				return null;
 			}
 			i++;
 		}
-			return prospectiveAttribute;
+		return prospectiveAttribute;
+	}
+	public void StartGame () {
+		this.chef.Init();
+
+		//Get possible nationalities
+		List<Tag> nationalities = new List<Tag>();
+		foreach(Tag tag in Database.Instance.TagData) {
+			if(Database.TagListContainsId(nationalities, tag.Id) || tag.TagType != "nationality") {
+				continue;
+			}
+			nationalities.Add(tag);
+		}
+		Database.Shuffle(nationalities);
+
+		//Assign nationalities to chef
+		this.chef.Liked.Add(nationalities[0].Id);
+		this.chef.Disliked.Add(nationalities[1].Id);
+
+		this.Next ();
+	}
+
+	public void Next () {
+		//Check trial count and progress to next scene if applicable
+		if(CurrentRound < NumberOfRounds) {
+			//Progress to next round
+			this.CurrentRound ++;
+			GenerateAnswers ();
+
+			print ("Displaying answers");
+			ChefUi.Instance.DisplayAnswers(this.Answers.Select(a => a.Id).ToList());
+
+		} else {
+			EndGame();
+		}
+	}
+
+	public void SubmitAttribute (string attributeId) {
+		if(this.Answers.Where (a => a.Id == attributeId).Count () == 0) {
+		//if(!this.Answers.Contains(attributeId)) {
+			Debug.LogError("Attribute not contained in Answers");
+		}
+		//Save answer to chef's chosen list
+		this.chef.ChosenAttributes.Add(attributeId);
+
+		Next ();
+	}
+
+	public void EndGame() {
+
 	}
 
 }

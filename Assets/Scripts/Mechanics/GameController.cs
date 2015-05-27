@@ -76,14 +76,18 @@ public class GameController : MonoBehaviour
 
 	void Awake ()
 	{
-		Instance = this;
+		//Init();
+	}
 
+	public void Init() {
+		Instance = this;
+		
 		qualifierQueue = GetShuffledAttributes (AttributeType.Qualifier);
 		ingredientQueue = GetShuffledAttributes (AttributeType.Ingredient);
 		formQueue = GetShuffledAttributes (AttributeType.Form);
-
+		
 		possiblePlayers = GetComponentsInChildren<Player> ().ToList ();
-
+		
 		InterfaceController.Instance.InitializeInterface ();
 	}
 

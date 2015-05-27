@@ -50,7 +50,7 @@ public class ToolsEditor : Editor {
 	{
 		//List<FoodAttribute> outputAttributes = new List<Food>();
 		List<FoodAttribute> attributeMatches = (from attribute in Database.Instance.AttributeData
-			where tools.viewCombinedAttributes.Contains(attribute.name)
+			where tools.viewCombinedAttributes.Contains(attribute.Id)
 				select attribute).ToList();
 //		foreach(string attributeString in tools.viewCombinedAttributes)
 //		{

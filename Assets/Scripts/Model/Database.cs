@@ -59,7 +59,7 @@ public class Food
 			string returnString = "";
 			for (int i = attributes.Count - 1; i >= 0; i--) {
 
-				returnString += attributes [i].name;
+				returnString += attributes [i].Id;
 				if (i > 0) {
 					returnString += " ";
 				}
@@ -250,7 +250,7 @@ public class Food
 [System.Serializable]
 public class FoodAttribute
 {
-	public string name = "";
+	public string Id = "";
 	//public LetterRank rank = LetterRank.None;
 	public string rarity = "";
 	public AttributeType attributeType;
@@ -348,9 +348,9 @@ public class Database : MonoBehaviour
 							string singleQuotes = "\"";
 							string outputString = recordStrings [j].Replace (tripleQuotes, singleQuotes);
 							//Debug.Log (outputString);
-							recordAttribute.name = outputString;
+							recordAttribute.Id = outputString;
 						} else {
-							recordAttribute.name = recordStrings [j];
+							recordAttribute.Id = recordStrings [j];
 						}
 						break;
 					case "Attribute Type":
@@ -366,7 +366,7 @@ public class Database : MonoBehaviour
 							where tagList.Contains (tag.Id)
 								select tag;
 						if (tagArray.Length > query.Count ()) {
-							Debug.Log ("Missing tags on " + recordAttribute.name);
+							Debug.Log ("Missing tags on " + recordAttribute.Id);
 						}
 						recordAttribute.tags = query.ToList ();
 						break;
@@ -618,12 +618,16 @@ public class Database : MonoBehaviour
 		//var list = Instance.TagData.Where (t => t.Id == "");
 		//print ("Random range: " + Random.Range(0,1));
 		float rawRandomValue = Random.value;
-		print ("Random = " + rawRandomValue);
+
+		int index;
 		if(rawRandomValue != 1) {
-			return  enumerable.ToList()[Mathf.FloorToInt (rawRandomValue * enumerable.Count())];
+			index = Mathf.FloorToInt (rawRandomValue * enumerable.Count());
 		} else {
-			return enumerable.ToList() [enumerable.Count() - 1];
+			index = enumerable.Count() - 1;
 		}
+		print ("Random, enumerable length, index = " + rawRandomValue + ", " + enumerable.Count() + ", " + index);
+		return enumerable.ToList()[index];
+
 	}
 
 	///<param name="sourceTags">Tag data to query</param>
