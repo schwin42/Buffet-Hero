@@ -15,8 +15,12 @@ public enum Phase
 
 public class GameController : MonoBehaviour
 {
-
-	public static GameController Instance;
+	private static GameController _instance;
+	public static GameController Instance {
+		get {
+			return _instance ?? GameObject.FindObjectOfType<GameController>();
+		}
+	}
 
 	//Rules
 	public Restaurant activeRestaurant;
@@ -35,7 +39,7 @@ public class GameController : MonoBehaviour
 	public static float RandomConstant = 0f;
 
 	//Cached
-	public List<Player> possiblePlayers = new List<Player> ();
+	public List<Player> PossiblePlayers = new List<Player> ();
 	public List<Player> registeredPlayers = new List<Player> ();
 	public List<Player> activePlayers = new List<Player> ();
 	public List<FoodAttribute> qualifierQueue;
@@ -76,17 +80,17 @@ public class GameController : MonoBehaviour
 
 	void Awake ()
 	{
-		//Init();
+		_instance = this;
+		Init();
 	}
 
 	public void Init() {
-		Instance = this;
 		
 		qualifierQueue = GetShuffledAttributes (AttributeType.Qualifier);
 		ingredientQueue = GetShuffledAttributes (AttributeType.Ingredient);
 		formQueue = GetShuffledAttributes (AttributeType.Form);
 		
-		possiblePlayers = GetComponentsInChildren<Player> ().ToList ();
+		PossiblePlayers = GetComponentsInChildren<Player> ().ToList ();
 		
 		InterfaceController.Instance.InitializeInterface ();
 	}
@@ -444,7 +448,7 @@ public class GameController : MonoBehaviour
 			player.playedInLastGame = true;
 
 		}
-		foreach (Player player in possiblePlayers) {
+		foreach (Player player in PossiblePlayers) {
 			if (player.playerChoice != PlayerChoice.Ready) {
 				InterfaceController.SetPlayerUiState (player, PlayerUiState.Inactive);
 				player.playedInLastGame = false;
@@ -573,7 +577,7 @@ public class GameController : MonoBehaviour
 
 	public void ReadyJoinedPlayers ()
 	{
-		foreach (Player player in possiblePlayers) {
+		foreach (Player player in PossiblePlayers) {
 			if (player.playedInLastGame) {
 				player.playerChoice = PlayerChoice.Ready;
 			}

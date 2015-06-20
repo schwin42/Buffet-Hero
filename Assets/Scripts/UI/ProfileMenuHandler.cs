@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,35 +21,22 @@ public class ProfileMenuHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		player = GameController.Instance.possiblePlayers[int.Parse(playerPanel.gameObject.name.Substring(11))];
+		player = GameController.Instance.PossiblePlayers[int.Parse(playerPanel.gameObject.name.Substring(11))];
 
 	}
 
 	void OnEnable()
 	{
-		Debug.Log ("Profile menu enabled.");
+		//Debug.Log ("Profile menu enabled.");
 		InterfaceController.Instance.activeProfileMenus.Add (this);
 	}
 
 	void OnDisable()
 	{
-		Debug.Log ("Profile menu disabled.");
+		//Debug.Log ("Profile menu disabled.");
 		InterfaceController.Instance.activeProfileMenus.Remove(this);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-		if(activeInput)
-		{
-			Debug.Log ("Active input is selected?"+activeInput.isSelected+" @"+Time.frameCount);
-//			if(activeInput.isSelected == false)
-//			{
-//				Debug.Log ("Destroying active input");
-//				Destroy(activeInput.gameObject);
-//			}
-		}
-	}
+
 
 	public void ToggleProfileMenuDisplay()
 	{
@@ -69,7 +56,7 @@ public class ProfileMenuHandler : MonoBehaviour {
 			//Populate menu
 
 			List<string> lockedNames = new List<string>();
-			foreach(Player player in GameController.Instance.possiblePlayers)
+			foreach(Player player in GameController.Instance.PossiblePlayers)
 			{
 				if(player.ProfileInstance != null && player.ProfileInstance.playerName != "Guest")
 				{
@@ -141,7 +128,7 @@ public class ProfileMenuHandler : MonoBehaviour {
 
 	public void OpenInput()
 	{
-		Debug.Log ("Open input on "+player.playerId+" @"+Time.frameCount);
+		Debug.Log ("Open input on "+player.Id+" @"+Time.frameCount);
 		GameObject newInputGo = Instantiate(menuInputPrefab) as GameObject;
 		UIInput newInput = newInputGo.GetComponentInChildren<UIInput>();
 		newInput.value = "";

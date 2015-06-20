@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,21 +37,8 @@ public class Player : MonoBehaviour {
 
 	public static Player Instance;
 
-	public int playerId;
+	public int Id;
 
-//	private string _profileStringId;
-//	public string ProfileStringId
-//	{
-//		get
-//		{
-//			return _profileStringId;
-//		}
-//		set
-//		{
-//			_profileStringId = value;
-//			ChangeProfile(_profileStringId);
-//		}
-//	}
 	private Profile _profileInstance;
 	public Profile ProfileInstance
 	{
@@ -209,8 +196,8 @@ public class Player : MonoBehaviour {
 	public UIWidget[] stateWidgets = new UIWidget[5];
 
 	//UI
-	public UIPanel playerPanelUi;
-	public PlayerPanel playerPanelScript;
+	public UIPanel uiPanel;
+	public PlayerPanel PanelScript;
 
 	public UISprite trayBacker;
 
@@ -250,14 +237,12 @@ public class Player : MonoBehaviour {
 
 	void Update()
 	{
-		//Debug.Log ("Updating");
-		//Computer choice
 		if(GameController.Instance.currentPhase == Phase.Choose && controlType == ControlType.Computer 
 		   && !computerDecisionRunning && playerChoice == PlayerChoice.Ready)
 		{
 			computerDecisionRunning = true;
 			StartCoroutine(ComputerDecision());
-			Debug.Log ("Computer "+playerId+" running @"+Time.frameCount);
+			Debug.Log ("Computer "+Id+" running @"+Time.frameCount);
 			//Debug.Log ("AI controlled during control phase");
 
 		}
@@ -274,11 +259,11 @@ public class Player : MonoBehaviour {
 			{
 				if(Random.value >= .5f)
 				{
-					Debug.Log ("Computer "+playerId+ "eat @"+Time.frameCount, this);
+					Debug.Log ("Computer "+Id+ "eat @"+Time.frameCount, this);
 					Eat ();
 				} else 
 				{
-					Debug.Log ("Computer "+playerId+ "pass @"+Time.frameCount, this);
+					Debug.Log ("Computer "+Id+ "pass @"+Time.frameCount, this);
 					Pass ();
 				}
 			} else {
@@ -287,7 +272,7 @@ public class Player : MonoBehaviour {
 			yield return 0;
 		}
 		computerDecisionRunning = false;
-		Debug.Log ("Computer "+playerId+" stopped running. @"+Time.frameCount);
+		Debug.Log ("Computer "+Id+" stopped running. @"+Time.frameCount);
 		yield break;
 
 		//If game is not in choose phase, end coroutine immediately
@@ -393,51 +378,44 @@ public class Player : MonoBehaviour {
 
 	public void EnableUi()
 	{
-		playerPanelUi = GameObject.Find ("UI Root/Camera/PanelPlayer"+playerId).GetComponent<UIPanel>();
-		playerPanelScript = playerPanelUi.GetComponent<PlayerPanel>();
-		playerPanelScript.player = GameController.Instance.possiblePlayers[int.Parse(gameObject.name[gameObject.name.Length - 1].ToString())];
-
-		//UI
+		uiPanel = GameObject.Find ("UI Root/Camera/PanelPlayer"+Id).GetComponent<UIPanel>();
+		PanelScript = uiPanel.GetComponent<PlayerPanel>();
+		PanelScript.Player = this;
 
 		//General
-		trayBacker = playerPanelUi.transform.Find("Backer").GetComponent<UISprite>();
+		trayBacker = uiPanel.transform.Find("Backer").GetComponent<UISprite>();
 
 		//Entry
-		humanButton = playerPanelUi.transform.Find("EntryWidget/ButtonHuman").GetComponent<UISprite>();
-		computerButton = playerPanelUi.transform.Find("EntryWidget/ButtonComputer").GetComponent<UISprite>();
-		humanButtonLabel = playerPanelUi.transform.Find("EntryWidget/ButtonHuman/Label").GetComponent<UILabel>();
-		computerButtonLabel = playerPanelUi.transform.Find("EntryWidget/ButtonComputer/Label").GetComponent<UILabel>();
-		entryNameField = playerPanelUi.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();
-
-
+		humanButton = uiPanel.transform.Find("EntryWidget/ButtonHuman").GetComponent<UISprite>();
+		computerButton = uiPanel.transform.Find("EntryWidget/ButtonComputer").GetComponent<UISprite>();
+		humanButtonLabel = uiPanel.transform.Find("EntryWidget/ButtonHuman/Label").GetComponent<UILabel>();
+		computerButtonLabel = uiPanel.transform.Find("EntryWidget/ButtonComputer/Label").GetComponent<UILabel>();
+		entryNameField = uiPanel.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();
 
 		//Game
-		eatButton = playerPanelUi.transform.FindChild("GameWidget/Eat").GetComponent<ButtonHandler>();
-		passButtton = playerPanelUi.transform.FindChild("GameWidget/Pass").GetComponent<ButtonHandler>();
-		eatButton.player = this;
-		passButtton.player = this;
-		hpLabel = playerPanelUi.transform.FindChild("GameWidget/FieldBacker/LabelHPDisplay").GetComponent<UILabel>();
-		rankingLabel = playerPanelUi.transform.FindChild("GameWidget/FieldBacker/Ranking").GetComponent<UILabel>();
-		scoreLabel = playerPanelUi.transform.FindChild("GameWidget/FieldBacker/LabelScoreDisplay").GetComponent<UILabel>();
-		updateHpLabel = playerPanelUi.transform.FindChild("GameWidget/AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
-		updateScoreLabel = playerPanelUi.transform.FindChild("GameWidget/AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
-		playerNameLabelGame = playerPanelUi.transform.Find ("GameWidget/LabelPlayer").GetComponent<UILabel>();
-
+		eatButton = uiPanel.transform.FindChild("GameWidget/Eat").GetComponent<ButtonHandler>();
+		passButtton = uiPanel.transform.FindChild("GameWidget/Pass").GetComponent<ButtonHandler>();
+		hpLabel = uiPanel.transform.FindChild("GameWidget/FieldBacker/LabelHPDisplay").GetComponent<UILabel>();
+		rankingLabel = uiPanel.transform.FindChild("GameWidget/FieldBacker/Ranking").GetComponent<UILabel>();
+		scoreLabel = uiPanel.transform.FindChild("GameWidget/FieldBacker/LabelScoreDisplay").GetComponent<UILabel>();
+		updateHpLabel = uiPanel.transform.FindChild("GameWidget/AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
+		updateScoreLabel = uiPanel.transform.FindChild("GameWidget/AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
+		playerNameLabelGame = uiPanel.transform.Find ("GameWidget/LabelPlayer").GetComponent<UILabel>();
 
 		//Acquire state widgets
 		//UIWidget[] stateWidgets = new UIWidget[4];
-		stateWidgets[0] = playerPanelUi.transform.Find ("JoinWidget").GetComponent<UIWidget>();
-		stateWidgets[1] = playerPanelUi.transform.Find ("EntryWidget").GetComponent<UIWidget>();
-		stateWidgets[2] = playerPanelUi.transform.Find ("ReadyWidget").GetComponent<UIWidget>();
-		stateWidgets[3] = playerPanelUi.transform.Find ("GameWidget").GetComponent<UIWidget>();
-		stateWidgets[4] = playerPanelUi.transform.Find ("InactiveWidget").GetComponent<UIWidget>(); //Dummy widget
-		//stateWidgets = stateWidgets;
+		stateWidgets[0] = uiPanel.transform.Find ("JoinWidget").GetComponent<UIWidget>();
+		stateWidgets[1] = uiPanel.transform.Find ("EntryWidget").GetComponent<UIWidget>();
+		stateWidgets[2] = uiPanel.transform.Find ("ReadyWidget").GetComponent<UIWidget>();
+		stateWidgets[3] = uiPanel.transform.Find ("GameWidget").GetComponent<UIWidget>();
+		stateWidgets[4] = uiPanel.transform.Find ("InactiveWidget").GetComponent<UIWidget>(); //Dummy widget
 
-		
 		hpLabel.text = Hp.ToString();
 		updateHpLabel.text = "";
 		scoreLabel.text = Score.ToString();
 		updateScoreLabel.text = "";
+
+		this.uiPanel.gameObject.BroadcastMessage("EnablePlayerGoUi", this);
 	}
 
 	public void ChangeProfile(string profileStringId)

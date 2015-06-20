@@ -34,6 +34,11 @@ public class ColorScheme
 {
 	public Color defaultColor;
 	public Color highlightedColor;
+
+	public ColorScheme (Color defaultColor, Color highlightedColor) {
+		this.defaultColor = defaultColor;
+		this.highlightedColor = highlightedColor;
+	}
 }
 
 [System.Serializable]
@@ -74,14 +79,18 @@ public class InterfaceController : MonoBehaviour {
 	public Color enabledTextYellowColor;
 	public Color neutralLightColor;
 	public Color neutralDarkColor;
-	//public Color[] colors; 
 	public Color[] letterRankColors = new Color[7];
-	//public Color[] playerTrayColors = new Color[4]; //Red, yellow, green, blue
-	public ColorScheme[] playerSchemes = new ColorScheme[6];
+	public ColorScheme[] PlayerSchemesPool = new ColorScheme[6] {
+		new ColorScheme(new Color32(202, 21, 21, 255), new Color32(255, 0, 0, 255)),
+		new ColorScheme(new Color32(231, 196, 2, 255), new Color32(255, 237, 0, 255)),
+		new ColorScheme(new Color32(20, 180, 0, 255), new Color32(9, 255, 0, 255)),
+		new ColorScheme(new Color32(24, 18, 199, 255), new Color32(0, 44, 255, 255)),
+		new ColorScheme(new Color32(204, 102, 36, 255), new Color32(255, 134, 53, 255)),
+		new ColorScheme(new Color32(136, 18, 199, 255), new Color32(195, 87, 253, 255)),
+	};
 	public Color[] highlightColors = new Color[4];
 	public Color activeMenuItemColor;
 	public Color inactiveMenuItemColor;
-	//public Color[] playerColors;
 
 	//Inspector
 	public GameObject promptPrefab;
@@ -90,13 +99,11 @@ public class InterfaceController : MonoBehaviour {
 	public Vector3 localPromptPosition = new Vector3(0, -105, 0);
 	public Vector3 localLetterRankPosition;
 
-	//public UIWidget[] gameStateWidgets = new UIWidget[4];
-
 	//Status
 	public bool adsEnabled = true;
 	public UILabel[] activePrompts = new UILabel[2];
 	GameObject[] activeFoodRanks = new GameObject[2];
-	 PlayerUiState[] playerUiStates = new PlayerUiState[] //Start FSM at all players uninitialized
+	PlayerUiState[] playerUiStates = new PlayerUiState[] //Start FSM at all players uninitialized
 	{
 		(PlayerUiState) (-1),
 		(PlayerUiState) (-1),
@@ -106,14 +113,9 @@ public class InterfaceController : MonoBehaviour {
 	public GameUiState currentGameState = GameUiState.Uninitialized;
 	public PopupUiState currentPopupState = PopupUiState.Uninitialized;
 	public bool displayedFirstScreen = false;
-	//public List<Profile> selectedProfiles = new List<Profile>();
 	public List<ProfileMenuHandler> activeProfileMenus = new List<ProfileMenuHandler>();
 	public string winString = "";
 	public List<GameObject> activeWinnerGos = new List<GameObject>();
-
-	//public UIPanel[] playerPanels;
-
-
 
 	public UIPanel[] mirrorPanels;
 	public UIPanel foregroundPanel;
@@ -122,9 +124,7 @@ public class InterfaceController : MonoBehaviour {
 	public UILabel[] roundLabels;
 	public UIButton[] nextButtons;
 
-	public List<UIPanel> uiLookup; //Panels by player id
-	//public UIPanel[] playerPanels;
-	//public UILabel[] winLabels;
+	public List<UIPanel> uiPanelsByPlayerId;
 
 	public UILabel[] highScoreNames;
 	public UILabel[] highScoreAmounts;
@@ -150,33 +150,16 @@ public class InterfaceController : MonoBehaviour {
 	//Other
 	public Collider blockingCollider;
 
-
-
-
 	void Awake()
 	{
 		_instance = this;
 	}
-
-	// Use this for initialization
-	void Start () {
 	
+	void Start () { }
+	void Update () { }
 
-
-
-
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-	public void DisplayPrompt(string s)
-	{
-		foreach(UILabel label in activePrompts)
-		{
+	public void DisplayPrompt(string s) {
+		foreach(UILabel label in activePrompts) {
 			Destroy(label);
 		}
 
@@ -194,22 +177,7 @@ public class InterfaceController : MonoBehaviour {
 			promptLabel.text = s;
 			AudioController.Instance.PlaySound(SoundEffect.Swoop);
 		}
-
-		//foreach(UILabel label in promptLabels)
-		//{
-		//	label.text = s;
-		//}
 	}
-
-//	public void WriteToOutcome(string s)
-//	{
-//		//outcomeLabel.text = s;
-//	}
-
-//	public void WriteToScore(float f)
-//	{
-//		//scoreLabel.text = "Score: "+f.ToString();
-//	}
 
 	public void EnableButton(ButtonHandler buttonHandler, bool b)
 	{
@@ -255,23 +223,16 @@ public class InterfaceController : MonoBehaviour {
 		}
 	}
 
-	public void HidePrompts()
-	{
-		Debug.Log ("Hiding prompts");
-		foreach(UILabel label in activePrompts)
-		{
+	public void HidePrompts() {
+		foreach(UILabel label in activePrompts) {
 			Destroy (label.gameObject);
 		}
-		
 	}
 
-	public void HideFoodRank()
-	{
-		foreach(GameObject go in activeFoodRanks)
-		{
+	public void HideFoodRank() {
+		foreach(GameObject go in activeFoodRanks) {
 			Destroy (go);
 		}
-
 	}
 
 	public void EnableNextButtons(bool b)
@@ -290,8 +251,13 @@ public class InterfaceController : MonoBehaviour {
 
 	public static void SetPlayerUiState(Player player, PlayerUiState targetState)
 	{
+
 		//Cache last state
-		PlayerUiState oldState = Instance.playerUiStates[player.playerId];
+//		print(player.Id);
+//		print (Instance.playerUiStates);
+		PlayerUiState oldState = Instance.playerUiStates[player.Id];
+
+		print ("Player " + player.Id + " change from " + oldState + " to " + targetState + " @" + Time.frameCount);
 
 		//Disable old elements
 		if((int)oldState != -1)
@@ -333,7 +299,7 @@ public class InterfaceController : MonoBehaviour {
 		}
 
 		//Record state
-		Instance.playerUiStates[player.playerId] = targetState;
+		Instance.playerUiStates[player.Id] = targetState;
 	
 	}
 
@@ -360,7 +326,6 @@ public class InterfaceController : MonoBehaviour {
 				{
 					if(widget.name.Contains("Widget"))
 					{
-
 					widget.gameObject.SetActive(false);
 					}
 				}
@@ -404,7 +369,7 @@ public class InterfaceController : MonoBehaviour {
 		case GameUiState.Join:
 			if(!displayedFirstScreen)
 			{
-				foreach(Player player in GameController.Instance.possiblePlayers)
+				foreach(Player player in GameController.Instance.PossiblePlayers)
 				{
 					if(player.ProfileInstance == null || string.IsNullOrEmpty(player.ProfileInstance.playerName))
 					{
@@ -417,7 +382,7 @@ public class InterfaceController : MonoBehaviour {
 				displayedFirstScreen = true;
 			} else {
 				GameController.Instance.registeredPlayers.Clear();
-				foreach(Player player in GameController.Instance.possiblePlayers)
+				foreach(Player player in GameController.Instance.PossiblePlayers)
 				{
 					//player.playerChoice = PlayerChoice.Inactive;
 					GameController.Instance.currentPhase = Phase.Pregame;
@@ -472,9 +437,9 @@ public class InterfaceController : MonoBehaviour {
 			DisplayScores(topResults);
 			break;
 		case GameUiState.Stats1:
-			for(int i = 0; i < GameController.Instance.possiblePlayers.Count; i++)
+			for(int i = 0; i < GameController.Instance.PossiblePlayers.Count; i++)
 			{
-				Player player = GameController.Instance.possiblePlayers[i];
+				Player player = GameController.Instance.PossiblePlayers[i];
 				if(GameController.Instance.registeredPlayers.Contains(player))
 				   {
 				string valueOutput = "";
@@ -488,10 +453,10 @@ public class InterfaceController : MonoBehaviour {
 						player.ProfileInstance.lifetimeScore + "\n" +
 						player.ProfileInstance.AverageFoodScore.ToString("F2") + "\n" +
 						player.ProfileInstance.bestScore;
-				stats1Values[player.playerId].text = valueOutput;
-				stats1Titles[player.playerId].text = titleOutput;
-				stats1tastiestEaten[player.playerId].text = tastiestEatenOutput;
-				stats1grossestEaten[player.playerId].text = grossestEatenOutput;
+				stats1Values[player.Id].text = valueOutput;
+				stats1Titles[player.Id].text = titleOutput;
+				stats1tastiestEaten[player.Id].text = tastiestEatenOutput;
+				stats1grossestEaten[player.Id].text = grossestEatenOutput;
 				 } else {
 					//Zero out all player stats1 fields
 					//string valueOutput = "";
@@ -501,10 +466,10 @@ public class InterfaceController : MonoBehaviour {
 					//Food grossestFoodEaten = player.ProfileInstance.grossestFoodEaten;
 					//string grossestEatenOutput = "";
 					//valueOutput = "";
-					stats1Values[player.playerId].text = "";
-					stats1Titles[player.playerId].text = "";
-					stats1tastiestEaten[player.playerId].text = "";
-					stats1grossestEaten[player.playerId].text = "";
+					stats1Values[player.Id].text = "";
+					stats1Titles[player.Id].text = "";
+					stats1tastiestEaten[player.Id].text = "";
+					stats1grossestEaten[player.Id].text = "";
 
 				}
 			}
@@ -598,25 +563,25 @@ public class InterfaceController : MonoBehaviour {
 		currentGameState = targetState;
 	}
 
-	string GetFormattedPlayerString(Player player, string closingHexTag)
+	private string GetFormattedPlayerString(Player player, string closingHexTag)
 	{
 		if(player != null)
 		{
-		return HexTag(player.playerPanelScript.playerScheme.defaultColor)+player.ProfileInstance.playerName + closingHexTag;
+		return HexTag(player.PanelScript.PlayerColorScheme.defaultColor)+player.ProfileInstance.playerName + closingHexTag;
 		} else {
 			Debug.LogError("No player to format @"+Time.frameCount);
 			return "";
 		}
 	}
 
-	string GetFormattedPlayerString(List<Player> players, string closingHexTag)
+	private string GetFormattedPlayerString(List<Player> players, string closingHexTag)
 	{
 		string outputString = "";
 		for(int i = 0; i < players.Count; i++)
 		{
 			Player player = players[i];
 
-			outputString += HexTag(player.playerPanelScript.playerScheme.defaultColor)+player.ProfileInstance.playerName;
+			outputString += HexTag(player.PanelScript.PlayerColorScheme.defaultColor)+player.ProfileInstance.playerName;
 
 			if(i != players.Count - 1)
 			{
@@ -742,13 +707,13 @@ Debug.Log("Query greater than 0");
 	{
 		if(player.controlType == ControlType.Human)
 		{
-			player.humanButton.color = player.playerPanelScript.playerScheme.highlightedColor;
+			player.humanButton.color = player.PanelScript.PlayerColorScheme.highlightedColor;
 			player.computerButton.color = neutralLightColor;
 			player.humanButtonLabel.color = neutralLightColor;
 			player.computerButtonLabel.color = neutralDarkColor;
 		} else if(player.controlType == ControlType.Computer)
 		{
-			player.computerButton.color = player.playerPanelScript.playerScheme.highlightedColor;
+			player.computerButton.color = player.PanelScript.PlayerColorScheme.highlightedColor;
 			player.humanButton.color = neutralLightColor;
 			player.computerButtonLabel.color = neutralLightColor;
 			player.humanButtonLabel.color = neutralDarkColor;
@@ -765,14 +730,16 @@ Debug.Log("Query greater than 0");
 
 	public void InitializeInterface()
 	{
-		for(int i = 0; i < 4; i++) //Magic number of players
+		//print ("count" + GameController.Instance.PossiblePlayers.Count);
+		for(int i = 0; i < GameController.Instance.PossiblePlayers.Count; i++)
 		{
-			Player player = GameController.Instance.possiblePlayers[i];
+			//AcquirePlayerObjects();
+
+			Player player = GameController.Instance.PossiblePlayers[i];
 			player.EnableUi();
-			//player.trayBacker.color = playerTrayColors[player.playerId];
-			player.playerPanelScript.SetPanelColor(playerSchemes[player.playerId]);
 
 			//Start player FSMs
+			print ("setting init player state" + player.Id);
 			SetPlayerUiState(player, PlayerUiState.Join);
 			
 			//Unready players
@@ -780,15 +747,10 @@ Debug.Log("Query greater than 0");
 			
 			
 		}
-		
-		//Acquire global UI
-		//gameStateWidgets[0] = 
+
 		SetGameUiState(GameUiState.Join);
 
 		SetPopupUiState(PopupUiState.NoPopup);
-		
-		//UISprite backer = panel.transform.Find("Backer").GetComponent<UISprite>();
-		//backer.color = 
 	}
 
 //	public void SetPlayerProfile(Player player, string profileName)
@@ -813,6 +775,20 @@ Debug.Log("Query greater than 0");
 		string outputTag = "["+color32.r.ToString("X2") + color32.g.ToString("X2") + color32.b.ToString("X2")+"]";
 		//print (outputTag);
 		return outputTag;
+	}
+
+	public static Player GetPlayerFromParentRecursively(Transform transform) {
+		if(transform == transform.root) {
+			Debug.LogError("Player not found.");
+			return null;
+		}
+		
+		if(transform.parent.name.Contains("PanelPlayer")) {
+			int playerId = int.Parse(transform.parent.name.Remove(0, 11));
+			return GameController.Instance.PossiblePlayers[playerId];
+		} else {
+			return GetPlayerFromParentRecursively(transform.parent);
+		}
 	}
 
 }

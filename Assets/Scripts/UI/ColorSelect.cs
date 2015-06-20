@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class ColorSelect : MonoBehaviour {
@@ -16,7 +16,7 @@ public class ColorSelect : MonoBehaviour {
 	void Start () {
 	
 		//Debug.Log ("Starting");
-		foreach(ColorScheme scheme in InterfaceController.Instance.playerSchemes)
+		foreach(ColorScheme scheme in InterfaceController.Instance.PlayerSchemesPool)
 		{
 			Color color = scheme.defaultColor;
 			//Debug.Log ("for loop");

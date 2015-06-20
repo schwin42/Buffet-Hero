@@ -125,7 +125,7 @@ public class Food
 	public void Realize ()
 	{
 		this.PopulateVirtualTags ();
-		this.DeriveQualityFromTags ();
+		this.DeriveQualityFromTags (true);
 		_isRealized = true;
 	}
 
@@ -192,7 +192,7 @@ public class Food
 		return matchingTags.Length;
 	}
 
-	private void DeriveQualityFromTags ()
+	private void DeriveQualityFromTags (bool useRandomConstant)
 	{
 		float netValue = 0f;
 		float netMagnitude = 0f;
@@ -215,11 +215,11 @@ public class Food
 			postAbsoluteValue = -Mathf.Abs (preAbsoluteValue);
 		}
 		float output = 0f;
-		//if (GameController.RandomConstant != 0f) { //TODO Restore randomness!
-		//	output = Mathf.Round (postAbsoluteValue * GameController.RandomConstant);
-		//} else {
+		if(useRandomConstant) {
+			output = Mathf.Round (postAbsoluteValue * GameController.RandomConstant);
+		} else {
 			output = Mathf.Round (postAbsoluteValue * Database.SCORE_CONSTANT);
-		//}
+		}
 		this.Quality = output;
 	}
 

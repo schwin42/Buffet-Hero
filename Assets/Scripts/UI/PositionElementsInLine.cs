@@ -2,35 +2,34 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
+public class PositionElementsInLine : MonoBehaviour {
 
-	public Player player;
-
+	//Assignable
 	public List<GameObject> elements;
 
-	//Constant
-	static int startingPositionRight = 2;
-	static int startingPositionLeft = -360;
-	static int distance1 = 64;
-	static int distance2 = 230;
+	static readonly int STARTING_POSITION_RIGHT = 2;
+	static readonly int STARTING_POSITION_LEFT = -360;
+	static readonly int DISTANCE1 = 64;
+	static readonly int DISTANCE2 = 230;
 
-	// Use this for initialization
-	void Start () {
-	
-		IPlayerAssignable iPlayerAssignable = this;
-		SendMessageUpwards("AssignPlayerToInterface", iPlayerAssignable);
+
+
+	public void Start () {
+
+		int playerId = InterfaceController.GetPlayerFromParentRecursively(transform).Id;
+
 		bool startFromRightSide = false;
-		switch(player.playerId)
+		switch(playerId)
 		{
 		case 0:
 			startFromRightSide = true;
 			break;
 		case 1:
-		//	Debug.Log ("Player 1 reached");
+			//	Debug.Log ("Player 1 reached");
 			if(elements.Count == 3)
 			{
 				elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
-				StartCoroutine("ZeroOutColorBarRotation");
+				//StartCoroutine("ZeroOutColorBarRotation");
 			}
 			break;
 		case 2:
@@ -40,23 +39,23 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 			if(elements.Count == 3)
 			{
 				elements[2].transform.localEulerAngles = new Vector3(0, 0, 180);
-				StartCoroutine("ZeroOutColorBarRotation");
+				//StartCoroutine("ZeroOutColorBarRotation");
 			}
 			break;
 		default:
-			Debug.LogError("Invalid player ID: "+player.playerId);
+			Debug.LogError("Invalid player ID: " + playerId);
 			break;
 		}
-		if(player.playerId == 1 || player.playerId == 2)
+		if(playerId == 1 || playerId == 2)
 		{
 			//Fine, do nothing
-		} else if(player.playerId == 0 || player.playerId == 3)
+		} else if(playerId == 0 || playerId == 3)
 		{
 			startFromRightSide = true;
 		} else {
-
+			
 		}
-
+		
 		for(int i = 0; i < elements.Count; i++)
 		{
 			//Debug.Log (i);
@@ -64,29 +63,19 @@ public class PositionElementsInLine : MonoBehaviour, IPlayerAssignable {
 			switch(i)
 			{
 			case 0:
-				elements[i].transform.localPosition = new Vector3(startFromRightSide ? startingPositionRight : startingPositionLeft, position.y, position.z);
+				elements[i].transform.localPosition = new Vector3(startFromRightSide ? STARTING_POSITION_RIGHT : STARTING_POSITION_LEFT, position.y, position.z);
 				break;
 			case 1:
-				elements[i].transform.localPosition = new Vector3(startFromRightSide ? startingPositionRight - distance1 : startingPositionLeft + distance1, position.y, position.z);
+				elements[i].transform.localPosition = new Vector3(startFromRightSide ? STARTING_POSITION_RIGHT - DISTANCE1 : STARTING_POSITION_LEFT + DISTANCE1, position.y, position.z);
 				break;
 			case 2:
-
-				elements[i].transform.localPosition = new Vector3(startFromRightSide ? startingPositionRight - distance2 : startingPositionLeft + distance2, position.y, position.z);
+				
+				elements[i].transform.localPosition = new Vector3(startFromRightSide ? STARTING_POSITION_RIGHT - DISTANCE2 : STARTING_POSITION_LEFT + DISTANCE2, position.y, position.z);
 				break;
-
+				
 			}
 		}
 
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-	public void SetPlayer(Player returnedPlayer)
-	{
-		player = returnedPlayer;
 	}
 
 	IEnumerator ZeroOutColorBarRotation() //Workaround for color elements not being positioned correctly initially

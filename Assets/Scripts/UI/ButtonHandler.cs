@@ -2,11 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 
-public interface IPlayerAssignable
-{
-	void SetPlayer(Player player);
-}
-
 public enum ButtonAction
 {
 	None = 0,
@@ -34,54 +29,26 @@ public enum ButtonAction
 	PurchaseAdRemoval = 23
 }
 
-public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
-
+public class ButtonHandler : MonoBehaviour {
 
 	public bool isPlayerButton = true;
 	public ButtonAction buttonAction = ButtonAction.None;
 
+	private Player _player;
 
-	public Player player;
 
-
-	// Use this for initialization
 	void Start () {
-	
-		//player = GetComponentInParent<Player>();
-//		Transform target = transform;
-//		int i = 0;
-//		while(player == null && i < 20) //Arbitrary number to break infinite loops
-//		{
-//
-//			Transform parent = target.parent;
-//
-//			if(parent == transform.root || parent.parent == null)
-//			{
-//				Debug.Log ("End catch");
-//				break;
-//			}
-//
-//			if(parent.name.Contains("Player"))
-//			{
-//				player = GameController.Instance.possiblePlayers[ int.Parse(parent.name[parent.name.Length - 1].ToString())];
-//			} else {
-//				target = transform.parent;
-//			}
-//			i++;
-//		}
-		//Debug.Log ("Unable to find player for : "+gameObject.name+", i="+i, gameObject);
-		//Debug.Log("Sending"+gameObject.name+" upwards"+isPlayerButton);
-		if(isPlayerButton) SendMessageUpwards("AssignPlayerToInterface", this);
+		if(isPlayerButton) {
+			_player = InterfaceController.GetPlayerFromParentRecursively(transform);
+		}
+
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+
+	void Update () {}
 
 	public void OnClick()
 	{
-		//Debug.Log ("Click @" + GameController.Instance.currentRound);
 		if(buttonAction != ButtonAction.Next){
 		AudioController.Instance.PlaySound(SoundEffect.Click);
 		}
@@ -89,15 +56,15 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 		switch(buttonAction)
 		{
 		case ButtonAction.Eat:
-			player.Eat();
+			_player.Eat();
 			break;
 		case ButtonAction.Pass:
-			player.Pass();
+			_player.Pass();
 			break;
 		case ButtonAction.Next:
 			if(GameController.Instance.currentPhase == Phase.Pregame)
 			{
-				if((from possiblePlayer in GameController.Instance.possiblePlayers
+				if((from possiblePlayer in GameController.Instance.PossiblePlayers
 				    where possiblePlayer.playerChoice == PlayerChoice.Ready
 				    select possiblePlayer).Count() > 0)
 				{
@@ -105,10 +72,7 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 				}
 				} else if(GameController.Instance.currentPhase == Phase.Evaluate)
 			{
-				//Debug.Log ("Current phase is evaluation");
 				AudioController.Instance.PlaySound(SoundEffect.Click);
-				//Debug.Log ("About to end round.");
-				//GameController.Instance.BeginRound();
 				GameController.Instance.EndRound();
 			} else if(GameController.Instance.currentPhase == Phase.GameOver)
 			{
@@ -117,28 +81,24 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 			}
 			break;
 		case ButtonAction.JoinGame:
-			//InterfaceController.Instance.PlayerUiStates[player.playerId] = 
-			//Debug.Log (player);
-			InterfaceController.SetPlayerUiState(player, PlayerUiState.Entry);
+			print (_player.Id);
+			InterfaceController.SetPlayerUiState(_player, PlayerUiState.Entry);
 			break;
 		case ButtonAction.CloseTray:
-			InterfaceController.SetPlayerUiState(player, PlayerUiState.Join);
+			InterfaceController.SetPlayerUiState(_player, PlayerUiState.Join);
 			break;
 		case ButtonAction.ConfirmEntry:
-			player.playerChoice = PlayerChoice.Ready;
-			InterfaceController.SetPlayerUiState(player, PlayerUiState.Ready);
+			_player.playerChoice = PlayerChoice.Ready;
+			InterfaceController.SetPlayerUiState(_player, PlayerUiState.Ready);
 			break;
 		case ButtonAction.Human:
-			player.controlType = ControlType.Human;
-			InterfaceController.Instance.HighlightControlType(player);
+			_player.controlType = ControlType.Human;
+			InterfaceController.Instance.HighlightControlType(_player);
 			break;
 		case ButtonAction.Computer:
-			player.controlType = ControlType.Computer;
-			InterfaceController.Instance.HighlightControlType(player);
+			_player.controlType = ControlType.Computer;
+			InterfaceController.Instance.HighlightControlType(_player);
 			break;
-//		case ButtonAction.JoinScreen:
-//			InterfaceController.Instance.SetGameUiState(GameUIState.Join);
-//			break;
 		case ButtonAction.Stats0Screen:
 			InterfaceController.Instance.SetGameUiState(GameUiState.Stats0);
 			break;
@@ -184,10 +144,5 @@ public class ButtonHandler : MonoBehaviour, IPlayerAssignable {
 			Debug.LogError("Invalid button action: "+buttonAction);
 			break;
 		}
-	}
-
-	public void SetPlayer(Player returnedPlayer)
-	{
-		player = returnedPlayer;
 	}
 }

@@ -6,7 +6,7 @@ brownie,form,,dessert; hot; American,,common,2014.09.19
 burger,form,,savory; hot; American,,common,2014.09.04
 burrito,form,,Mexican; hot; savory; entree,,common,2014.09.04
 calzone,form,,Italian; grain; enticing,,uncommon,2014.09.04
-casserole,form,,gooey; salty; hot; French; American,,common,2014.09.04
+casserole,form,,gooey; salty; hot; Canadian; American,,common,2014.09.04
 chalupa,form,,grain; cheap; corporate,,uncommon,2014.09.04
 cheesecake,form,,sweet; creamy; awesome; dessert; American; Canadian; Greek; German,,uncommon,2014.09.04
 chimichanga,form,,Mexican; hot; delicious; savory; entree,,uncommon,2014.09.04
@@ -27,7 +27,7 @@ cupcake,form,,dessert; grain; sweet; American,,common,2014.09.10
 onigiri,form,,Japanese; grain,,,
 curry,form,,entree; Indian; hot; Thai; Vietnamese; Japanese; Chinese,,common,2014.09.04
 daiquiri,form,,fancy; alcoholic; sweet; cold; beverage,,uncommon,2014.09.04
-donut,form,,sweet; dessert; American,,common,2014.09.04
+donut,form,,sweet; dessert; Canadian; American,,common,2014.09.04
 dumpling,form,,delicious; grain; entree,,uncommon,2014.09.18
 elixir,form,,beverage; powerful,,rare,2014.09.10
 empanada,form,,Spanish; hot; doughy,meat+; dairy+; dessert+,uncommon,2014.09.04
@@ -65,7 +65,7 @@ panini,form,,hot; crispy; Italian; American,,common,2014.09.04
 parfait,form,,dessert; sweet; cold; tasty,,uncommon,2014.09.14
 pho,form,,Vietnamese; entree,,common,2014.09.08
 pie,form,,sweet; American; dessert,fruit++,common,2014.09.04
-pierogi,form,,hot; European; enticing; German; Russian; Canadian; American,,uncommon,2014.09.04
+pierogi,form,,hot; enticing; German; Russian; Canadian; American,,uncommon,2014.09.04
 pizza,form,,gooey; doughy; Italian; tasty; classic; American,meat+; dairy+,common,2014.09.04
 poutine,form,,entree; fancy; Canadian,,uncommon,2014.09.25
 pretzel,form,,doughy; salty,,uncommon,2014.09.04
@@ -74,7 +74,7 @@ quesadilla,form,,Mexican; hot; savory; entree; grain,,common,2014.09.10
 rind,form,,gross; cheap,,uncommon,2014.09.04
 risotto,form,,Italian; fancy; grain,,uncommon,2014.09.11
 salad,form,,boring; cold,,common,2014.09.04
-samosa,form,,Indian; entree; tasty,,uncommon,2014.10.11
+samosa,form,,Indian; entree; tasty; Middle Eastern,,uncommon,2014.10.11
 sandwich,form,,grain; tasty,meat+; dairy+,common,2014.09.04
 sausage,form,,savory; hot; Italian,,uncommon,2014.09.04
 scone,form,,grain; tasty; British; American; Canadian; Scottish,,uncommon,2014.09.14
@@ -83,7 +83,7 @@ soda,form,,beverage,,common,2014.09.26
 souffle,form,,French; fancy; dairy,,uncommon,2014.09.22
 soup,form,,creamy; hot,,common,2014.09.04
 steak,form,,meat; entree,,common,2014.09.22
-stew,form,,cheap,,common,2014.09.04
+stew,form,,cheap; Korean; Mexican; German,,common,2014.09.04
 stir-fry,form,,hot; Chinese,,common,2014.09.04
 stroganoff,form,,entree; Russian; crummy,,uncommon,2014.09.18
 sundae,form,,sweet; creamy; cold; dessert,,common,2014.09.04
@@ -367,10 +367,18 @@ a lumpy,qualifier,,crummy,,uncommon,2014.11.16
 soylent,ingredient,,crummy,,uncommon,2015.04.28
 moose,ingredient,,crummy; meat,,uncommon,2015.05.06
 masala,form,,Indian; entree,,common,2015.05.06
-ramen,form,,Japanese; entree; hot,,common,2015.05.06
+cup of noodles,form,,Japanese; entree; hot; Korean; Chinese; Thai,,common,2015.05.06
 sriracha,ingredient,,moderate spice; tasty,,common,2015.05.06
 stromboli,form,,Italian; fancy; hot; entree,,uncommon,2015.05.06
-jellyfish,ingredient,,unappetizing; fancy; seafood,,rare,2015.05.06
+jellyfish,ingredient,,unappetizing; ambitious; seafood,,rare,2015.05.06
 fritter,form,,fancy,,rare,2015.05.17
 lime,ingredient,,fruit; sour,,common,2015.05.19
-barbacoa,ingredient,,meat; tasty,,,
+barbacoa,ingredient,,meat; tasty; Mexican; Spanish,,common,2015.05.26
+popsicle,form,,frozen; dessert; American; British,,common,2015.05.26
+a royal,qualifier,,fancy; nice,,rare,2015.05.26
+rice,ingredient,,grain; Korean; Thai; Japanese; Chinese,,common,2015.05.26
+peanut,ingredient,,nut; Thai,,common,2015.05.26
+coconut,ingredient,,fruit; Thai; Indian,,uncommon,2015.05.26
+ramen,form,,Japanese; entree; hot; grain,,uncommon,2015.05.26
+razzleberry,ingredient,,fruit; sweet; nice,,uncommon,2015.05.31
+pad see ew,form,,Thai; entree,,common,2015.05.31
