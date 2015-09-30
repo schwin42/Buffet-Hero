@@ -1,0 +1,389 @@
+Name ID,Attribute Type,Subtype,Tags,Combinations,Rarity,Date Added
+beer,form,,alcoholic; cold; beverage,,common,2014.09.04
+biscuit,form,,grain,,common,2014.09.04
+bisque,form,,entree; tasty; French,,uncommon,2014.09.11
+brownie,form,,dessert; hot; American,,common,2014.09.19
+burger,form,,savory; hot; American,,common,2014.09.04
+burrito,form,,Mexican; hot; savory; entree,,common,2014.09.04
+calzone,form,,Italian; grain; enticing,,uncommon,2014.09.04
+casserole,form,,gooey; salty; hot; Canadian; American,,common,2014.09.04
+chalupa,form,,grain; cheap; corporate,,uncommon,2014.09.04
+cheesecake,form,,sweet; creamy; awesome; dessert; American; Canadian; Greek; German,,uncommon,2014.09.04
+chimichanga,form,,Mexican; hot; delicious; savory; entree,,uncommon,2014.09.04
+chowder,form,,entree; hot; American,,common,2014.09.26
+churro,form,,sweet; Mexican; dessert,,uncommon,2014.09.04
+cobbler,form,,dessert; American,fruit++,uncommon,2014.09.30
+coffee,form,,bitter; liquid; beverage,,common,2014.09.04
+compote,form,,French; tasty; dessert,,uncommon,2014.09.18
+cookie,form,,dessert; sweet; doughy,,common,2014.09.08
+corn dog,form,,cheap; tasty; hot; savory,,uncommon,2014.09.04
+creampuff,form,,dessert; grain; sweet,,uncommon,2014.09.22
+creme brulee,form,,sweet; creamy; dessert,,uncommon,2014.09.04
+crepe,form,,fancy; French,,uncommon,2014.09.04
+croissant,form,,fancy; doughy; sweet; French; grain,,uncommon,2014.09.04
+croquembouche,form,,awesome; dessert; French; grain,,rare,2014.09.22
+croquette,form,,fancy; savory; hot; entree,,rare,2014.09.04
+cupcake,form,,dessert; grain; sweet; American,,common,2014.09.10
+musubi,form,,Japanese; grain,,,
+curry,form,,entree; Indian; hot; Thai; Vietnamese; Japanese; Chinese,,common,2014.09.04
+daiquiri,form,,fancy; alcoholic; sweet; cold; beverage,,uncommon,2014.09.04
+donut,form,,sweet; dessert; Canadian; American,,common,2014.09.04
+dumpling,form,,delicious; grain; entree,,uncommon,2014.09.18
+elixir,form,,beverage; powerful,,rare,2014.09.10
+empanada,form,,Spanish; hot; doughy,meat+; dairy+; dessert+,uncommon,2014.09.04
+enchilada,form,,Mexican; grain; hot,,common,2014.09.10
+enema,form,,non-food; terrifying,,uncommon,2014.09.08
+frankfurter,form,,savory; hot; entree; American,,common,2014.09.04
+frappuccino,form,,dessert; sweet; beverage; tasty; corporate,,uncommon,2014.09.14
+french fries,form,,salty; hot; entree; American,,common,2014.09.04
+frittata,form,,hot; fancy; entree; Italian,,rare,2014.09.04
+froyo,form,,cold; creamy; dessert,,uncommon,2014.09.04
+gelato,form,,sweet; cold; fancy; enticing; dessert; Italian,,rare,2014.09.04
+gnocchi,form,,Italian; fancy; entree,,uncommon,2014.09.04
+gumbo,form,,entree; hot; American,,uncommon,2014.09.26
+haggis,form,,crummy; meat; Scottish; entree,,rare,2014.09.04
+hot pocket,form,,cheap; hot; crummy; corporate,,common,2014.09.04
+jerky,form,,savory; salty; chewy; entree,,common,2014.09.04
+juice,form,,liquid; cold; beverage,,common,2014.09.04
+kabob,form,,hot; Indian; Middle Eastern; Chinese; Greek,,common,2014.09.04
+lasagne,form,,Italian; savory,,common,2014.09.04
+latke,form,,German; entree; hot; Middle Eastern; Russian,,common,2014.09.30
+loaf,form,,doughy; hot; crummy,,common,2014.09.04
+mac & cheese,form,,American; hot; savory; entree,,common,2014.09.10
+macaroon,form,,dessert; sweet; fancy; Italian; French; British; American; German,,uncommon,2014.09.04
+medallion,form,,fancy; delicious,,rare,2014.09.30
+melange,form,,fancy; awesome,,rare,2014.09.04
+mess,form,,disaster,,uncommon,2014.09.10
+milk,form,,beverage; dairy,,common,2014.10.07
+milkshake,form,,American; dessert; cold; tasty; dairy,,common,2014.09.19
+mistake,form,,disaster,,uncommon,2014.09.18
+muffin,form,,breakfast; doughy; sweet; American,,common,2014.09.08
+omelette,form,,hot; savory; French; entree,meat+; dairy+,common,2014.09.04
+paella,form,,Spanish; entree,,uncommon,2014.09.11
+pancake,form,,sweet; hot; breakfast,,common,2014.09.04
+panini,form,,hot; crispy; Italian; American,,common,2014.09.04
+parfait,form,,dessert; sweet; cold; tasty,,uncommon,2014.09.14
+pho,form,,Vietnamese; entree,,common,2014.09.08
+pie,form,,sweet; American; dessert,fruit++,common,2014.09.04
+pierogi,form,,hot; enticing; German; Russian; Canadian; American,,uncommon,2014.09.04
+pizza,form,,gooey; doughy; Italian; tasty; classic; American,meat+; dairy+,common,2014.09.04
+poutine,form,,entree; fancy; Canadian,,uncommon,2014.09.25
+pretzel,form,,doughy; salty,,uncommon,2014.09.04
+pudding,form,,dessert; sweet; creamy,,common,2014.09.10
+quesadilla,form,,Mexican; hot; savory; entree; grain,,common,2014.09.10
+rind,form,,gross; cheap,,uncommon,2014.09.04
+risotto,form,,Italian; fancy; grain,,uncommon,2014.09.11
+salad,form,,boring; cold,,common,2014.09.04
+samosa,form,,Indian; entree; tasty; Middle Eastern,,uncommon,2014.10.11
+sandwich,form,,grain; classic,meat+; dairy+,common,2014.09.04
+sausage,form,,savory; hot; Italian,,uncommon,2014.09.04
+scone,form,,grain; tasty; British; American; Canadian; Scottish,,uncommon,2014.09.14
+smoothie,form,,sweet; creamy; cold; breakfast,,uncommon,2014.09.04
+soda,form,,beverage,,common,2014.09.26
+souffle,form,,French; fancy; dairy,,uncommon,2014.09.22
+soup,form,,creamy; hot,,common,2014.09.04
+steak,form,,meat; entree,,common,2014.09.22
+stew,form,,cheap; Korean; Mexican; German,,common,2014.09.04
+stir-fry,form,,hot; Chinese,,common,2014.09.04
+stroganoff,form,,entree; Russian; crummy,,uncommon,2014.09.18
+sundae,form,,sweet; creamy; cold; dessert,,common,2014.09.04
+surprise,form,,dangerous; gross,,uncommon,2014.09.04
+sushi,form,,Japanese; fancy,seafood+,uncommon,2014.09.04
+taco,form,,hot; entree; Mexican,,common,2014.09.04
+tea,form,,liquid; beverage,,common,2014.09.04
+torta,form,,Mexican; grain,,common,2014.09.04
+tostada,form,,Mexican; grain,,common,2014.09.04
+truffle,form,,fancy; enticing; vegan; tasty,,rare,2014.09.04
+waffle,form,,sweet; spongy; breakfast; French; German; American,,common,2014.09.04
+wellington,form,,doughy; hot; British; fancy; grain,,rare,2014.09.04
+"""chicken""",ingredient,,crummy; risky; meat,,rare,2014.09.04
+a bizarre,qualifier,,disgusting,,uncommon,2014.10.09
+albacore,ingredient,,seafood; tasty,,uncommon,2014.09.11
+alligator,ingredient,,meat; exotic,,uncommon,2014.09.26
+ambergris,ingredient,,horrific; expensive,,rare,2014.09.18
+ambrosia,ingredient,,awesome; sweet; powerful,,mythic,2014.09.14
+antifreeze,ingredient,,toxic; sweet; non-food,,rare,2014.09.04
+antiseptic,ingredient,,bitter; toxic; non-food,,rare,2014.09.04
+anus,ingredient,,gross; meat,,rare,2014.09.04
+avocado,ingredient,,tasty; fruit,,common,2014.09.04
+bacon,ingredient,,savory; awesome,,common,2014.09.04
+banana,ingredient,,sweet; fruit,,common,2014.09.04
+beef,ingredient,,meat,,common,2014.09.05
+blood,ingredient,,crummy,,rare,2014.09.04
+blueberry,ingredient,,fruit; sweet,,common,2014.09.14
+bologna,ingredient,,crummy; meat; cheap,,uncommon,2014.09.04
+brain,ingredient,,meat; exotic; entree; unsettling,,rare,2014.09.22
+broccoli,ingredient,,vegetable; entree; boring,,common,2014.09.04
+buffalo,ingredient,,cheap,,uncommon,2014.09.04
+butt,ingredient,,disgusting; meat,,rare,2014.09.04
+butterfinger,ingredient,,crispy; sweet; dessert,,uncommon,2014.09.04
+cactus,ingredient,,crummy; vegetable,,uncommon,2014.09.10
+calamari,ingredient,,seafood; fancy; Italian,,common,2014.09.26
+capsaicin,ingredient,,deadly; enticing,,rare,2014.09.25
+caramel,ingredient,,sweet; chewy,,common,2014.09.04
+carp,ingredient,,seafood; hot; cheap,,uncommon,2014.09.04
+chicken,ingredient,,meat; savory; entree; classic,,common,2014.09.04
+chili,ingredient,,hot; savory; chewy; American; entree,,uncommon,2014.09.04
+chipotle,ingredient,,Mexican; mild spice,,uncommon,2014.09.04
+chocolate,ingredient,,sweet; dessert,,common,2014.09.04
+chorizo,ingredient,,meat; Mexican,,common,2014.09.21
+clam,ingredient,,seafood; nice,,common,2014.09.26
+coconut,ingredient,,fruit,,uncommon,2014.09.14
+corn,ingredient,,vegetable; entree,,common,2014.09.04
+crab,ingredient,,seafood; entree; nice,,common,2014.09.26
+cranberry,ingredient,,sweet; fruit,,common,2014.09.05
+crap,ingredient,,disgusting; non-food,,rare,2014.09.04
+crawdad,ingredient,,cheap; seafood,,uncommon,2014.09.26
+crud,ingredient,,crummy; non-food,,uncommon,2014.09.11
+cuitlacoche,ingredient,,disgusting; vegan; entree,,uncommon,2014.09.04
+custard,ingredient,,dessert; tasty; dairy,,uncommon,2014.09.18
+dragon,ingredient,,savory; impossible; meat,,mythic,2014.09.04
+egg,ingredient,,hot; dairy,,common,2014.09.04
+escargot,ingredient,,meat; risky,,rare,2014.09.04
+excrement,ingredient,,non-food; disgusting,,rare,2014.09.04
+eyeball,ingredient,,meat; gross,,rare,2014.09.04
+fatback,ingredient,,savory; hot; crummy; cheap,,uncommon,2014.09.04
+frobscottle,ingredient,,beverage; amazing; exotic,,mythic,2014.10.09
+fugu,ingredient,,seafood; enticing; dangerous,,rare,2014.09.04
+gabagool,ingredient,,meat; tasty; Italian,,uncommon,2014.09.18
+garlic,ingredient,,tasty; entree; hot,,common,2014.09.18
+ghost-chili,ingredient,,extreme spice,,rare,2014.09.04
+ginger,ingredient,,tasty,,common,2014.09.18
+goat cheese,ingredient,,potent; dairy; entree,,uncommon,2014.09.04
+gravy,ingredient,,cheap; meat; entree,,common,2014.09.04
+habanero,ingredient,,hot spice; hot,,uncommon,2014.09.04
+ham,ingredient,,meat,,common,2014.09.14
+honey,ingredient,,tasty,,common,2014.09.18
+human,ingredient,,savory; meat; enticing; cruel,,rare,2014.09.04
+jalapeno,ingredient,,mild spice; hot,,common,2014.09.04
+kimchi,ingredient,,Korean; crummy; entree,,common,2014.09.19
+knuckle,ingredient,,bland; tough,,rare,2014.09.04
+kobe beef,ingredient,,awesome; meat,,rare,2014.09.15
+kraken,ingredient,,savory; dangerous; awesome; meat; impossible,,mythic,2014.09.04
+lamb,ingredient,,meat; savory; tasty,,uncommon,2014.09.04
+lard,ingredient,,gross; meat,,uncommon,2014.09.04
+lead,ingredient,,toxic; non-food,,uncommon,2014.09.04
+llama,ingredient,,exotic; meat,,rare,2014.09.14
+lobster,ingredient,,fancy; seafood; entree,,uncommon,2014.09.04
+maggot,ingredient,,gross,,rare,2014.09.04
+mammoth,ingredient,,meat; tough; hot; enticing,,mythic,2014.09.04
+marshmallow,ingredient,,sweet; dessert,,common,2014.09.04
+mercury,ingredient,,non-food; toxic,,rare,2014.09.18
+mildew,ingredient,,gross; non-food,,uncommon,2014.10.09
+moogle,ingredient,,impossible; meat,,mythic,2014.09.04
+mushroom,ingredient,,chewy; hot,,common,2014.09.04
+mystery,ingredient,,risky,,common,2014.09.04
+napkin,ingredient,,non-food,,rare,2014.09.04
+oyster,ingredient,,risky; expensive; seafood,,uncommon,2014.09.04
+pancetta,ingredient,,Italian; savory; meat; fancy,,uncommon,2014.09.08
+penguin,ingredient,,meat; exotic,,rare,2014.09.14
+pesto,ingredient,,entree; nice; Italian,,common,2014.09.26
+pickle,ingredient,,tangy; vegetable,,uncommon,2014.09.04
+pikachu,ingredient,,dangerous; impossible; meat,,mythic,2014.09.04
+pineapple,ingredient,,fruit; sweet,,common,2014.09.14
+pistachio,ingredient,,tasty; nut,,uncommon,2014.09.04
+plastic,ingredient,,non-food; disgusting,,uncommon,2014.09.14
+pork,ingredient,,savory; meat,,common,2014.09.04
+potato,ingredient,,vegan; entree; vegetable; hot,,common,2014.09.04
+prosciutto,ingredient,,savory; delicious; meat; fancy,,uncommon,2014.09.04
+rainicorn,ingredient,,impossible; meat,,mythic,2014.09.04
+ranch,ingredient,,salty; creamy; cheap; delicious,,common,2014.09.04
+raspberry,ingredient,,sweet; fruit,,common,2014.09.08
+roadkill,ingredient,,savory; gross; meat,,uncommon,2014.09.04
+salmon,ingredient,,seafood; nice,,common,2014.09.09
+sardine,ingredient,,seafood; cheap; salty; entree,,uncommon,2014.09.18
+sasquatch,ingredient,,savory; meat; impossible; gamey,,mythic,2014.09.04
+scallop,ingredient,,entree; seafood; fancy,,uncommon,2014.09.08
+shampoo,ingredient,,non-food; gross,,uncommon,2014.09.10
+shark,ingredient,,seafood; exotic; hot,,rare,2014.09.14
+shrim,ingredient,,non-food; disgusting,,rare,2014.09.04
+shrimp,ingredient,,savory; seafood; fancy,,uncommon,2014.09.04
+skunk,ingredient,,gross; meat; hot,,rare,2014.09.04
+slurm,ingredient,,beverage; impossible,,mythic,2014.09.04
+smeat,ingredient,,disgusting; meat; hot,,uncommon,2014.09.18
+snozzberry,ingredient,,sweet; juicy; impossible; fruit,,mythic,2014.09.04
+snozzcumber,ingredient,,vegetable; gross; enticing,,mythic,2014.10.09
+soap,ingredient,,non-food,,rare,2014.09.04
+spam,ingredient,,savory; hot; cheap; crummy; meat,,common,2014.09.04
+spinach,ingredient,,entree; vegetable,,common,2014.09.04
+squid,ingredient,,seafood; risky,,uncommon,2014.09.04
+strawberry,ingredient,,sweet; juicy,,common,2014.09.04
+tenderloin,ingredient,,meat; fancy; tasty; entree; hot,,rare,2014.09.19
+tentacle,ingredient,,gross; meat; hot,,rare,2014.09.04
+testicle,ingredient,,meat; gross; hot,,uncommon,2014.09.24
+tilapia,ingredient,,seafood; entree; cheap,,common,2014.09.26
+tofu,ingredient,,vegan; boring,,common,2014.09.04
+tomato,ingredient,,vegetable; entree,grain+,common,2014.09.04
+tongue,ingredient,,meat; entree; hot; unsettling,,uncommon,2014.09.22
+toothpaste,ingredient,,gross; non-food,,uncommon,2014.09.04
+trout,ingredient,,seafood; savory,,common,2014.09.04
+turkey,ingredient,,savory; meat; hot,,common,2014.09.04
+unicorn,ingredient,,savory; meat; impossible; hot; heals,,mythic,2014.09.04
+vanilla,ingredient,,sweet; dessert,,common,2014.09.04
+veal,ingredient,,fancy; cruel; meat,,uncommon,2014.09.04
+vegetable,ingredient,,vegan; vegetable,,common,2014.09.04
+venison,ingredient,,meat; savory; hot; fancy,,rare,2014.09.04
+wasabi,ingredient,,hot spice; Japanese,,common,2014.10.07
+watermelon,ingredient,,sweet; cold; fruit,,common,2014.09.04
+whiskey,ingredient,,bitter; alcoholic,,uncommon,2014.09.04
+yak,ingredient,,crummy; meat; hot,,rare,2014.09.10
+yeti,ingredient,,impossible; meat,,mythic,2014.09.04
+zebra,ingredient,,hot; meat; exotic,,rare,2014.10.16
+a barbeque,qualifier,,marinade; hot,--dessert,common,2014.09.04
+a barely legal,qualifier,,disgusting,,rare,2014.10.07
+a bellicose,qualifier,,fancy; dangerous,,rare,2014.09.04
+a bootleg,qualifier,,bland,,uncommon,2014.09.14
+a botched,qualifier,,ruined; disgusting,,common,2014.09.04
+a burnt,qualifier,temperature,ruined,,common,2014.09.04
+a caffinated,qualifier,,caffinated; beverage,,uncommon,2014.09.04
+a Cajun-style,qualifier,,American; entree; marinade; hot,,uncommon,2014.09.26
+a canned,qualifier,,old; crummy,,common,2014.09.10
+a carbonated,qualifier,,beverage,,common,2014.09.05
+a Chicago-style,qualifier,,delicious; American,,rare,2014.09.26
+a chocolatey,qualifier,,sweet; dessert,,common,2014.09.04
+a classic,qualifier,,tasty,,common,2014.09.14
+a counterfeit,qualifier,,poor,,uncommon,2014.09.14
+a day-old,qualifier,freshness,stale,,common,2014.09.04
+a decadent,qualifier,,delicious,,uncommon,2014.09.04
+a deconstructed,qualifier,,fancy,,uncommon,2014.09.18
+a decoy,qualifier,,disgusting,,rare,2014.09.14
+a deep-fried,qualifier,,crispy; tasty; fried,,common,2014.09.04
+a deluxe,qualifier,,potent; tasty,,uncommon,2014.09.19
+a demonic,qualifier,,powerful; dangerous,,mythic,2014.09.19
+a dodgy,qualifier,,British; risky,,common,2014.09.25
+a dreadful,qualifier,,gross; bad,,common,2014.09.04
+a felonious,qualifier,,toxic; gross,,rare,2014.09.14
+a festering,qualifier,,disgusting; potent,,rare,2014.09.04
+a fetid,qualifier,,gross,,uncommon,2014.09.04
+a flaccid,qualifier,,gross,,uncommon,2014.09.26
+a flaming,qualifier,,hot; dangerous,,rare,2014.09.04
+a fluffy,qualifier,,nice,,uncommon,2014.09.30
+a furry,qualifier,,risky; disgusting; terrifying,,uncommon,2014.09.04
+a gamey,qualifier,,savory; tough,,common,2014.09.04
+a gangrenous,qualifier,,toxic; gross,,rare,2014.09.10
+a gelatinous,qualifier,,dessert; crummy,,uncommon,2014.09.04
+a gnarly,qualifier,,risky,,uncommon,2014.09.04
+a haunted,qualifier,,dangerous,,rare,2014.09.08
+a heinous,qualifier,,disaster; bad,,rare,2014.09.11
+a hideous,qualifier,,horrific; bad,,uncommon,2014.09.04
+a hyperbolic,qualifier,,potent,,rare,2014.09.04
+a hyperdimensional,qualifier,,ultimate; deadly,,mythic,2014.09.19
+a leftover,qualifier,,stale,,common,2014.09.04
+a life-changing,qualifier,,ultimate,,rare,2014.09.04
+a live,qualifier,,terrifying; enticing,,rare,2014.09.04
+a lurid,qualifier,,disgusting; bad,,uncommon,2014.09.04
+a luxurious,qualifier,,fancy; tasty,,uncommon,2014.09.15
+a made-to-order,qualifier,,fresh,,common,2014.09.04
+a marvelous,qualifier,,awesome; good,,uncommon,2014.09.11
+a mesmerising,qualifier,,enticing; risky,,rare,2014.09.04
+a microwaved,qualifier,,crummy; hot,,common,2014.09.04
+a moldy,qualifier,,gross; stale,,uncommon,2014.09.04
+a non-euclidian,qualifier,,powerful; dangerous,,mythic,2014.09.18
+a pan-seared,qualifier,,hot; enticing,,common,2014.09.09
+a pangalactic,qualifier,,awesome; toxic; psychotropic; impossible,,mythic,2014.09.04
+a paradoxical,qualifier,,heals,,mythic,2014.09.04
+a pedestrian,qualifier,,boring,,common,2014.09.14
+a pickled,qualifier,,crunchy; risky,dessert--,common,2014.09.04
+a piping hot,qualifier,,hot; fresh,,common,2014.09.04
+a poached,qualifier,,hot,,common,2014.09.30
+a pre-chewed,qualifier,,disgusting,,rare,2014.10.08
+a precocious,qualifier,,fancy,,uncommon,2014.09.04
+a pungent,qualifier,,potent; risky,,uncommon,2014.09.04
+a purely decorative,qualifier,,non-food; disgusting; bad,,uncommon,2014.09.14
+a putrescent,qualifier,,spoiled; bad,,uncommon,2014.09.04
+a radical,qualifier,,American; delicious,,uncommon,2014.09.25
+a radioactive,qualifier,,dangerous; gross,,rare,2014.09.04
+a rancid,qualifier,,spoiled; gross; bad,,uncommon,2014.09.04
+a raw,qualifier,temperature,raw,,common,2014.09.04
+a redonkulous,qualifier,,powerful; enticing,,rare,2014.09.11
+a refried,qualifier,,cheap; crummy; hot,,common,2014.09.04
+a refurbished,qualifier,,gross,,rare,2014.09.18
+a ruptured,qualifier,,gross,,uncommon,2014.09.10
+a sentient,qualifier,,terrifying; dangerous,,mythic,2014.09.04
+a septic,qualifier,,gross; toxic,,uncommon,2014.09.14
+a signature,qualifier,,tasty,,common,2014.09.15
+a sizzling,qualifier,,hot; enticing,,uncommon,2014.09.04
+a slimy,qualifier,,gross,,uncommon,2014.09.04
+a soggy,qualifier,,liquid; crummy,,common,2014.09.04
+a sour,qualifier,,potent; risky; sour,,uncommon,2014.09.04
+a spectacular,qualifier,,awesome; good,,rare,2014.09.15
+a splendiferous,qualifier,,amazing; good,,rare,2014.09.04
+a squirming,qualifier,,disgusting; terrifying,,rare,2014.09.04
+a stinking,qualifier,,gross,,uncommon,2014.09.04
+a stone-cold,qualifier,temperature,cold; crummy,,common,2014.09.22
+a strictly platonic,qualifier,,enticing,,uncommon,2014.09.11
+a stunning,qualifier,,potent; tasty,,common,2014.09.25
+a succulent,qualifier,,awesome; good,,uncommon,2014.10.09
+a suspect,qualifier,,risky; unsettling,,common,2014.09.04
+a tenacious,qualifier,,risky; enticing,,uncommon,2014.09.11
+a tepid,qualifier,,lukewarm,,common,2014.09.04
+a turgid,qualifier,,gross,,uncommon,2014.09.04
+a vegan,qualifier,,vegan,meat-; seafood-,common,2014.09.04
+a velvety,qualifier,,creamy; delicious,,uncommon,2014.09.04
+a well-seasoned,qualifier,,tasty,,common,2014.09.04
+a whipped,qualifier,,sweet; creamy; cold,,common,2014.09.04
+a writhing,qualifier,,disgusting; terrifying,,rare,2014.09.10
+a zero-calorie,qualifier,,non-food,,rare,2014.09.04
+an aborted,qualifier,,disaster,,uncommon,2014.09.14
+an absoludicrous,qualifier,,powerful,,rare,2014.09.04
+an accidental,qualifier,,ruined; bad,,uncommon,2014.09.18
+an aged,qualifier,,aged,,uncommon,2014.09.04
+an ambitious,qualifier,,risky,,uncommon,2014.09.04
+an archetypal,qualifier,,enticing,,uncommon,2014.09.04
+an artisan,qualifier,,delicious,,uncommon,2014.09.09
+an attempted,qualifier,,ruined,,uncommon,2014.10.09
+an electrifying,qualifier,,enticing; delicious,,rare,2014.09.04
+an electrocuting,qualifier,,dangerous,,rare,2014.09.04
+an enchanted,qualifier,,powerful,,rare,2014.09.04
+an experimental,qualifier,,risky; potent,,uncommon,2014.09.18
+an expired,qualifier,freshness,spoiled,,common,2014.09.04
+an extra-spicy,qualifier,,hot spice,,common,2014.09.04
+an ice-cold,qualifier,temperature,cold; fresh,,common,2014.09.04
+an immaculate,qualifier,,awesome,,uncommon,2014.09.18
+an impeccable,qualifier,,awesome,,rare,2014.09.14
+an ineffable,qualifier,,ultimate,,rare,2014.09.22
+an infected,qualifier,,toxic; disgusting,,rare,2014.09.04
+an infested,qualifier,,dangerous; terrifying; gross,,rare,2014.09.04
+an ironic,qualifier,,crummy,,rare,2014.09.14
+an oxymoronic,qualifier,,dull,,rare,2014.09.04
+an uncanny,qualifier,,dangerous; enticing,,rare,2014.09.19
+an unconscionable,qualifier,,disaster; toxic; bad,,uncommon,2014.09.04
+an undercooked,qualifier,temperature,ruined; risky,,common,2014.09.04
+an unforgettable,qualifier,,powerful,,rare,2014.09.25
+an unforgivable,qualifier,,horrific; bad,,rare,2014.09.25
+not your mother's,qualifier,,dangerous; enticing,,rare,2014.09.04
+one hell of a,qualifier,,potent,,rare,2014.09.04
+the last,qualifier,,enticing,,mythic,2014.09.04
+your mother's,qualifier,,nostalgic,,rare,2014.09.04
+a perfected,qualifier,,flawless,,rare,2014.10.16
+eclair,form,,dessert; fancy; French,,common,2014.10.19
+a heavenly,qualifier,,good; flawless,,rare,2014.10.19
+nugget,form,,American; enticing,,uncommon,2014.10.22
+freedom,ingredient,,American; nice,,uncommon,2014.10.22
+a transcendent,qualifier,,good; amazing; dangerous,,mythic,2014.10.22
+short rib,ingredient,,delicious; meat,,uncommon,2014.10.31
+jumbalaya,form,,American; entree; mild spice,,uncommon,2014.10.31
+a lumpy,qualifier,,crummy,,uncommon,2014.11.16
+soylent,ingredient,,crummy,,uncommon,2015.04.28
+moose,ingredient,,crummy; meat,,uncommon,2015.05.06
+masala,form,,Indian; entree,,common,2015.05.06
+cup of noodles,form,,Japanese; entree; hot; Korean; Chinese; Thai,,common,2015.05.06
+sriracha,ingredient,,moderate spice; tasty,,common,2015.05.06
+stromboli,form,,Italian; fancy; hot; entree,,uncommon,2015.05.06
+jellyfish,ingredient,,unappetizing; ambitious; seafood,,rare,2015.05.06
+fritter,form,,fancy,,rare,2015.05.17
+lime,ingredient,,fruit; sour,,common,2015.05.19
+barbacoa,ingredient,,meat; tasty; Mexican; Spanish,,common,2015.05.26
+popsicle,form,,frozen; dessert; American; British,,common,2015.05.26
+a royal,qualifier,,fancy; nice,,rare,2015.05.26
+rice,ingredient,,grain; Korean; Thai; Japanese; Chinese,,common,2015.05.26
+peanut,ingredient,,nut; Thai,,common,2015.05.26
+coconut,ingredient,,fruit; Thai; Indian,,uncommon,2015.05.26
+ramen,form,,Japanese; entree; hot; grain,,uncommon,2015.05.26
+razzleberry,ingredient,,fruit; sweet; nice,,uncommon,2015.05.31
+pad see ew,form,,Thai; entree,,common,2015.05.31
+toenail,ingredient,,non-food,,uncommon,2015.06.26
+frankenberry,ingredient,,risky; sweet; fruit,,uncommon,2015.07.03
+tuna,ingredient,,seafood; risky,,common,2015.07.06
+deep dish,ingredient,,tasty,,uncommon,2015.08.26
+mayonnaise,ingredient,,gross,grain+,uncommon,2015.08.26

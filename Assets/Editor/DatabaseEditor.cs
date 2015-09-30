@@ -1,18 +1,18 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-[CustomEditor(typeof(Database))]
+[CustomEditor(typeof(GameData))]
 public class DatabaseEditor : Editor {
 
-	static Database database;
+	static GameData database;
 
 	public static GUIContent loadButtonContent = new GUIContent(
 		"Load", "Load data from csv");
 
 	public void OnEnable()
 	{
-		database = (Database)target;
+		database = (GameData)target;
 	}
 
 	public override void OnInspectorGUI()

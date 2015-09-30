@@ -49,7 +49,7 @@ public class ToolsEditor : Editor {
 	public void DisplayFood()
 	{
 		//List<FoodAttribute> outputAttributes = new List<Food>();
-		List<FoodAttribute> attributeMatches = (from attribute in Database.Instance.AttributeData
+		List<FoodAttribute> attributeMatches = (from attribute in GameData.Instance.AttributeData
 			where tools.viewCombinedAttributes.Contains(attribute.Id)
 				select attribute).ToList();
 //		foreach(string attributeString in tools.viewCombinedAttributes)
