@@ -1,0 +1,6 @@
+lastUpgrade=00925
+proj.AppId=584985543628
+proj.ConstantsClassName=P2pGameMaster
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0a%3c%21--%0aGoogle+Play+game+services+IDs.%0aSave+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.%0a--%3e%0a%3cresources%3e%0a++%3cstring+name%3d%22app_id%22%3e584985543628%3c%2fstring%3e%0a++%3cstring+name%3d%22achievement_dumb0%22%3eCgkIzIfsnoMREAIQAg%3c%2fstring%3e%0a++%3cstring+name%3d%22achievement_dumb1%22%3eCgkIzIfsnoMREAIQAw%3c%2fstring%3e%0a++%3cstring+name%3d%22achievement_dumb2%22%3eCgkIzIfsnoMREAIQBA%3c%2fstring%3e%0a++%3cstring+name%3d%22achievement_dumb3%22%3eCgkIzIfsnoMREAIQBQ%3c%2fstring%3e%0a++%3cstring+name%3d%22achievement_dumb4%22%3eCgkIzIfsnoMREAIQBg%3c%2fstring%3e%0a%3c%2fresources%3e
+and.ClientId=584985543628-1je9r7hrcr04iio0u4smj1tu1bfl1dbp.apps.googleusercontent.com
+android.SetupDone=true

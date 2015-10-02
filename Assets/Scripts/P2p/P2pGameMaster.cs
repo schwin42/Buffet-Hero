@@ -39,7 +39,6 @@ public class P2pGameMaster : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		BeginNewGame ();
 	}
 	
 	// Update is called once per frame
