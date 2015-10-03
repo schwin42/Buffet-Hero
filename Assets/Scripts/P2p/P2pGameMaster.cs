@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class P2pGameMaster : MonoBehaviour {
-
+	
 	public float wobbleFactor = 10f;
 	public float timeAllotted = 10f;
-
+	
 	public bool gameInProgress;
 	
 	public float ScoreWobbleMultiplier {
@@ -90,4 +90,6 @@ public class P2pGameMaster : MonoBehaviour {
 		passedFoods.Add (displayedFood);
 		NextFood ();
 	}
+
+
 }

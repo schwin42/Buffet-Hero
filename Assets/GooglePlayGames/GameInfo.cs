@@ -38,7 +38,7 @@ namespace GooglePlayGames {
         public const string ApplicationId = "584985543628"; // Filled in automatically
         public const string IosClientId = ""; // Filled in automatically
         public const string WebClientId = "584985543628-1je9r7hrcr04iio0u4smj1tu1bfl1dbp.apps.googleusercontent.com"; // Filled in automatically
-        public const string NearbyConnectionServiceId = "";
+        public const string NearbyConnectionServiceId = "com.PersonalSingularity.BuffetLegend";
 
         public static bool ApplicationIdInitialized() {
             return !string.IsNullOrEmpty(ApplicationId) && !ApplicationId.Equals(ToEscapedToken(UnescapedApplicationId));

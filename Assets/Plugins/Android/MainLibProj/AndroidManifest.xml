@@ -9,14 +9,13 @@
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />
 
     <!-- replaced during setup -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-<uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    
 
     <application>
 
      <!-- Required for Nearby Connections API -->
         <meta-data android:name="com.google.android.gms.nearby.connection.SERVICE_ID"
-            android:value="" />
+            android:value="com.PersonalSingularity.BuffetLegend" />
 
         <!-- the space in these forces it to be interpreted as a string vs. int -->
         <meta-data android:name="com.google.android.gms.games.APP_ID"

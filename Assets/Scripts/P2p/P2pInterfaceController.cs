@@ -15,7 +15,7 @@ public class P2pInterfaceController : MonoBehaviour {
 	}
 
 	private P2pGameMaster gameMaster;
-	public Transform inspector_MainPanel;
+	public Transform inspector_UiRoot;
 	private Text _timeRemainingText;
 	private Text _foodLine0;
 	private Text _foodLine1;
@@ -25,18 +25,17 @@ public class P2pInterfaceController : MonoBehaviour {
 
 	void Awake() {
 		_instance = this;
+		gameMaster = GetComponent<P2pGameMaster> ();
 	}
 
 	// Use this for initialization
 	void Start () {
-		gameMaster = GetComponent<P2pGameMaster> ();
 
-		_timeRemainingText = inspector_MainPanel.transform.Find ("TimeRemaining").GetComponent<Text>();
-		_foodLine0 = inspector_MainPanel.transform.Find ("FoodLine0").GetComponent<Text>();
-//		_foodLine1 = inspector_MainPanel.transform.Find ("FoodLine1").GetComponent<Text>();
-//		_foodLine2 = inspector_MainPanel.transform.Find ("FoodLine2").GetComponent<Text>();
-		_score = inspector_MainPanel.transform.Find ("Score").GetComponent<Text>();
-		_console = inspector_MainPanel.transform.Find ("Console").GetComponent<Text>();
+		_console = inspector_UiRoot.transform.Find ("Console/Text").GetComponent<Text>();
+
+		_timeRemainingText = inspector_UiRoot.transform.Find ("GameScreen/TimeRemaining").GetComponent<Text>();
+		_foodLine0 = inspector_UiRoot.transform.Find ("GameScreen/FoodLine0").GetComponent<Text>();
+		_score = inspector_UiRoot.transform.Find ("GameScreen/Score").GetComponent<Text>();
 	}
 	
 	// Update is called once per frame
@@ -55,6 +54,10 @@ public class P2pInterfaceController : MonoBehaviour {
 	}
 
 	public void WriteToConsole(string text) {
+		if (_console == null) {
+			_console = inspector_UiRoot.transform.Find ("Console/Text").GetComponent<Text>();
+		}
+		print ("Console: " + text);
 		_console.text = text + "\n" + _console.text;
 	}
 }
