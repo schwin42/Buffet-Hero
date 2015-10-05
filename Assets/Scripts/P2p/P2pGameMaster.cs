@@ -3,7 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class P2pGameMaster : MonoBehaviour {
-	
+
+	private static P2pGameMaster _instance;
+	public static P2pGameMaster Instance {
+		get {
+			if(_instance == null) {
+				GameObject.FindObjectOfType<P2pGameMaster>();
+			}
+			return _instance;
+		}
+	}
+
 	public float wobbleFactor = 10f;
 	public float timeAllotted = 10f;
 	
@@ -37,6 +47,10 @@ public class P2pGameMaster : MonoBehaviour {
 		}
 	}
 
+	void Awake() {
+		_instance = this;
+	}
+
 	// Use this for initialization
 	void Start () {
 	}
@@ -46,7 +60,7 @@ public class P2pGameMaster : MonoBehaviour {
 	
 		if (_timerIsRunning) {
 			if(_timeRemaining <= 0) {
-				print ("Time's up!");
+				TimerEnded();
 				_timerIsRunning = false;
 			} else {
 				_timeRemaining -= Time.deltaTime;
@@ -73,6 +87,13 @@ public class P2pGameMaster : MonoBehaviour {
 		_timerIsRunning = true;
 	}
 
+	void TimerEnded ()
+	{
+		gameInProgress = false;
+		GameResult gameResult = new GameResult (currentScore);
+		StateController.Instance.GameFinished (gameResult);
+	}
+
 	public void NextFood () {
 		displayedFood = FoodLogic.Instance.GetRandomFoodUsingQueue ();
 		foods.Add (displayedFood);
@@ -92,4 +113,13 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 
+}
+
+public class GameResult {
+	int foodsEaten;
+	float score;
+
+	public GameResult(float score) {
+		this.score = score;
+	}
 }

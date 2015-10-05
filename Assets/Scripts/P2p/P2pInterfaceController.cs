@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class P2pInterfaceController : MonoBehaviour {
 
@@ -16,12 +17,38 @@ public class P2pInterfaceController : MonoBehaviour {
 
 	private P2pGameMaster gameMaster;
 	public Transform inspector_UiRoot;
+
+	//Host Screen
+	private Text host_PlayerList;
+	private Button host_StartButton;
+
+	//Game Screen
 	private Text _timeRemainingText;
 	private Text _foodLine0;
-	private Text _foodLine1;
-	private Text _foodLine2;
 	private Text _score;
 	private Text _console;
+
+	public List<RemotePlayer> Host_JoinedPlayers {
+		set {
+			string output = "";
+			for (int i = 0; i < value.Count; i++) {
+				if(i != 0) {
+					output += "\n";
+				}
+				output += value[i].profile.playerName;
+			}
+			host_PlayerList.text = output;
+		}
+	}
+
+	public void Host_SetStartButtonInteractive (bool b)
+	{
+		if (b) {
+			host_StartButton.interactable = true;
+		} else {
+			host_StartButton.interactable = false;
+		}
+	}
 
 	void Awake() {
 		_instance = this;
@@ -33,11 +60,25 @@ public class P2pInterfaceController : MonoBehaviour {
 
 		_console = inspector_UiRoot.transform.Find ("Console/Text").GetComponent<Text>();
 
+		//Host
+		host_PlayerList = inspector_UiRoot.transform.Find ("HostScreen/PlayerList").GetComponent<Text>();
+		host_StartButton = inspector_UiRoot.transform.Find ("HostScreen/StartButton").GetComponent<Button>();
+
+		//Game
 		_timeRemainingText = inspector_UiRoot.transform.Find ("GameScreen/TimeRemaining").GetComponent<Text>();
 		_foodLine0 = inspector_UiRoot.transform.Find ("GameScreen/FoodLine0").GetComponent<Text>();
 		_score = inspector_UiRoot.transform.Find ("GameScreen/Score").GetComponent<Text>();
+
+		InitializeUi ();
 	}
-	
+
+	private void InitializeUi() {
+		_console.text = "";
+
+		host_PlayerList.text = "";
+		host_StartButton.interactable = false;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (gameMaster.gameInProgress) {
