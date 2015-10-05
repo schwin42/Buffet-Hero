@@ -11,9 +11,9 @@ public class RemotePlayer
 {
 
 	public string remoteEndpointId;
-	public Profile profile;
+	public OnlineProfile profile;
 
-	public RemotePlayer (string remoteEndpointId, Profile profile)
+	public RemotePlayer (string remoteEndpointId, OnlineProfile profile)
 	{
 		this.remoteEndpointId = remoteEndpointId;
 		this.profile = profile;

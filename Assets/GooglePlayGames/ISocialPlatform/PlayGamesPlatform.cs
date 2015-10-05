@@ -100,7 +100,6 @@ namespace GooglePlayGames
 
         public static void InitializeNearby(Action<INearbyConnectionClient> callback)
         {
-            Debug.Log("Calling InitializeNearby!");
             if (sNearbyConnectionClient == null)
             {
 #if UNITY_ANDROID && !UNITY_EDITOR

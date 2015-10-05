@@ -1,39 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
-public abstract class Payload {
+[System.Serializable] public abstract class Payload { }
 
-}
-
-[System.Serializable]
-public class ProfilePayload : Payload {
-	public Profile profile;
-
-	public ProfilePayload (Profile profile) {
+[System.Serializable] public class StartGameEvent : Payload { }
+[System.Serializable] public class DisplayResultsEvent : Payload { }
+[System.Serializable] public class ProfilePayload : Payload {
+	public OnlineProfile profile;
+	public ProfilePayload (OnlineProfile profile) {
 		this.profile = profile;
 	}
 }
-
-//[System.Serializable]
-//public class EventPayload : Payload {
-//	public PlayerEvent playerEvent;
-//
-//	public EventPayload (PlayerEvent playerEvent) {
-//		this.playerEvent = playerEvent;
-//	}
-//}
-
-[System.Serializable]
-public class StartGamePayload : Payload {
-
-}
-
-[System.Serializable]
-public class GameFinishedPayload : Payload {
+[System.Serializable] public class GameResultPayload : Payload {
 	public GameResult gameResult;
-
-	public GameFinishedPayload(GameResult gameResult) {
+	public GameResultPayload (GameResult gameResult) {
 		this.gameResult = gameResult;
 	}
 }

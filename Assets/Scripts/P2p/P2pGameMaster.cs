@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class P2pGameMaster : MonoBehaviour {
 
@@ -32,7 +33,10 @@ public class P2pGameMaster : MonoBehaviour {
 	public List<Food> eatenFoods;
 	public List<Food> passedFoods;
 	public float currentScore;
-	
+
+	public List<GameResult> otherGameResults;
+	public GameResult myGameResult;
+
 	private float _timeRemaining;
 	public float TimeRemaining {
 		get {
@@ -74,12 +78,16 @@ public class P2pGameMaster : MonoBehaviour {
 	public void BeginNewGame() {
 		gameInProgress = true;
 		currentScore = 0;
+		myGameResult = null;
+		otherGameResults = new List<GameResult> ();
 		NextFood ();
 		StartTimer ();
 	}
 
 	public void EndGame () {
 		gameInProgress = false;
+		myGameResult = new GameResult (currentScore, eatenFoods.Count, ClientDatabase.activeProfile.profileId);
+		StateController.Instance.GameFinished (myGameResult);
 	}
 
 	void StartTimer() {
@@ -89,9 +97,7 @@ public class P2pGameMaster : MonoBehaviour {
 
 	void TimerEnded ()
 	{
-		gameInProgress = false;
-		GameResult gameResult = new GameResult (currentScore);
-		StateController.Instance.GameFinished (gameResult);
+		EndGame ();
 	}
 
 	public void NextFood () {
@@ -115,11 +121,14 @@ public class P2pGameMaster : MonoBehaviour {
 
 }
 
-public class GameResult {
-	int foodsEaten;
-	float score;
+[System.Serializable] public class GameResult {
+	public int foodsEaten;
+	public float score;
+	public Guid profileId;
 
-	public GameResult(float score) {
+	public GameResult(float score, int foodsEaten, Guid profileId) {
 		this.score = score;
+		this.foodsEaten = foodsEaten;
+		this.profileId = profileId;
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 
 public class P2pInterfaceController : MonoBehaviour {
 
@@ -28,6 +29,10 @@ public class P2pInterfaceController : MonoBehaviour {
 	private Text _score;
 	private Text _console;
 
+	//Result Screen
+	private Text result_Result;
+	private Button result_PlayButton;
+
 	public List<RemotePlayer> Host_JoinedPlayers {
 		set {
 			string output = "";
@@ -50,6 +55,10 @@ public class P2pInterfaceController : MonoBehaviour {
 		}
 	}
 
+	public void Result_SetPlayButtonInteractive (bool b) {
+		result_PlayButton.interactable = b;
+	}
+
 	void Awake() {
 		_instance = this;
 		gameMaster = GetComponent<P2pGameMaster> ();
@@ -68,6 +77,12 @@ public class P2pInterfaceController : MonoBehaviour {
 		_timeRemainingText = inspector_UiRoot.transform.Find ("GameScreen/TimeRemaining").GetComponent<Text>();
 		_foodLine0 = inspector_UiRoot.transform.Find ("GameScreen/FoodLine0").GetComponent<Text>();
 		_score = inspector_UiRoot.transform.Find ("GameScreen/Score").GetComponent<Text>();
+
+		//Result
+		result_Result = inspector_UiRoot.transform.Find ("ResultScreen/Result").GetComponent<Text>();
+		result_PlayButton = inspector_UiRoot.transform.Find ("ResultScreen/PlayButton").GetComponent<Button>();
+
+		//TODO Validate that these are all properly acquire here rather than later on
 
 		InitializeUi ();
 	}
@@ -91,6 +106,32 @@ public class P2pInterfaceController : MonoBehaviour {
 //				_foodLine2.text = gameMaster.displayedFood.attributes [2].Id;
 			}
 			_score.text = "Score: " + gameMaster.currentScore.ToString();
+		}
+	}
+
+	public void Results_Display ()
+	{
+//		WriteToConsole("Found game results: " + P2pGameMaster.Instance.otherGameResults.ToString());
+//		WriteToConsole("Found my game result" + P2pGameMaster.Instance.myGameResult.ToString());
+//		WriteToConsole ("Found result_result" + result_result.ToString());
+
+		try {
+		float highestScore = -9999;
+		Guid winningPlayer = Guid.Empty;
+		foreach (GameResult gameResult in P2pGameMaster.Instance.otherGameResults) {
+			if(gameResult.score > highestScore) {
+				highestScore = gameResult.score;
+				winningPlayer = gameResult.profileId;
+			}
+		}
+		if (gameMaster.myGameResult.score > highestScore) {
+			result_Result.text = "You win with " + gameMaster.myGameResult.score;
+		} else {
+			result_Result.text = "You lose with " + gameMaster.myGameResult.score;
+		} //TODO Handle ties
+
+		} catch (Exception e) {
+			WriteToConsole("Exception in Results_Display: " + e.Message);
 		}
 	}
 
