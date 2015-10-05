@@ -36,7 +36,6 @@ public class ConnectionController : MonoBehaviour
 	public static RemoteStatus remoteStatus = RemoteStatus.Uninitialized;
 	DiscoveryListener discoveryListener;
 	public MessageListener messageListener;
-	private P2pGameMaster _gameMaster;
 
 	public void Awake ()
 	{
@@ -45,9 +44,6 @@ public class ConnectionController : MonoBehaviour
 
 	public void Start ()
 	{
-
-		_gameMaster = GetComponent<P2pGameMaster> ();
-
 		InitializeGpgNearby ();
 
 		serviceId = PlayGamesPlatform.Nearby.GetServiceId ();
