@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Random = System.Random;
 
 [System.Serializable]
 public class Food
@@ -238,7 +237,13 @@ public class Tag
 
 public class FoodLogic : MonoBehaviour {
 
-	static System.Random _random = new System.Random ();
+	public static System.Random randomSeed = new System.Random ();
+
+	public static int NextUnityRandomSeed {
+		get {
+			return randomSeed.Next(1000);
+		}
+	}
 
 	public float scoreWobbleMultiplier = 25f;
 
@@ -287,10 +292,12 @@ public class FoodLogic : MonoBehaviour {
 
 	public static List<FoodAttribute> GetShuffledAttributes (AttributeType type)
 	{
-		return GetShuffledAttributes (type, _random);
+		List <FoodAttribute> attributes = GameData.Instance.AttributeData.Where (a => a.attributeType == type).ToList();
+		ShuffleList (attributes);
+		return attributes;
 	}
 
-	public static List<FoodAttribute> GetShuffledAttributes (AttributeType type, Random seed) {
+	public static List<FoodAttribute> GetShuffledAttributes (AttributeType type, int seed) {
 		List <FoodAttribute> attributes = GameData.Instance.AttributeData.Where (a => a.attributeType == type).ToList();
 		ShuffleList (attributes, seed);
 		return attributes;
@@ -332,10 +339,11 @@ public class FoodLogic : MonoBehaviour {
 		return food;
 	}
 
-	public static void ShuffleList<T> (List<T> list, Random seed) {
+	public static void ShuffleList<T> (List<T> list, int seed) {
+		UnityEngine.Random.seed = seed;
 		for (int i = list.Count; i > 1; i--) {
 			// Pick random element to swap.
-			int j = seed.Next (i); // 0 <= j <= i-1
+			int j = UnityEngine.Random.Range (0, i); // 0 <= j <= i-1
 			// Swap.
 			T tmp = list [j];
 			list [j] = list [i - 1];
@@ -345,6 +353,13 @@ public class FoodLogic : MonoBehaviour {
 
 	public static void ShuffleList<T> (List<T> list)
 	{
-		ShuffleList<T> (list, _random);
+		for (int i = list.Count; i > 1; i--) {
+			// Pick random element to swap.
+			int j = randomSeed.Next (i); // 0 <= j <= i-1
+			// Swap.
+			T tmp = list [j];
+			list [j] = list [i - 1];
+			list [i - 1] = tmp;
+		}
 	}
 }

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using Random = System.Random;
 
 public class P2pGameMaster : MonoBehaviour {
 
@@ -55,8 +54,7 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
-	}
+	void Start () { }
 	
 	// Update is called once per frame
 	void Update () {
@@ -79,9 +77,9 @@ public class P2pGameMaster : MonoBehaviour {
 		timeLimit = gameSettings.timeLimit;
 		
 		//Generate food lists from random seed
-		qualifierPool = FoodLogic.GetShuffledAttributes (AttributeType.Qualifier, gameSettings.foodSeed);
-		ingredientPool = FoodLogic.GetShuffledAttributes (AttributeType.Ingredient, gameSettings.foodSeed);
-		formPool = FoodLogic.GetShuffledAttributes (AttributeType.Form, gameSettings.foodSeed);
+		qualifierPool = FoodLogic.GetShuffledAttributes (AttributeType.Qualifier, gameSettings.qualifierSeed);
+		ingredientPool = FoodLogic.GetShuffledAttributes (AttributeType.Ingredient, gameSettings.ingredientSeed);
+		formPool = FoodLogic.GetShuffledAttributes (AttributeType.Form, gameSettings.formSeed);
 	}
 
 	public void BeginNewGame() {
@@ -162,10 +160,14 @@ public class P2pGameMaster : MonoBehaviour {
 [System.Serializable] public class GameSettings {
 	//Host sends game specifications to clients
 	public float timeLimit;
-	public Random foodSeed;
+	public int qualifierSeed;
+	public int ingredientSeed;
+	public int formSeed;
 
-	public GameSettings (float timeLimit, Random foodSeed) {
+	public GameSettings (float timeLimit, int qualifierSeed, int ingredientSeed, int formSeed) {
 		this.timeLimit = timeLimit;
-		this.foodSeed = foodSeed;
+		this.qualifierSeed = qualifierSeed;
+		this.ingredientSeed = ingredientSeed;
+		this.formSeed = formSeed;
 	}
 }

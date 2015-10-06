@@ -69,7 +69,7 @@ public class StateController : MonoBehaviour {
 	public void Host_StartGame() {
 		ConnectionController.Instance.Host_BeginSession (); //Stop advertising and update remote status
 
-		GameSettings gameStartInfo = new GameSettings (P2pGameMaster.Instance.timeLimit, new Random ()); //Bundle and send game settings to clients
+		GameSettings gameStartInfo = new GameSettings (P2pGameMaster.Instance.timeLimit, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed); //Bundle and send game settings to clients
 		ConnectionController.Instance.BroadcastEvent (new StartGamePayload(gameStartInfo));
 		//TODO Check if event is successful
 		SetScreenState (AppState.GameScreen);
