@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Random = System.Random;
 
 public class StateController : MonoBehaviour {
 
@@ -67,7 +68,9 @@ public class StateController : MonoBehaviour {
 
 	public void Host_StartGame() {
 		ConnectionController.Instance.Host_BeginSession (); //Stop advertising and update remote status
-		ConnectionController.Instance.BroadcastEvent (new StartGameEvent());
+
+		GameSettings gameStartInfo = new GameSettings (P2pGameMaster.Instance.timeLimit, new Random ()); //Bundle and send game settings to clients
+		ConnectionController.Instance.BroadcastEvent (new StartGamePayload(gameStartInfo));
 		//TODO Check if event is successful
 		SetScreenState (AppState.GameScreen);
 	}
@@ -80,9 +83,10 @@ public class StateController : MonoBehaviour {
 		SetScreenState (AppState.JoinScreen);
 	}
 
-	public void Client_StartGame ()
+	public void Client_StartGame (GameSettings gameStartInfo)
 	{
 		ConnectionController.remoteStatus = ConnectionController.RemoteStatus.EstablishedClient;
+		P2pGameMaster.Instance.LoadGameSettings (gameStartInfo);
 		SetScreenState (AppState.GameScreen);
 	}
 

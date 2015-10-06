@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Random = System.Random;
 
 [System.Serializable]
 public class Food
@@ -284,10 +285,14 @@ public class FoodLogic : MonoBehaviour {
 
 
 
-	List<FoodAttribute> GetShuffledAttributes (AttributeType type)
+	public static List<FoodAttribute> GetShuffledAttributes (AttributeType type)
 	{
+		return GetShuffledAttributes (type, _random);
+	}
+
+	public static List<FoodAttribute> GetShuffledAttributes (AttributeType type, Random seed) {
 		List <FoodAttribute> attributes = GameData.Instance.AttributeData.Where (a => a.attributeType == type).ToList();
-		ShuffleList (attributes);
+		ShuffleList (attributes, seed);
 		return attributes;
 	}
 	
@@ -327,16 +332,19 @@ public class FoodLogic : MonoBehaviour {
 		return food;
 	}
 
-	public static void ShuffleList<T> (List<T> list)
-	{
-		var random = _random;
+	public static void ShuffleList<T> (List<T> list, Random seed) {
 		for (int i = list.Count; i > 1; i--) {
 			// Pick random element to swap.
-			int j = random.Next (i); // 0 <= j <= i-1
+			int j = seed.Next (i); // 0 <= j <= i-1
 			// Swap.
 			T tmp = list [j];
 			list [j] = list [i - 1];
 			list [i - 1] = tmp;
 		}
+	}
+
+	public static void ShuffleList<T> (List<T> list)
+	{
+		ShuffleList<T> (list, _random);
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Random = System.Random;
 
 public class P2pGameMaster : MonoBehaviour {
 
@@ -15,19 +16,15 @@ public class P2pGameMaster : MonoBehaviour {
 		}
 	}
 
-	public float wobbleFactor = 10f;
-	public float timeAllotted = 10f;
-	
-	public bool gameInProgress;
-	
-	public float ScoreWobbleMultiplier {
-		get {
-			return FoodLogic.Instance.scoreWobbleMultiplier;
-		}
-		set {
-			FoodLogic.Instance.scoreWobbleMultiplier = value;
-		}
-	}
+	//Game settings
+	public float timeLimit = 15f;
+
+	//Game instance info
+	public List<FoodAttribute> qualifierPool;
+	public List<FoodAttribute> ingredientPool;
+	public List<FoodAttribute> formPool;
+
+	//Game instance records
 	public List<Food> foods;
 	public Food displayedFood;
 	public List<Food> eatenFoods;
@@ -44,6 +41,8 @@ public class P2pGameMaster : MonoBehaviour {
 		}
 	}
 
+	//State
+	public bool gameInProgress;
 	private bool _timerIsRunning;
 	public bool TimerIsRunning {
 		get {
@@ -75,6 +74,16 @@ public class P2pGameMaster : MonoBehaviour {
 		}
 	}
 
+	public void LoadGameSettings (GameSettings gameSettings)
+	{
+		timeLimit = gameSettings.timeLimit;
+		
+		//Generate food lists from random seed
+		qualifierPool = FoodLogic.GetShuffledAttributes (AttributeType.Qualifier, gameSettings.foodSeed);
+		ingredientPool = FoodLogic.GetShuffledAttributes (AttributeType.Ingredient, gameSettings.foodSeed);
+		formPool = FoodLogic.GetShuffledAttributes (AttributeType.Form, gameSettings.foodSeed);
+	}
+
 	public void BeginNewGame() {
 		gameInProgress = true;
 		currentScore = 0;
@@ -91,7 +100,7 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	void StartTimer() {
-		_timeRemaining = timeAllotted;
+		_timeRemaining = timeLimit;
 		_timerIsRunning = true;
 	}
 
@@ -101,15 +110,14 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	public void NextFood () {
-		displayedFood = FoodLogic.Instance.GetRandomFoodUsingQueue ();
+		displayedFood = GetNextFoodFromPool ();
+
 		foods.Add (displayedFood);
 	}
 
 	public void HandleEatResponse() {
 		eatenFoods.Add (displayedFood);
-		print ("quality: " + displayedFood.Quality.Value);
 		currentScore += displayedFood.Quality.Value;
-//		ScoreWobbleMultiplier = ((Random.value * wobbleFactor) - wobbleFactor / 2) + GameData.SCORE_CONSTANT; 
 		NextFood ();
 	}
 
@@ -119,6 +127,24 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 
+	Food GetNextFoodFromPool ()
+	{
+		Food food = new Food ();
+		
+		food.attributes.Add (PullAttributeAndAppend (formPool));
+		food.attributes.Add (PullAttributeAndAppend (ingredientPool));
+		food.attributes.Add (PullAttributeAndAppend (qualifierPool));
+		
+		food.Realize ();
+		return food;
+	}
+
+	FoodAttribute PullAttributeAndAppend(List<FoodAttribute> pool) {
+		FoodAttribute attribute = pool [0];
+		pool.RemoveAt (0);
+		pool.Insert (pool.Count, attribute);
+		return attribute;
+	}
 }
 
 [System.Serializable] public class GameResult {
@@ -130,5 +156,16 @@ public class P2pGameMaster : MonoBehaviour {
 		this.score = score;
 		this.foodsEaten = foodsEaten;
 		this.profileId = profileId;
+	}
+}
+
+[System.Serializable] public class GameSettings {
+	//Host sends game specifications to clients
+	public float timeLimit;
+	public Random foodSeed;
+
+	public GameSettings (float timeLimit, Random foodSeed) {
+		this.timeLimit = timeLimit;
+		this.foodSeed = foodSeed;
 	}
 }

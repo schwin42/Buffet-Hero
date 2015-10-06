@@ -285,9 +285,9 @@ public class ConnectionController : MonoBehaviour
 		{
 			Payload payload = Utility.ByteArrayToPayload (data);
 			P2pInterfaceController.Instance.WriteToConsole ("Received message: " + payload);
-			if (payload is StartGameEvent) {
+			if (payload is StartGamePayload) {
 				P2pInterfaceController.Instance.WriteToConsole ("Received start game event");
-				StateController.Instance.Client_StartGame ();
+				StateController.Instance.Client_StartGame (((StartGamePayload)payload).gameStartInfo);
 			} else if (payload is GameResultPayload) {
 				P2pInterfaceController.Instance.WriteToConsole ("Received game result");
 				StateController.Instance.ReceiveGameResult (((GameResultPayload)payload).gameResult);
