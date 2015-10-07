@@ -17,13 +17,16 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	//Game session records
-	public List<RemotePlayer> ActivePlayers { //Other players in this session
+	public List<OnlineProfile> ActivePlayers { //Other players in this session
 		get {
 			if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
-				return StateController.Instance.host_ConnectedClients;
+				return StateController.Instance.host_ConnectedClients.Select(remotePlayer => remotePlayer.profile) //Connected players
+					.Union(new List<OnlineProfile> { DeviceDatabase.activeProfile }).ToList(); //Self
 			} else if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
-				List<RemotePlayer> output = new List<RemotePlayer> (StateController.Instance.client_ConnectedClients);
-				output.Add(StateController.Instance.client_ConnectedHost);
+				P2pInterfaceController.Instance.WriteToConsole("Getting active players, connected clients: " + StateController.Instance.client_ConnectedClients.Count);
+				List<OnlineProfile> output = StateController.Instance.client_ConnectedClients.Select(remotePlayer => remotePlayer.profile)
+					.Union ( new List<OnlineProfile> { StateController.Instance.client_ConnectedHost.profile } )
+						.Union ( new List<OnlineProfile> { DeviceDatabase.activeProfile } ).ToList();
 				return output;
 			} else {
 				P2pInterfaceController.Instance.WriteToConsole("No active players in unestablished remote state");
@@ -108,7 +111,7 @@ public class P2pGameMaster : MonoBehaviour {
 
 	public void EndGame () {
 		gameInProgress = false;
-		myGameResult = new GameResult (currentScore, eatenFoods.Count, ClientDatabase.activeProfile.profileId);
+		myGameResult = new GameResult (currentScore, eatenFoods.Count, DeviceDatabase.activeProfile.profileId);
 		StateController.Instance.GameFinished (myGameResult);
 	}
 

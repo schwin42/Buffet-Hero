@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class ClientDatabase : MonoBehaviour {
+public class DeviceDatabase : MonoBehaviour {
 	
 	public static OnlineProfile activeProfile = new OnlineProfile ("Guest profile");
 }

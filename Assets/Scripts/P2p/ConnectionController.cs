@@ -134,7 +134,7 @@ public class ConnectionController : MonoBehaviour
 		try {
 			PlayGamesPlatform.Nearby.AcceptConnectionRequest (
 				request.RemoteEndpoint.EndpointId,
-				Utility.PayloadToByteArray(new WelcomePayload(new RemotePlayer(PlayGamesPlatform.Nearby.LocalEndpointId(), ClientDatabase.activeProfile), StateController.Instance.client_ConnectedClients)),
+				Utility.PayloadToByteArray(new WelcomePayload(new RemotePlayer(PlayGamesPlatform.Nearby.LocalEndpointId(), DeviceDatabase.activeProfile), StateController.Instance.client_ConnectedClients)),
 				messageListener);
 
 			RemotePlayer remotePlayer = ((PlayerJoinedPayload)Utility.ByteArrayToPayload (request.Payload)).remotePlayer; //TODO better type validation/ error checking
@@ -248,12 +248,12 @@ public class ConnectionController : MonoBehaviour
 
 		public void Client_SendConnectionRequest (EndpointDetails discoveredEndpoint)
 		{
-			ConnectionController.Instance.messageListener = new MessageListener (MessageListener.ListenerMode.ListeningToHost);
 			try {
+				ConnectionController.Instance.messageListener = new MessageListener (MessageListener.ListenerMode.ListeningToHost);
 				PlayGamesPlatform.Nearby.SendConnectionRequest (
 				"Marco Polo",
 				discoveredEndpoint.EndpointId,
-				Utility.PayloadToByteArray (new PlayerJoinedPayload (new RemotePlayer(PlayGamesPlatform.Nearby.LocalEndpointId (), ClientDatabase.activeProfile))),
+				Utility.PayloadToByteArray (new PlayerJoinedPayload (new RemotePlayer(PlayGamesPlatform.Nearby.LocalEndpointId (), DeviceDatabase.activeProfile))),
 				Client_HandleConnectionResponse,
 				(IMessageListener)ConnectionController.Instance.messageListener);
 				P2pInterfaceController.Instance.WriteToConsole ("Connection request sent to endpoint");
@@ -261,7 +261,6 @@ public class ConnectionController : MonoBehaviour
 				P2pInterfaceController.Instance.WriteToConsole ("Error: " + e.Message);
 				return;
 			}
-
 		}
 
 		public void Client_HandleConnectionResponse (ConnectionResponse response)
