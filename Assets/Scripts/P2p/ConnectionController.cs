@@ -60,14 +60,15 @@ public class ConnectionController : MonoBehaviour
 		});
 	}
 
-	public void StopAllConnections ()
+	public void TerminateAllConnections ()
 	{
 		PlayGamesPlatform.Nearby.StopAllConnections ();
 		remoteStatus = RemoteStatus.Idle;
 		discoveryListener = null;
 		messageListener = null;
-		StateController.Instance.connectedHost = null;
-		StateController.Instance.connectedClients = null;
+		StateController.Instance.client_ConnectedHost = null;
+		StateController.Instance.host_ConnectedClients = null;
+		StateController.Instance.client_ConnectedClients = null;
 		P2pInterfaceController.Instance.WriteToConsole ("All connections stopped");
 	}
 
@@ -76,21 +77,21 @@ public class ConnectionController : MonoBehaviour
 		P2pInterfaceController.Instance.WriteToConsole ("Broadcasting event");
 		try {
 			if (remoteStatus == RemoteStatus.EstablishedClient) {
-				if(StateController.Instance.connectedHost == null) {
+				if(StateController.Instance.client_ConnectedHost == null) {
 					P2pInterfaceController.Instance.WriteToConsole ("Failed to broadcast event " + payload + " because host is null");
 					return;
 				}
-				PlayGamesPlatform.Nearby.SendReliable (new List<string> { StateController.Instance.connectedHost.remoteEndpointId }, 
+				PlayGamesPlatform.Nearby.SendReliable (new List<string> { StateController.Instance.client_ConnectedHost.remoteEndpointId }, 
 			                                      Utility.PayloadToByteArray (payload));
 				P2pInterfaceController.Instance.WriteToConsole ("Broadcast " + payload + " to host");
 			} else if (remoteStatus == RemoteStatus.EstablishedHost) {
-				if(StateController.Instance.connectedClients == null || StateController.Instance.connectedClients.Count == 0) {
+				if(StateController.Instance.host_ConnectedClients == null || StateController.Instance.host_ConnectedClients.Count == 0) {
 					P2pInterfaceController.Instance.WriteToConsole ("Failed to broadcast event " + payload + " because clients list is empty");
 					return;
 				}
-				PlayGamesPlatform.Nearby.SendReliable (StateController.Instance.connectedClients.Select (p => p.remoteEndpointId).ToList (), 
+				PlayGamesPlatform.Nearby.SendReliable (StateController.Instance.host_ConnectedClients.Select (p => p.remoteEndpointId).ToList (), 
 			                                      Utility.PayloadToByteArray (payload));
-				P2pInterfaceController.Instance.WriteToConsole ("Broadcast " + payload + " to " + StateController.Instance.connectedClients.Count + " clients");
+				P2pInterfaceController.Instance.WriteToConsole ("Broadcast " + payload + " to " + StateController.Instance.host_ConnectedClients.Count + " clients");
 			} else {
 				P2pInterfaceController.Instance.WriteToConsole ("Failed to send message while in " + remoteStatus);
 				return;
@@ -106,7 +107,7 @@ public class ConnectionController : MonoBehaviour
 	public void Host_BeginAdvertising ()
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("beginning advertising @" + DateTime.Now);
-		StateController.Instance.connectedClients = new List<RemotePlayer> ();
+		StateController.Instance.host_ConnectedClients = new List<RemotePlayer> ();
 		List<string> appIdentifiers = new List<string> ();
 		appIdentifiers.Add (PlayGamesPlatform.Nearby.GetAppBundleId ());
 		PlayGamesPlatform.Nearby.StartAdvertising (
@@ -132,12 +133,14 @@ public class ConnectionController : MonoBehaviour
 
 		try {
 			PlayGamesPlatform.Nearby.AcceptConnectionRequest (
-			request.RemoteEndpoint.EndpointId,
-			Utility.PayloadToByteArray(new ProfilePayload(ClientDatabase.activeProfile)), //TODO Host and other clients' profiles
-			messageListener);
-			RemotePlayer remotePlayer = new RemotePlayer (request.RemoteEndpoint.EndpointId, ((ProfilePayload)Utility.ByteArrayToPayload (request.Payload)).profile); //TODO better type validation/ error checking
+				request.RemoteEndpoint.EndpointId,
+				Utility.PayloadToByteArray(new WelcomePayload(new RemotePlayer(PlayGamesPlatform.Nearby.LocalEndpointId(), ClientDatabase.activeProfile), StateController.Instance.client_ConnectedClients)),
+				messageListener);
+
+			RemotePlayer remotePlayer = ((PlayerJoinedPayload)Utility.ByteArrayToPayload (request.Payload)).remotePlayer; //TODO better type validation/ error checking
 			P2pInterfaceController.Instance.WriteToConsole ("Accepted connection request from " + request.RemoteEndpoint.EndpointId);
 			StateController.Instance.Host_PlayerJoined (remotePlayer);
+			Host_EchoMessageToOtherClients(request.RemoteEndpoint.EndpointId, request.Payload, true);
 		} catch (Exception e) {
 			P2pInterfaceController.Instance.WriteToConsole (e.Message);
 		}
@@ -150,6 +153,20 @@ public class ConnectionController : MonoBehaviour
 		P2pInterfaceController.Instance.WriteToConsole ("Session started");
 	}	
 
+	private void Host_EchoMessageToOtherClients (string sourceEndpointId, byte[] data, bool isReliableMessage) {
+		//Send to every client but the source
+		P2pInterfaceController.Instance.WriteToConsole ("Host beginning echo procedure");
+	
+		List<string> endpointsToMessage = StateController.Instance.host_ConnectedClients.Where (rp => rp.remoteEndpointId != sourceEndpointId).Select(rp => rp.remoteEndpointId).ToList();
+
+		if (isReliableMessage) {
+			PlayGamesPlatform.Nearby.SendReliable (endpointsToMessage, data);
+		} else {
+			PlayGamesPlatform.Nearby.SendUnreliable (endpointsToMessage, data);
+		}
+		P2pInterfaceController.Instance.WriteToConsole ("Host echoed to: " + endpointsToMessage.Count + " endpoints");
+	}
+
 	#endregion
 
 	#region nearby client
@@ -157,7 +174,8 @@ public class ConnectionController : MonoBehaviour
 	public void Client_BeginDiscovery ()
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("Beginning discovery");
-		StateController.Instance.connectedHost = null;
+		StateController.Instance.client_ConnectedHost = null;
+		StateController.Instance.client_ConnectedClients = new List<RemotePlayer> ();
 		discoveryListener = new DiscoveryListener ();
 
 		PlayGamesPlatform.Nearby.StartDiscovery (
@@ -235,7 +253,7 @@ public class ConnectionController : MonoBehaviour
 				PlayGamesPlatform.Nearby.SendConnectionRequest (
 				"Marco Polo",
 				discoveredEndpoint.EndpointId,
-				Utility.PayloadToByteArray (new ProfilePayload (ClientDatabase.activeProfile)),
+				Utility.PayloadToByteArray (new PlayerJoinedPayload (new RemotePlayer(PlayGamesPlatform.Nearby.LocalEndpointId (), ClientDatabase.activeProfile))),
 				Client_HandleConnectionResponse,
 				(IMessageListener)ConnectionController.Instance.messageListener);
 				P2pInterfaceController.Instance.WriteToConsole ("Connection request sent to endpoint");
@@ -261,7 +279,9 @@ public class ConnectionController : MonoBehaviour
 			P2pInterfaceController.Instance.WriteToConsole ("Connection successful!");
 			PlayGamesPlatform.Nearby.StopDiscovery (ConnectionController.serviceId);
 			StateController.Instance.Client_EnterLobby ();
-			StateController.Instance.connectedHost = new RemotePlayer (response.RemoteEndpointId, ((ProfilePayload)Utility.ByteArrayToPayload (response.Payload)).profile);
+			WelcomePayload welcomePayload = (WelcomePayload)Utility.ByteArrayToPayload (response.Payload);
+			StateController.Instance.client_ConnectedHost = welcomePayload.hostPlayer;
+			StateController.Instance.client_ConnectedClients = welcomePayload.fellowClients;
 		}
 	}
 	
@@ -291,10 +311,27 @@ public class ConnectionController : MonoBehaviour
 			} else if (payload is GameResultPayload) {
 				P2pInterfaceController.Instance.WriteToConsole ("Received game result");
 				StateController.Instance.ReceiveGameResult (((GameResultPayload)payload).gameResult);
-				//TODO If host, echo result to all other clients
+				//If host, echo result to all other clients
+				if (listenerMode == ListenerMode.ListeningToClients) {
+					ConnectionController.Instance.Host_EchoMessageToOtherClients (remoteEndpointId, data, isReliableMessage);
+				}
 			} else if (payload is DisplayResultsEvent) {
 				P2pInterfaceController.Instance.WriteToConsole ("Received display result event");
 				StateController.Instance.DisplayResult ();
+			} else if (payload is PlayerLeftPayload) {
+				P2pInterfaceController.Instance.WriteToConsole ("Recieved player left payload");
+				if (ConnectionController.remoteStatus == RemoteStatus.EstablishedClient) {
+					string droppedEndpointId = ((PlayerLeftPayload)payload).droppedEndpointId;
+					StateController.Instance.client_ConnectedClients.RemoveAll (rp => rp.remoteEndpointId == droppedEndpointId);
+				} else {
+					P2pInterfaceController.Instance.WriteToConsole ("Unexpected player left event outside of established client mode");
+				}
+			} else if (payload is PlayerJoinedPayload) {
+				if (ConnectionController.remoteStatus == RemoteStatus.EstablishedClient) {
+					StateController.Instance.client_ConnectedClients.Add(((PlayerJoinedPayload)payload).remotePlayer);
+				} else {
+					P2pInterfaceController.Instance.WriteToConsole ("Unexpected player joined event outside of established client mode");
+				}
 			} else {
 				P2pInterfaceController.Instance.WriteToConsole ("Unhandled message: " + payload);
 			}
@@ -304,9 +341,12 @@ public class ConnectionController : MonoBehaviour
 		public void OnRemoteEndpointDisconnected (string remoteEndpointId)
 		{
 			if (listenerMode == ListenerMode.ListeningToHost) {
-
+				//TODO Throw error
+				StateController.Instance.ExitToTitle();
 			} else if (listenerMode == ListenerMode.ListeningToClients) {
+				ConnectionController.Instance.Host_EchoMessageToOtherClients(remoteEndpointId, Utility.PayloadToByteArray(new PlayerLeftPayload(remoteEndpointId)), true);
 				StateController.Instance.Host_PlayerLeft(remoteEndpointId);
+
 			} else {
 				P2pInterfaceController.Instance.WriteToConsole("Error: Remote endpoint disconnected but listener is uninitialized!");
 				return;

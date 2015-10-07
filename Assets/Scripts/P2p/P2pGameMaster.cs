@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class P2pGameMaster : MonoBehaviour {
 
@@ -15,10 +16,24 @@ public class P2pGameMaster : MonoBehaviour {
 		}
 	}
 
-	//Game settings
-	public float timeLimit = 15f;
+	//Game session records
+	public List<RemotePlayer> ActivePlayers { //Other players in this session
+		get {
+			if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
+				return StateController.Instance.host_ConnectedClients;
+			} else if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+				List<RemotePlayer> output = new List<RemotePlayer> (StateController.Instance.client_ConnectedClients);
+				output.Add(StateController.Instance.client_ConnectedHost);
+				return output;
+			} else {
+				P2pInterfaceController.Instance.WriteToConsole("No active players in unestablished remote state");
+				return null;
+			}
+		}
+	} 
 
 	//Game instance info
+	public float timeLimit;
 	public List<FoodAttribute> qualifierPool;
 	public List<FoodAttribute> ingredientPool;
 	public List<FoodAttribute> formPool;
@@ -140,7 +155,7 @@ public class P2pGameMaster : MonoBehaviour {
 	FoodAttribute PullAttributeAndAppend(List<FoodAttribute> pool) {
 		FoodAttribute attribute = pool [0];
 		pool.RemoveAt (0);
-		pool.Insert (pool.Count, attribute);
+		pool.Add (attribute);
 		return attribute;
 	}
 }

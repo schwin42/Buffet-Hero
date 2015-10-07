@@ -28,14 +28,18 @@ public class StateController : MonoBehaviour {
 		WaitingScreen = 6
 	}
 
+	//Configurable
+	public const float TIME_LIMIT = 15f;
+
 	private AppState _currentState = AppState.Uninitialized;
 
 	private Dictionary<AppState, GameObject> stateGoReference = new Dictionary<AppState, GameObject>();
 
 	public Transform inspector_ScreenContainer;
 
-	public List<RemotePlayer> connectedClients;
-	[System.NonSerialized] public RemotePlayer connectedHost;
+	public List<RemotePlayer> host_ConnectedClients;
+	[System.NonSerialized] public RemotePlayer client_ConnectedHost;
+	public List<RemotePlayer> client_ConnectedClients;
 
 	void Awake () {
 		_instance = this;
@@ -69,8 +73,9 @@ public class StateController : MonoBehaviour {
 	public void Host_StartGame() {
 		ConnectionController.Instance.Host_BeginSession (); //Stop advertising and update remote status
 
-		GameSettings gameStartInfo = new GameSettings (P2pGameMaster.Instance.timeLimit, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed); //Bundle and send game settings to clients
-		ConnectionController.Instance.BroadcastEvent (new StartGamePayload(gameStartInfo));
+		GameSettings gameSettings = new GameSettings (TIME_LIMIT, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed); //Bundle and send game settings to clients
+		P2pGameMaster.Instance.LoadGameSettings (gameSettings);
+		ConnectionController.Instance.BroadcastEvent (new StartGamePayload(gameSettings));
 		//TODO Check if event is successful
 		SetScreenState (AppState.GameScreen);
 	}
@@ -102,7 +107,7 @@ public class StateController : MonoBehaviour {
 	}
 
 	public void ExitToTitle() {
-		ConnectionController.Instance.StopAllConnections ();
+		ConnectionController.Instance.TerminateAllConnections ();
 		SetScreenState (AppState.TitleScreen);
 	}
 
@@ -125,8 +130,8 @@ public class StateController : MonoBehaviour {
 
 	public void Host_PlayerJoined(RemotePlayer player) {
 		P2pInterfaceController.Instance.WriteToConsole ("Player joined!");
-		connectedClients.Add (player);
-		P2pInterfaceController.Instance.Host_JoinedPlayers = connectedClients;
+		host_ConnectedClients.Add (player);
+		P2pInterfaceController.Instance.Host_JoinedPlayers = host_ConnectedClients;
 		P2pInterfaceController.Instance.Host_SetStartButtonInteractive (true);
 	}
 
@@ -134,13 +139,13 @@ public class StateController : MonoBehaviour {
 		P2pInterfaceController.Instance.WriteToConsole ("Player left");
 
 		try {
-			RemotePlayer playerToRemove = connectedClients.Single(rp => rp.remoteEndpointId == remoteEndpointId);
-			connectedClients.Remove (playerToRemove);
+			RemotePlayer playerToRemove = host_ConnectedClients.Single(rp => rp.remoteEndpointId == remoteEndpointId);
+			host_ConnectedClients.Remove (playerToRemove);
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole("Error in Host_PlayerLeft: " + e);
+			P2pInterfaceController.Instance.WriteToConsole("Error in Host_PlayerLeft: " + e.Message);
 		}
 
-		if (connectedClients.Count == 0) {
+		if (host_ConnectedClients.Count == 0) {
 			P2pInterfaceController.Instance.Host_SetStartButtonInteractive (false);
 			P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (false);
 
@@ -153,7 +158,7 @@ public class StateController : MonoBehaviour {
 
 		//Broadcast display result event if all games have been received
 		if (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
-			if (P2pGameMaster.Instance.otherGameResults.Count == connectedClients.Count) {
+			if (P2pGameMaster.Instance.otherGameResults.Count == host_ConnectedClients.Count) {
 				DisplayResult();
 			}
 		}
@@ -178,7 +183,7 @@ P2pInterfaceController.Instance.WriteToConsole("Setting screen state to " + targ
 		InitializeState (_currentState);
 		stateGoReference[_currentState].SetActive(true);
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole("Exception in SetScreenState: " + e.Message);
+			P2pInterfaceController.Instance.WriteToConsole("Exception in SetScreenState: " + e.Message + ", " + e.StackTrace);
 		}
 	}
 

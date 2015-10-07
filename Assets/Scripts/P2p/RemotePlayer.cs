@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System;
 using GooglePlayGames.BasicApi.Nearby;
 
-public class RemotePlayer
+[System.Serializable] public class RemotePlayer
 {
 
 	public string remoteEndpointId;
