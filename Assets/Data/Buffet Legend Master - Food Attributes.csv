@@ -370,7 +370,7 @@ masala,form,,Indian; entree,,common,2015.05.06
 cup of noodles,form,,Japanese; entree; hot; Korean; Chinese; Thai,,common,2015.05.06
 sriracha,ingredient,,moderate spice; tasty,,common,2015.05.06
 stromboli,form,,Italian; fancy; hot; entree,,uncommon,2015.05.06
-jellyfish,ingredient,,unappetizing; ambitious; seafood,,rare,2015.05.06
+jellyfish,ingredient,,unappetizing; risky; seafood,,rare,2015.05.06
 fritter,form,,fancy,,rare,2015.05.17
 lime,ingredient,,fruit; sour,,common,2015.05.19
 barbacoa,ingredient,,meat; tasty; Mexican; Spanish,,common,2015.05.26
@@ -387,3 +387,10 @@ frankenberry,ingredient,,risky; sweet; fruit,,uncommon,2015.07.03
 tuna,ingredient,,seafood; risky,,common,2015.07.06
 deep dish,ingredient,,tasty,,uncommon,2015.08.26
 mayonnaise,ingredient,,gross,grain+,uncommon,2015.08.26
+an ameliorative,qualifier,,nice,,uncommon,2015.09.30
+an exacerbatory,qualifier,,gross,,uncommon,2015.09.30
+grapefruit,ingredient,,fruit; cold,,uncommon,2015.10.02
+gazpacho,form,,cold; entree; risky,,uncommon,2015.10.02
+slider,form,,nice; entree; hot,,uncommon,2015.10.03
+oreo,ingredient,,sweet; dessert; classic,,common,2015.10.08
+cheese,ingredient,,classic; dairy,,common,2015.10.08

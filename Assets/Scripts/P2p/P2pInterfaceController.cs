@@ -205,7 +205,7 @@ public class P2pInterfaceController : MonoBehaviour
 				result_Result.text = outputString;
 			}
 		} catch (Exception e) {
-			WriteToConsole ("Exception in Results_Display: " + " message:  " + e.Message + " stack trace: " + e.StackTrace);
+			WriteToConsole ("Exception in Results_Display: " + " message:  " + e.Message);
 		}
 	}
 

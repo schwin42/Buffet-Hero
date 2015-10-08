@@ -97,6 +97,7 @@ potent,taste,,2,,,,,,,,,,,
 powerful,taste,,3,,,,,,,,,,,
 ultimate,taste,,4,,,,,,,,,,,
 weak,taste,,-2,,,,,,,,,,,
+frozen,temperature,,,,,,,,,,cold,hot,,
 cold,temperature,,,,,,,,,,cold,hot,,good only with cold
 hot,temperature,,,,,,,,,,hot,cold,,good only with hot
 raw,temperature,,,,,,,,,,,meat---,,ruins meat

@@ -67,14 +67,21 @@ public class ConnectionController : MonoBehaviour
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("Attempting to terminate connections...");
 		try {
+			P2pInterfaceController.Instance.WriteToConsole ("Attempt started");
 		PlayGamesPlatform.Nearby.StopAllConnections ();
+			P2pInterfaceController.Instance.WriteToConsole ("Call to GpgNearby completed");
 		remoteStatus = RemoteStatus.Idle;
+			P2pInterfaceController.Instance.WriteToConsole ("Remote status set to idle");
 		discoveryListener = null;
+			P2pInterfaceController.Instance.WriteToConsole ("Discovery listener set to null");
 		messageListener = null;
+			P2pInterfaceController.Instance.WriteToConsole ("Message listener set to null");
 		StateController.Instance.client_ConnectedHost = null;
+			P2pInterfaceController.Instance.WriteToConsole ("Connected host set to null");
 		StateController.Instance.host_ConnectedClients = null;
+			P2pInterfaceController.Instance.WriteToConsole ("Connected clients set to null");
 		StateController.Instance.client_ConnectedClients = null;
-		P2pInterfaceController.Instance.WriteToConsole ("All connections stopped");
+		P2pInterfaceController.Instance.WriteToConsole ("TerminateAllConnections completed successfully");
 		} catch (Exception e) {
 			P2pInterfaceController.Instance.WriteToConsole("Exception in TerminateAllConnections: " + e.Message);
 		}
@@ -119,11 +126,11 @@ public class ConnectionController : MonoBehaviour
 		List<string> appIdentifiers = new List<string> ();
 		appIdentifiers.Add (PlayGamesPlatform.Nearby.GetAppBundleId ());
 		PlayGamesPlatform.Nearby.StartAdvertising (
-			"First pancake",
+			"DebugSession42", //TODO User determines session name
 			appIdentifiers,
 			TimeSpan.FromSeconds (0),
 			(AdvertisingResult result) => {
-			P2pInterfaceController.Instance.WriteToConsole ("advertising result: " + result.Status + ", " + result.Succeeded);
+			P2pInterfaceController.Instance.WriteToConsole ("advertising result: " + result.Status + ", " + result.Succeeded); //TODO Throw useful error to user
 		},
 		Host_HandleConnectionRequest);
 
@@ -275,9 +282,8 @@ public class ConnectionController : MonoBehaviour
 		{
 			if (response.ResponseStatus == ConnectionResponse.Status.Accepted) {
 				Client_HandleSuccessfulConnectionToHost (response);
-				remoteStatus = RemoteStatus.EstablishedClient;
 			} else {	
-				P2pInterfaceController.Instance.WriteToConsole ("Connection failed: " + response.ResponseStatus);
+				P2pInterfaceController.Instance.WriteToConsole ("Connection failed: " + response.ResponseStatus); //TODO Connection failed, so retry or begin discovery again
 			}
 		}
 
@@ -288,6 +294,7 @@ public class ConnectionController : MonoBehaviour
 			WelcomePayload welcomePayload = (WelcomePayload)Utility.ByteArrayToPayload (response.Payload);
 			StateController.Instance.client_ConnectedHost = welcomePayload.hostPlayer;
 			StateController.Instance.client_ConnectedClients = welcomePayload.fellowClients;
+			remoteStatus = RemoteStatus.EstablishedClient;
 			StateController.Instance.Client_EnterLobby ();
 		}
 	}

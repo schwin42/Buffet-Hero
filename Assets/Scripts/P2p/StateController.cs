@@ -31,7 +31,7 @@ public class StateController : MonoBehaviour
 	}
 
 	//Configurable
-	public const float TIME_LIMIT = 15f;
+	public const float TIME_LIMIT = 30f;
 
 	string userText_WaitingForClients = "Waiting for clients...";
 	string userText_WaitingForHost = "Waiting for host...";
@@ -48,13 +48,9 @@ public class StateController : MonoBehaviour
 	private List<RemotePlayer> _client_ConnectedClients;
 	public List<RemotePlayer> client_ConnectedClients {
 		get {
-//			P2pInterfaceController.Instance.WriteToConsole("getting connectedClients: " + Environment.StackTrace);
-			P2pInterfaceController.Instance.WriteToConsole("connectedClients count = " + _client_ConnectedClients.Count);
 			return _client_ConnectedClients;
 		}
 		set {
-//			P2pInterfaceController.Instance.WriteToConsole("setting connectedClients from: " + Environment.StackTrace);
-			P2pInterfaceController.Instance.WriteToConsole("connectedClients count = " + value.Count);
 			_client_ConnectedClients = value;
 		}
 	}
@@ -255,7 +251,10 @@ public class StateController : MonoBehaviour
 		try {
 			switch (state) {
 			case AppState.LobbyScreen:
-				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive( (host_ConnectedClients != null && host_ConnectedClients.Count > 0));
+				P2pInterfaceController.Instance.WriteToConsole("connected clients = " + (host_ConnectedClients == null ? "null" : host_ConnectedClients.Count.ToString()));
+				bool startButtonState = host_ConnectedClients != null && host_ConnectedClients.Count > 0;
+				P2pInterfaceController.Instance.WriteToConsole("setting start button to: " + startButtonState);
+				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive(startButtonState);
 
 				//Set status
 				string status = "Initializing status";

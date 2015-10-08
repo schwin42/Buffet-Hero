@@ -82,7 +82,13 @@ public class GameData : MonoBehaviour
 		_instance = this;
 	}
 
-	public void OnStart() {}
+	public void Start () {
+		P2pInterfaceController.Instance.WriteToConsole (AttributeData.Count + " attributes loaded.");
+		int possibleFoods = AttributeData.Where (attribute => attribute.attributeType == AttributeType.Qualifier).Count () * 
+			AttributeData.Where (attribute => attribute.attributeType == AttributeType.Ingredient).Count () *
+			AttributeData.Where (attribute => attribute.attributeType == AttributeType.Form).Count ();
+		P2pInterfaceController.Instance.WriteToConsole (possibleFoods.ToString () + " possible foods available");
+	}
 
 	public void LoadAttributes ()
 	{
