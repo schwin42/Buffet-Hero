@@ -5,13 +5,15 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class P2pInterfaceController : MonoBehaviour {
+public class P2pInterfaceController : MonoBehaviour
+{
 
 	private static P2pInterfaceController _instance;
+
 	public static P2pInterfaceController Instance {
 		get {
-			if(_instance == null) {
-				_instance = FindObjectOfType<P2pInterfaceController>();
+			if (_instance == null) {
+				_instance = FindObjectOfType<P2pInterfaceController> ();
 			}
 			return _instance;
 		}
@@ -23,9 +25,15 @@ public class P2pInterfaceController : MonoBehaviour {
 	//Title Screen
 	private InputField title_NameInput;
 
-	//Host Screen
-	private Text host_PlayerList;
-	private Button host_StartButton;
+	//Lobby Screen
+	private Text lobby_PlayerList;
+	private Button lobby_StartButton;
+	private Text lobby_Status;
+	public string Lobby_Status {
+		set {
+			lobby_Status.text = value;
+		}
+	}
 
 	//Game Screen
 	private Text _timeRemainingText;
@@ -37,17 +45,17 @@ public class P2pInterfaceController : MonoBehaviour {
 	private Text result_Result;
 	private Button result_PlayButton;
 
-	public List<RemotePlayer> Host_JoinedPlayers {
+	public List<RemotePlayer> Lobby_JoinedPlayers {
 		set {
 			string output = "";
 			for (int i = 0; i < value.Count; i++) {
-				if(i != 0) {
+				if (i != 0) {
 					output += "\n";
 				}
-				output += value[i].profile.playerName;
+				output += value [i].profile.playerName;
 			}
-			host_PlayerList.text = output;
-			WriteToConsole("Completed set joined players");
+			lobby_PlayerList.text = output;
+			WriteToConsole ("Completed set joined players");
 		}
 	}
 
@@ -56,49 +64,53 @@ public class P2pInterfaceController : MonoBehaviour {
 		return title_NameInput.text == "" ? "Guest" : title_NameInput.text;
 	}
 
-	public void Host_SetStartButtonInteractive (bool b)
+	public void Lobby_SetStartButtonInteractive (bool b)
 	{
 		WriteToConsole ("setting start button to " + b);
 		if (b) {
-			host_StartButton.interactable = true;
+			lobby_StartButton.interactable = true;
 		} else {
-			host_StartButton.interactable = false;
+			lobby_StartButton.interactable = false;
 		}
-		WriteToConsole("Completed set start button to " + b);
+		WriteToConsole ("Completed set start button to " + b);
 	}
 
-	public void Result_SetPlayButtonInteractive (bool b) {
+	public void Result_SetPlayButtonInteractive (bool b)
+	{
 		result_PlayButton.interactable = b;
 	}
 
-	void Awake() {
+	void Awake ()
+	{
 		_instance = this;
 		gameMaster = GetComponent<P2pGameMaster> ();
 	}
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
 		WriteToConsole ("Ui started");
 		try {
-		_console = inspector_UiRoot.transform.Find ("Console/Text").GetComponent<Text>();
+			_console = inspector_UiRoot.transform.Find ("Console/Text").GetComponent<Text> ();
 
-		//Title
-		title_NameInput = inspector_UiRoot.transform.Find ("TitleScreen/NameInput").GetComponent<InputField>();
+			//Title
+			title_NameInput = inspector_UiRoot.transform.Find ("TitleScreen/NameInput").GetComponent<InputField> ();
 
-		//Host
-		host_PlayerList = inspector_UiRoot.transform.Find ("HostScreen/PlayerList").GetComponent<Text>();
-		host_StartButton = inspector_UiRoot.transform.Find ("HostScreen/StartButton").GetComponent<Button>();
+			//Lobby
+			lobby_PlayerList = inspector_UiRoot.transform.Find ("LobbyScreen/PlayerList").GetComponent<Text> ();
+			lobby_StartButton = inspector_UiRoot.transform.Find ("LobbyScreen/StartButton").GetComponent<Button> ();
+			lobby_Status = inspector_UiRoot.transform.Find ("LobbyScreen/Status").GetComponent<Text> ();
 
-		//Game
-		_timeRemainingText = inspector_UiRoot.transform.Find ("GameScreen/TimeRemaining").GetComponent<Text>();
-		_foodLine0 = inspector_UiRoot.transform.Find ("GameScreen/FoodLine0").GetComponent<Text>();
-		_score = inspector_UiRoot.transform.Find ("GameScreen/Score").GetComponent<Text>();
+			//Game
+			_timeRemainingText = inspector_UiRoot.transform.Find ("GameScreen/TimeRemaining").GetComponent<Text> ();
+			_foodLine0 = inspector_UiRoot.transform.Find ("GameScreen/FoodLine0").GetComponent<Text> ();
+			_score = inspector_UiRoot.transform.Find ("GameScreen/Score").GetComponent<Text> ();
 
-		//Result
-		result_Result = inspector_UiRoot.transform.Find ("ResultScreen/Result").GetComponent<Text>();
-		result_PlayButton = inspector_UiRoot.transform.Find ("ResultScreen/PlayButton").GetComponent<Button>();
+			//Result
+			result_Result = inspector_UiRoot.transform.Find ("ResultScreen/Result").GetComponent<Text> ();
+			result_PlayButton = inspector_UiRoot.transform.Find ("ResultScreen/PlayButton").GetComponent<Button> ();
 		} catch (Exception e) {
-			WriteToConsole("Ui start failed");
+			WriteToConsole ("Ui start failed");
 		}
 
 		ValidateUi ();
@@ -106,40 +118,43 @@ public class P2pInterfaceController : MonoBehaviour {
 		InitializeUi ();
 	}
 
-	private void ValidateUi () {
+	private void ValidateUi ()
+	{
 		try {
 //		_console.text = "";
 		
-		//Title
-		title_NameInput.text = "";
+			//Title
+			title_NameInput.text = "";
 		
-		//Host
-			host_PlayerList.text = "";
-			host_StartButton.interactable = true;
+			//Host
+			lobby_PlayerList.text = "";
+			lobby_StartButton.interactable = true;
 		
-		//Game
+			//Game
 			_timeRemainingText.text = "";
 			_foodLine0.text = "";
 			_score.text = "";
 		
-		//Result
+			//Result
 			result_Result.text = "";
 			result_PlayButton.interactable = true;
 			WriteToConsole ("Ui validated successfully");
 		} catch (Exception e) {
-			WriteToConsole("ValidateUI failed: " + e.Message + ", " + e.TargetSite);
+			WriteToConsole ("ValidateUI failed: " + e.Message + ", " + e.TargetSite);
 		}
 	}
 
-	private void InitializeUi() {
+	private void InitializeUi ()
+	{
 
 
-		host_PlayerList.text = "";
-		host_StartButton.interactable = false;
+		lobby_PlayerList.text = "";
+		lobby_StartButton.interactable = false;
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 		if (gameMaster.gameInProgress) {
 			if (gameMaster.TimerIsRunning) {
 				_timeRemainingText.text = gameMaster.TimeRemaining.ToString ("F2");
@@ -149,7 +164,7 @@ public class P2pInterfaceController : MonoBehaviour {
 //				_foodLine1.text = gameMaster.displayedFood.attributes [1].Id;
 //				_foodLine2.text = gameMaster.displayedFood.attributes [2].Id;
 			}
-			_score.text = "Score: " + gameMaster.currentScore.ToString();
+			_score.text = "Score: " + gameMaster.currentScore.ToString ();
 		}
 	}
 
@@ -157,19 +172,19 @@ public class P2pInterfaceController : MonoBehaviour {
 	{
 		try {
 			List<GameResult> allGameResults = new List<GameResult> (P2pGameMaster.Instance.otherGameResults);
-			allGameResults.Add(P2pGameMaster.Instance.myGameResult);
+			allGameResults.Add (P2pGameMaster.Instance.myGameResult);
 			//Sort by descending score
-			allGameResults = allGameResults.OrderByDescending(gameResult => gameResult.score).ToList();
+			allGameResults = allGameResults.OrderByDescending (gameResult => gameResult.score).ToList ();
 			string outputString = "";
-			WriteToConsole("all game results: " + allGameResults.Count);
-			WriteToConsole("active players: " + P2pGameMaster.Instance.ActivePlayers.Count);
-			for(int i = 0; i < allGameResults.Count; i++) {
-				GameResult currentGameResult = allGameResults[i];
-				if(i != 0) {
+			WriteToConsole ("all game results: " + allGameResults.Count);
+			WriteToConsole ("active players: " + P2pGameMaster.Instance.ActiveProfiles.Count);
+			for (int i = 0; i < allGameResults.Count; i++) {
+				GameResult currentGameResult = allGameResults [i];
+				if (i != 0) {
 					outputString += "\n";
 				}
 				string place = null;
-				switch(i) {
+				switch (i) {
 				case 0:
 					place = "1st";
 					break;
@@ -180,23 +195,24 @@ public class P2pInterfaceController : MonoBehaviour {
 					place = "3rd";
 					break;
 				default:
-					place = (i + 1).ToString() + "th";
+					place = (i + 1).ToString () + "th";
 					break;
 				}
-				WriteToConsole("current game result id: " + currentGameResult.profileId);
-				OnlineProfile player = P2pGameMaster.Instance.ActivePlayers.Single (onlineProfile => onlineProfile.profileId == currentGameResult.profileId);
+				WriteToConsole ("current game result id: " + currentGameResult.profileId);
+				OnlineProfile player = P2pGameMaster.Instance.ActiveProfiles.Single (onlineProfile => onlineProfile.profileId == currentGameResult.profileId);
 				string name = player.playerName;
 				outputString += place + " - " + name + " - " + currentGameResult.score;
 				result_Result.text = outputString;
 			}
 		} catch (Exception e) {
-			WriteToConsole("Exception in Results_Display: " + e.Message + "\n" + e.Source);
+			WriteToConsole ("Exception in Results_Display: " + " message:  " + e.Message + " stack trace: " + e.StackTrace);
 		}
 	}
 
-	public void WriteToConsole(string text) {
+	public void WriteToConsole (string text)
+	{
 		if (_console == null) {
-			_console = inspector_UiRoot.transform.Find ("Console/Text").GetComponent<Text>();
+			_console = inspector_UiRoot.transform.Find ("Console/Text").GetComponent<Text> ();
 		}
 		print ("Console: " + text);
 		_console.text = text + "\n" + _console.text;

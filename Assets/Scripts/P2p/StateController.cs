@@ -23,23 +23,63 @@ public class StateController : MonoBehaviour
 	{
 		Uninitialized = -1,
 		TitleScreen = 0,
-		HostScreen = 1,
+		WaitingScreen = 1,
 		JoinScreen = 2,
 		GameScreen = 3,
 		ResultScreen = 4,
 		LobbyScreen = 5,
-		WaitingScreen = 6
 	}
 
 	//Configurable
 	public const float TIME_LIMIT = 15f;
+
+	string userText_WaitingForClients = "Waiting for clients...";
+	string userText_WaitingForHost = "Waiting for host...";
+
+	//FSM
 	private AppState _currentState = AppState.Uninitialized;
 	private Dictionary<AppState, GameObject> stateGoReference = new Dictionary<AppState, GameObject> ();
 	public Transform inspector_ScreenContainer;
+
+	//Players
 	public List<RemotePlayer> host_ConnectedClients;
 	[System.NonSerialized]
 	public RemotePlayer client_ConnectedHost;
-	public List<RemotePlayer> client_ConnectedClients;
+	private List<RemotePlayer> _client_ConnectedClients;
+	public List<RemotePlayer> client_ConnectedClients {
+		get {
+//			P2pInterfaceController.Instance.WriteToConsole("getting connectedClients: " + Environment.StackTrace);
+			P2pInterfaceController.Instance.WriteToConsole("connectedClients count = " + _client_ConnectedClients.Count);
+			return _client_ConnectedClients;
+		}
+		set {
+//			P2pInterfaceController.Instance.WriteToConsole("setting connectedClients from: " + Environment.StackTrace);
+			P2pInterfaceController.Instance.WriteToConsole("connectedClients count = " + value.Count);
+			_client_ConnectedClients = value;
+		}
+	}
+	public List<RemotePlayer> AccessiblePlayers { //Other players in this session
+		get {
+			P2pInterfaceController.Instance.WriteToConsole ("Start of AccessiblePlayers getter");
+			P2pInterfaceController.Instance.WriteToConsole ("AP remote status: " + ConnectionController.remoteStatus);
+			if (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost || 
+				ConnectionController.remoteStatus == ConnectionController.RemoteStatus.Advertising) {
+				P2pInterfaceController.Instance.WriteToConsole ("AP as host");
+				return StateController.Instance.host_ConnectedClients //Connected players
+					.Union (new List<RemotePlayer> { new RemotePlayer (ConnectionController.localEndpointId, DeviceDatabase.activeProfile) }).ToList (); //Self
+			} else if (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+				P2pInterfaceController.Instance.WriteToConsole ("Getting active players, connected clients: " + StateController.Instance.client_ConnectedClients.Count);
+				List<RemotePlayer> output = StateController.Instance.client_ConnectedClients //Other connected clients
+					.Union (new List<RemotePlayer> { StateController.Instance.client_ConnectedHost }) //Host
+						.Union (new List<RemotePlayer> { new RemotePlayer(ConnectionController.localEndpointId, DeviceDatabase.activeProfile) }).ToList (); //Self
+				return output;
+			} else {
+				P2pInterfaceController.Instance.WriteToConsole ("No accessible players in unestablished remote state: " + ConnectionController.remoteStatus);
+				return new List<RemotePlayer> { new RemotePlayer(ConnectionController.localEndpointId, DeviceDatabase.activeProfile) }; //Self
+			}
+		}
+	} 
+
 
 	void Awake ()
 	{
@@ -74,7 +114,8 @@ public class StateController : MonoBehaviour
 		try {
 			DeviceDatabase.activeProfile.playerName = P2pInterfaceController.Instance.Title_SubmitProfileName ();
 			P2pInterfaceController.Instance.WriteToConsole ("Wrote " + DeviceDatabase.activeProfile.playerName + " to active profile");
-			SetScreenState (AppState.HostScreen);
+			ConnectionController.Instance.Host_BeginAdvertising ();
+			SetScreenState (AppState.LobbyScreen);
 		} catch (Exception e) {
 			P2pInterfaceController.Instance.WriteToConsole ("Exception: " + e.Message);
 		}
@@ -121,8 +162,13 @@ public class StateController : MonoBehaviour
 
 	public void ExitToTitle ()
 	{
+		P2pInterfaceController.Instance.WriteToConsole ("Exiting to title");
+		try {
 		ConnectionController.Instance.TerminateAllConnections ();
 		SetScreenState (AppState.TitleScreen);
+		} catch (Exception e) {
+			P2pInterfaceController.Instance.WriteToConsole("Exception in ExitToTitle: " + e.Message);
+		}
 	}
 
 	//Triggered
@@ -147,8 +193,8 @@ public class StateController : MonoBehaviour
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("Player joined!");
 		host_ConnectedClients.Add (player);
-		P2pInterfaceController.Instance.Host_JoinedPlayers = host_ConnectedClients;
-		P2pInterfaceController.Instance.Host_SetStartButtonInteractive (true);
+		P2pInterfaceController.Instance.Lobby_JoinedPlayers = AccessiblePlayers;
+		P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive (true);
 	}
 
 	public void Host_PlayerLeft (string remoteEndpointId)
@@ -157,9 +203,9 @@ public class StateController : MonoBehaviour
 		try {
 			RemotePlayer playerToRemove = host_ConnectedClients.Single (rp => rp.remoteEndpointId == remoteEndpointId);
 			host_ConnectedClients.Remove (playerToRemove);
-			P2pInterfaceController.Instance.Host_JoinedPlayers = host_ConnectedClients;
+			P2pInterfaceController.Instance.Lobby_JoinedPlayers = AccessiblePlayers;
 			if (host_ConnectedClients.Count == 0) {
-				P2pInterfaceController.Instance.Host_SetStartButtonInteractive (false);
+				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive (false);
 				P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (false); 
 				
 			}
@@ -208,28 +254,40 @@ public class StateController : MonoBehaviour
 		P2pInterfaceController.Instance.WriteToConsole ("initializing " + state);
 		try {
 			switch (state) {
-			case AppState.HostScreen:
-				P2pInterfaceController.Instance.Host_SetStartButtonInteractive( (host_ConnectedClients ?? new List<RemotePlayer> ()).Count != 0);
-				P2pInterfaceController.Instance.Host_JoinedPlayers = host_ConnectedClients ?? new List<RemotePlayer>();
-				ConnectionController.Instance.Host_BeginAdvertising ();
-				P2pInterfaceController.Instance.WriteToConsole ("completed host screen" + state);
+			case AppState.LobbyScreen:
+				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive( (host_ConnectedClients != null && host_ConnectedClients.Count > 0));
+
+				//Set status
+				string status = "Initializing status";
+				if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.Advertising) { 
+					status = userText_WaitingForClients;
+				} else if (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+					status = userText_WaitingForHost;
+				} else {
+					P2pInterfaceController.Instance.WriteToConsole("Unexpected remote state: " + ConnectionController.remoteStatus);
+					status = "Initialization failed";
+				}
+				P2pInterfaceController.Instance.Lobby_Status = status;
+
+				P2pInterfaceController.Instance.Lobby_JoinedPlayers = AccessiblePlayers;
+				P2pInterfaceController.Instance.WriteToConsole ("completed lobby screen");
 				break;
 			case AppState.JoinScreen:
 				ConnectionController.Instance.Client_BeginDiscovery ();
-				P2pInterfaceController.Instance.WriteToConsole ("completed join screen" + state);
+				P2pInterfaceController.Instance.WriteToConsole ("completed join screen");
 				break;
 			case AppState.GameScreen:
 				P2pGameMaster.Instance.BeginNewGame ();
-				P2pInterfaceController.Instance.WriteToConsole ("completed game screen" + state);
+				P2pInterfaceController.Instance.WriteToConsole ("completed game screen");
 				break;
 			case AppState.ResultScreen:
 				P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost);
 				P2pInterfaceController.Instance.Results_Display ();
-				P2pInterfaceController.Instance.WriteToConsole ("completed result screen" + state);
+				P2pInterfaceController.Instance.WriteToConsole ("completed result screen");
 				break;
 			}
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole ("Somewhat expected error at this point." + e.Message + " " + e.TargetSite);
+			P2pInterfaceController.Instance.WriteToConsole ("Shit, initialize state failed." + e.Message);
 		}
 	}
 }

@@ -17,21 +17,9 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	//Game session records
-	public List<OnlineProfile> ActivePlayers { //Other players in this session
+	public List<OnlineProfile> ActiveProfiles { //Other players in this session
 		get {
-			if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
-				return StateController.Instance.host_ConnectedClients.Select(remotePlayer => remotePlayer.profile) //Connected players
-					.Union(new List<OnlineProfile> { DeviceDatabase.activeProfile }).ToList(); //Self
-			} else if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
-				P2pInterfaceController.Instance.WriteToConsole("Getting active players, connected clients: " + StateController.Instance.client_ConnectedClients.Count);
-				List<OnlineProfile> output = StateController.Instance.client_ConnectedClients.Select(remotePlayer => remotePlayer.profile)
-					.Union ( new List<OnlineProfile> { StateController.Instance.client_ConnectedHost.profile } )
-						.Union ( new List<OnlineProfile> { DeviceDatabase.activeProfile } ).ToList();
-				return output;
-			} else {
-				P2pInterfaceController.Instance.WriteToConsole("No active players in unestablished remote state");
-				return null;
-			}
+			return StateController.Instance.AccessiblePlayers.Select(rp => rp.profile).ToList();
 		}
 	} 
 

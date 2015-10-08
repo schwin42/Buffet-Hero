@@ -36,6 +36,7 @@ public class ConnectionController : MonoBehaviour
 	public static RemoteStatus remoteStatus = RemoteStatus.Uninitialized;
 	DiscoveryListener discoveryListener;
 	public MessageListener messageListener;
+	public static string localEndpointId;
 
 	public void Awake ()
 	{
@@ -47,6 +48,8 @@ public class ConnectionController : MonoBehaviour
 		InitializeGpgNearby ();
 
 		serviceId = PlayGamesPlatform.Nearby.GetServiceId ();
+
+		localEndpointId = PlayGamesPlatform.Nearby.LocalEndpointId ();
 
 		remoteStatus = RemoteStatus.Idle;
 	}
@@ -62,6 +65,8 @@ public class ConnectionController : MonoBehaviour
 
 	public void TerminateAllConnections ()
 	{
+		P2pInterfaceController.Instance.WriteToConsole ("Attempting to terminate connections...");
+		try {
 		PlayGamesPlatform.Nearby.StopAllConnections ();
 		remoteStatus = RemoteStatus.Idle;
 		discoveryListener = null;
@@ -70,6 +75,9 @@ public class ConnectionController : MonoBehaviour
 		StateController.Instance.host_ConnectedClients = null;
 		StateController.Instance.client_ConnectedClients = null;
 		P2pInterfaceController.Instance.WriteToConsole ("All connections stopped");
+		} catch (Exception e) {
+			P2pInterfaceController.Instance.WriteToConsole("Exception in TerminateAllConnections: " + e.Message);
+		}
 	}
 
 	public void BroadcastEvent (Payload payload)
@@ -134,7 +142,7 @@ public class ConnectionController : MonoBehaviour
 		try {
 			PlayGamesPlatform.Nearby.AcceptConnectionRequest (
 				request.RemoteEndpoint.EndpointId,
-				Utility.PayloadToByteArray(new WelcomePayload(new RemotePlayer(PlayGamesPlatform.Nearby.LocalEndpointId(), DeviceDatabase.activeProfile), StateController.Instance.client_ConnectedClients)),
+				Utility.PayloadToByteArray(new WelcomePayload(new RemotePlayer(PlayGamesPlatform.Nearby.LocalEndpointId(), DeviceDatabase.activeProfile), StateController.Instance.host_ConnectedClients)),
 				messageListener);
 
 			RemotePlayer remotePlayer = ((PlayerJoinedPayload)Utility.ByteArrayToPayload (request.Payload)).remotePlayer; //TODO better type validation/ error checking
@@ -277,10 +285,10 @@ public class ConnectionController : MonoBehaviour
 		{
 			P2pInterfaceController.Instance.WriteToConsole ("Connection successful!");
 			PlayGamesPlatform.Nearby.StopDiscovery (ConnectionController.serviceId);
-			StateController.Instance.Client_EnterLobby ();
 			WelcomePayload welcomePayload = (WelcomePayload)Utility.ByteArrayToPayload (response.Payload);
 			StateController.Instance.client_ConnectedHost = welcomePayload.hostPlayer;
 			StateController.Instance.client_ConnectedClients = welcomePayload.fellowClients;
+			StateController.Instance.Client_EnterLobby ();
 		}
 	}
 	
