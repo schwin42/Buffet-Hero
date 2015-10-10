@@ -5,8 +5,21 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
+public enum AppState
+{
+	Uninitialized = -1,
+	TitleScreen = 0,
+	WaitingScreen = 1,
+	JoinScreen = 2,
+	GameScreen = 3,
+	ResultScreen = 4,
+	LobbyScreen = 5,
+}
+
 public class P2pInterfaceController : MonoBehaviour
 {
+	string userText_WaitingForClients = "Waiting for clients...";
+	string userText_WaitingForHost = "Waiting for host...";
 
 	private static P2pInterfaceController _instance;
 
@@ -19,8 +32,17 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 	}
 
+	//FSM
+	private AppState _currentState = AppState.Uninitialized;
+	private Dictionary<AppState, GameObject> stateGoReference = new Dictionary<AppState, GameObject> ();
+	public Transform inspector_ScreenContainer;
+
+
 	private P2pGameMaster gameMaster;
 	public Transform inspector_UiRoot;
+
+	//Debug
+	private Text _console;
 
 	//Title Screen
 	private InputField title_NameInput;
@@ -36,16 +58,16 @@ public class P2pInterfaceController : MonoBehaviour
 	}
 
 	//Game Screen
-	private Text _timeRemainingText;
-	private Text _foodLine0;
-	private Text _score;
-	private Text _console;
+	private Text game_TimeRemaining;
+	private Text game_Food;
+	private Text game_Score;
+	private Text game_PlayerName;
 
 	//Result Screen
 	private Text result_Result;
 	private Button result_PlayButton;
 
-	public List<RemotePlayer> Lobby_JoinedPlayers {
+	public List<RemotePlayer> PlayersInLobby {
 		set {
 			string output = "";
 			for (int i = 0; i < value.Count; i++) {
@@ -59,9 +81,9 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 	}
 
-	public string Title_SubmitProfileName ()
+	public void Title_SubmitProfileName ()
 	{
-		return title_NameInput.text == "" ? "Guest" : title_NameInput.text;
+		DeviceDatabase.Instance.ActivePlayerName = title_NameInput.text;
 	}
 
 	public void Lobby_SetStartButtonInteractive (bool b)
@@ -89,33 +111,43 @@ public class P2pInterfaceController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		//Initialize screen dictionary
+		for (int i = 0; i < Enum.GetValues(typeof(AppState)).Length - 1; i++) {
+			AppState appState = (AppState)i;
+			GameObject screenGo = inspector_ScreenContainer.Find (appState.ToString ()).gameObject;
+			stateGoReference.Add (appState, screenGo);
+		}
+
+
 		WriteToConsole ("Ui started");
 		try {
-			_console = inspector_UiRoot.transform.Find ("Console/Text").GetComponent<Text> ();
+			DeviceDatabase.Instance.ProfileChanged += UpdateProfileDisplay;
 
 			//Title
 			title_NameInput = inspector_UiRoot.transform.Find ("TitleScreen/NameInput").GetComponent<InputField> ();
-
 			//Lobby
 			lobby_PlayerList = inspector_UiRoot.transform.Find ("LobbyScreen/PlayerList").GetComponent<Text> ();
 			lobby_StartButton = inspector_UiRoot.transform.Find ("LobbyScreen/StartButton").GetComponent<Button> ();
 			lobby_Status = inspector_UiRoot.transform.Find ("LobbyScreen/Status").GetComponent<Text> ();
 
 			//Game
-			_timeRemainingText = inspector_UiRoot.transform.Find ("GameScreen/TimeRemaining").GetComponent<Text> ();
-			_foodLine0 = inspector_UiRoot.transform.Find ("GameScreen/FoodLine0").GetComponent<Text> ();
-			_score = inspector_UiRoot.transform.Find ("GameScreen/Score").GetComponent<Text> ();
-
+			game_TimeRemaining = inspector_UiRoot.transform.Find ("GameScreen/TimeRemaining").GetComponent<Text> ();
+			game_Food = inspector_UiRoot.transform.Find ("GameScreen/FoodLine0").GetComponent<Text> ();
+			game_Score = inspector_UiRoot.transform.Find ("GameScreen/Score").GetComponent<Text> ();
+			game_PlayerName = inspector_UiRoot.transform.Find ("GameScreen/PlayerName").GetComponent<Text> ();
 			//Result
 			result_Result = inspector_UiRoot.transform.Find ("ResultScreen/Result").GetComponent<Text> ();
 			result_PlayButton = inspector_UiRoot.transform.Find ("ResultScreen/PlayButton").GetComponent<Button> ();
 		} catch (Exception e) {
-			WriteToConsole ("Ui start failed");
+			WriteToConsole ("Ui start failed: " + e.Message);
 		}
 
 		ValidateUi ();
 
 		InitializeUi ();
+
+		//Display first screen
+		SetScreenState (AppState.TitleScreen);
 	}
 
 	private void ValidateUi ()
@@ -131,9 +163,10 @@ public class P2pInterfaceController : MonoBehaviour
 			lobby_StartButton.interactable = true;
 		
 			//Game
-			_timeRemainingText.text = "";
-			_foodLine0.text = "";
-			_score.text = "";
+			game_TimeRemaining.text = "";
+			game_Food.text = "";
+			game_Score.text = "";
+			game_PlayerName.text = "";
 		
 			//Result
 			result_Result.text = "";
@@ -157,14 +190,14 @@ public class P2pInterfaceController : MonoBehaviour
 	{
 		if (gameMaster.gameInProgress) {
 			if (gameMaster.TimerIsRunning) {
-				_timeRemainingText.text = gameMaster.TimeRemaining.ToString ("F2");
+				game_TimeRemaining.text = gameMaster.TimeRemaining.ToString ("F1");
 			}
 			if (gameMaster.displayedFood.attributes.Count != 0) {
-				_foodLine0.text = gameMaster.displayedFood.Name;
+				game_Food.text = gameMaster.displayedFood.Name;
 //				_foodLine1.text = gameMaster.displayedFood.attributes [1].Id;
 //				_foodLine2.text = gameMaster.displayedFood.attributes [2].Id;
 			}
-			_score.text = "Score: " + gameMaster.currentScore.ToString ();
+			game_Score.text = gameMaster.currentScore.ToString ();
 		}
 	}
 
@@ -217,4 +250,150 @@ public class P2pInterfaceController : MonoBehaviour
 		print ("Console: " + text);
 		_console.text = text + "\n" + _console.text;
 	}
+
+	void UpdateProfileDisplay (object sender, EventArgs e)
+	{
+		string name = DeviceDatabase.Instance.ActivePlayerName;
+		game_PlayerName.text = name;
+		title_NameInput.text = name;
+	}
+
+	public void SetScreenState (AppState targetState)
+	{
+		P2pInterfaceController.Instance.WriteToConsole ("Setting screen state to " + targetState + " from " + _currentState);
+		try {
+			if (_currentState != AppState.Uninitialized) {
+				//Disable last state and clean up
+				stateGoReference [_currentState].SetActive (false);
+			} else {
+				//Disable all screens before initialization
+				foreach (KeyValuePair<AppState, GameObject> pair in stateGoReference) {
+					pair.Value.SetActive (false);
+				}
+			}
+			_currentState = targetState;
+			InitializeState (_currentState);
+			stateGoReference [_currentState].SetActive (true);
+		} catch (Exception e) {
+			P2pInterfaceController.Instance.WriteToConsole ("Exception in SetScreenState: " + e.Message + ", " + e.StackTrace);
+		}
+	}
+
+	private void InitializeState (AppState state)
+	{
+		P2pInterfaceController.Instance.WriteToConsole ("initializing " + state);
+		try {
+			switch (state) {
+			case AppState.LobbyScreen:
+				bool startButtonState = ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost &&
+					ConnectionController.Instance.AccessiblePlayers.Count >= 2;
+				P2pInterfaceController.Instance.WriteToConsole("setting start button to: " + startButtonState);
+				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive(startButtonState);
+				
+				//Set status
+				string status = "Initializing status";
+				if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.Advertising) { 
+					status = userText_WaitingForClients;
+				} else if (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+					status = userText_WaitingForHost;
+				} else {
+					P2pInterfaceController.Instance.WriteToConsole("Unexpected remote state: " + ConnectionController.remoteStatus);
+					status = "Initialization failed";
+				}
+				P2pInterfaceController.Instance.Lobby_Status = status;
+				
+				P2pInterfaceController.Instance.PlayersInLobby = ConnectionController.Instance.AccessiblePlayers;
+				P2pInterfaceController.Instance.WriteToConsole ("completed lobby screen");
+				break;
+			case AppState.JoinScreen:
+				ConnectionController.Instance.Client_BeginDiscovery ();
+				P2pInterfaceController.Instance.WriteToConsole ("completed join screen");
+				break;
+			case AppState.GameScreen:
+				game_PlayerName.text = DeviceDatabase.Instance.ActivePlayerName;
+				P2pGameMaster.Instance.BeginNewGame ();
+				P2pInterfaceController.Instance.WriteToConsole ("completed game screen");
+				break;
+			case AppState.ResultScreen:
+				P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost);
+				P2pInterfaceController.Instance.Results_Display ();
+				P2pInterfaceController.Instance.WriteToConsole ("completed result screen");
+				break;
+			case AppState.TitleScreen:
+				P2pInterfaceController.Instance.WriteToConsole("IS, active player name: " + DeviceDatabase.Instance.ActivePlayerName);
+				P2pInterfaceController.Instance.WriteToConsole("IS, name input: " + title_NameInput);
+				title_NameInput.text = DeviceDatabase.Instance.ActivePlayerName;
+				break;
+			}
+		} catch (Exception e) {
+			P2pInterfaceController.Instance.WriteToConsole ("Shit, initialize state failed." + e.Message);
+		}
+	}
+
+	# region local event handlers
+	
+	//Buttons
+	public void Host_CreateGame ()
+	{
+		P2pInterfaceController.Instance.WriteToConsole ("Creating game");
+		try {
+			P2pInterfaceController.Instance.WriteToConsole ("Wrote " + DeviceDatabase.Instance.ActivePlayerName + " to active profile");
+			ConnectionController.Instance.Host_BeginAdvertising ();
+			SetScreenState (AppState.LobbyScreen);
+		} catch (Exception e) {
+			P2pInterfaceController.Instance.WriteToConsole ("Exception: " + e.Message);
+		}
+	}
+	
+	public void Host_StartGame ()
+	{
+		ConnectionController.Instance.Host_BeginSession (); //Stop advertising and update remote status
+		
+		GameSettings gameSettings = new GameSettings (StateController.TIME_LIMIT, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed); //Bundle and send game settings to clients
+		P2pGameMaster.Instance.LoadGameSettings (gameSettings);
+		ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings));
+		//TODO Check if event is successful
+		SetScreenState (AppState.GameScreen);
+	}
+	
+	//	public void Host_ReceiveGameResult() {
+	//		//Echo game result to all other clients
+	//	}
+	
+	public void Client_JoinGame ()
+	{
+		SetScreenState (AppState.JoinScreen);
+	}
+	
+	public void DisplayResult ()
+	{
+		P2pInterfaceController.Instance.WriteToConsole ("Beginning display result, remote status: " + ConnectionController.remoteStatus);
+		if (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
+			ConnectionController.Instance.BroadcastEvent (new DisplayResultsEvent ());
+		}
+		
+		P2pInterfaceController.Instance.WriteToConsole ("Displaying result");
+		SetScreenState (AppState.ResultScreen);
+	}
+	
+	public void ExitToTitle ()
+	{
+		P2pInterfaceController.Instance.WriteToConsole ("Exiting to title");
+		try {
+			ConnectionController.Instance.TerminateAllConnections ();
+			SetScreenState (AppState.TitleScreen);
+		} catch (Exception e) {
+			P2pInterfaceController.Instance.WriteToConsole("Exception in ExitToTitle: " + e.Message);
+		}
+	}
+	
+	//Triggered
+	public void GameFinished (GameResult gameResult)
+	{
+		P2pInterfaceController.Instance.WriteToConsole ("Game finished");
+		SetScreenState (AppState.WaitingScreen);
+		ConnectionController.Instance.BroadcastEvent (new GameResultPayload (gameResult));
+		
+	}
+	#endregion
 }

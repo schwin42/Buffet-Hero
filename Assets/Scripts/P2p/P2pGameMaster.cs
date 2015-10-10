@@ -19,7 +19,7 @@ public class P2pGameMaster : MonoBehaviour {
 	//Game session records
 	public List<OnlineProfile> ActiveProfiles { //Other players in this session
 		get {
-			return StateController.Instance.AccessiblePlayers.Select(rp => rp.profile).ToList();
+			return ConnectionController.Instance.AccessiblePlayers.Select(rp => rp.profile).ToList();
 		}
 	} 
 
@@ -99,8 +99,8 @@ public class P2pGameMaster : MonoBehaviour {
 
 	public void EndGame () {
 		gameInProgress = false;
-		myGameResult = new GameResult (currentScore, eatenFoods.Count, DeviceDatabase.activeProfile.profileId);
-		StateController.Instance.GameFinished (myGameResult);
+		myGameResult = new GameResult (currentScore, eatenFoods.Count, DeviceDatabase.Instance.ProfileId);
+		P2pInterfaceController.Instance.GameFinished (myGameResult);
 	}
 
 	void StartTimer() {

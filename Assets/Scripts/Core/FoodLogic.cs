@@ -20,9 +20,9 @@ public class Food
 		}
 	}
 	
-	private float netValue;
-	private float netMagnitude;
-	private float netAbsolute;
+//	private float netValue;
+//	private float netMagnitude;
+//	private float netAbsolute;
 	private float _quality;
 	
 	public float? Quality { 
@@ -153,9 +153,9 @@ public class Food
 			netMagnitude += tag.magnitude;
 			netAbsolute += tag.absolute;
 		}
-		this.netValue = netValue;
-		this.netMagnitude = netMagnitude;
-		this.netAbsolute = netAbsolute;
+//		this.netValue = netValue;
+//		this.netMagnitude = netMagnitude;
+//		this.netAbsolute = netAbsolute;
 		float preAbsoluteValue = (netValue >= 0 ? netValue + 1 : netValue) * (netMagnitude <= -4 ? .25f : (netMagnitude / 4) + 1);
 		float postAbsoluteValue;
 		if (netAbsolute == 0) {
