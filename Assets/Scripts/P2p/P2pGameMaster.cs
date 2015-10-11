@@ -153,11 +153,11 @@ public class P2pGameMaster : MonoBehaviour {
 
 [System.Serializable] public class GameResult {
 	public int foodsEaten;
-	public float score;
+	public float finalScore;
 	public Guid profileId;
 
 	public GameResult(float score, int foodsEaten, Guid profileId) {
-		this.score = score;
+		this.finalScore = score;
 		this.foodsEaten = foodsEaten;
 		this.profileId = profileId;
 	}
@@ -170,10 +170,10 @@ public class P2pGameMaster : MonoBehaviour {
 	public int ingredientSeed;
 	public int formSeed;
 
-	public GameSettings (float timeLimit, int qualifierSeed, int ingredientSeed, int formSeed) {
+	public GameSettings (float timeLimit) {
 		this.timeLimit = timeLimit;
-		this.qualifierSeed = qualifierSeed;
-		this.ingredientSeed = ingredientSeed;
-		this.formSeed = formSeed;
+		this.qualifierSeed = FoodLogic.NextUnityRandomSeed;
+		this.ingredientSeed = FoodLogic.NextUnityRandomSeed;
+		this.formSeed = FoodLogic.NextUnityRandomSeed;
 	}
 }

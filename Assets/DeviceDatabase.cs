@@ -54,6 +54,7 @@ public class DeviceDatabase : MonoBehaviour {
 	#region ActivePlayer API
 	public string ActivePlayerName {
 		get {
+
 			return _activeProfile.playerName;
 		}
 		set {
@@ -68,6 +69,34 @@ public class DeviceDatabase : MonoBehaviour {
 		}
 	}
 	#endregion
+
+	public void RecordGameToActiveProfile (GameResult gameResult)
+	{
+		_activeProfile.gamesPlayed ++;
+		_activeProfile.foodsEaten += gameResult.foodsEaten;
+		_activeProfile.lifetimeScore += gameResult.finalScore;
+		if (_activeProfile.bestScore.HasValue) {
+			if(_activeProfile.bestScore < gameResult.finalScore) _activeProfile.bestScore = gameResult.finalScore;
+		} else {
+			_activeProfile.bestScore = gameResult.finalScore;
+		}
+		if (_activeProfile.worstScore.HasValue) {
+			if(_activeProfile.worstScore < gameResult.finalScore) _activeProfile.worstScore = gameResult.finalScore;
+		} else {
+			_activeProfile.worstScore = gameResult.finalScore;
+		}
+
+		SaveToBinaryFile(GetProfileFullName(_activeProfile.profileId), _activeProfile);
+
+		//TODO
+//		tastiestFoodEaten = sourceProfile.tastiestFoodEaten;
+//		grossestFoodEaten = sourceProfile.grossestFoodEaten;
+//		tastiestFoodMissed = sourceProfile.tastiestFoodMissed;
+//		grossestFoodMissed = sourceProfile.grossestFoodMissed;
+		
+//		this.pointRating = sourceProfile.pointRating;
+
+	}
 
 	public event EventHandler<ProfileEventArgs> ProfileChanged;
 	private void OnProfileChanged(OnlineProfile profile) {
@@ -183,6 +212,8 @@ public class DeviceDatabase : MonoBehaviour {
 {
 	public Guid profileId = Guid.Empty;
 	public string playerName = "";
+
+	//TODO
 	public int gamesPlayed = 0;
 	public int foodsEaten = 0;
 	public float lifetimeScore = 0f;
@@ -205,13 +236,17 @@ public class DeviceDatabase : MonoBehaviour {
 			return foodsEaten > 0 ? lifetimeScore / foodsEaten : 0;
 		}
 	}
-	public float bestScore = 0f;
-	public float worstScore = 0f;
+	public float? bestScore = null;
+	public float? worstScore = null;
 	//public float winPercentage = 0f;
-	public Food tastiestFoodEaten = null;
-	public Food grossestFoodEaten = null;
-	public Food tastiestFoodMissed = null;
-	public Food grossestFoodMissed = null;
+	public FoodInfo tastiestFoodEaten = null;
+	public FoodInfo grossestFoodEaten = null;
+	public FoodInfo tastiestFoodMissed = null;
+	public FoodInfo grossestFoodMissed = null;
+
+	//TODO New
+	public int pointRating;
+
 	
 	public OnlineProfile () {
 		profileId = Guid.NewGuid ();
@@ -227,7 +262,9 @@ public class DeviceDatabase : MonoBehaviour {
 	{
 		profileId = sourceProfile.profileId;
 		playerName = sourceProfile.playerName;
-		gamesPlayed = sourceProfile.gamesPlayed;
+
+
+		gamesPlayed = sourceProfile.gamesPlayed; //TOOD Differentiate between different game modes
 		foodsEaten = sourceProfile.foodsEaten;
 		lifetimeScore = sourceProfile.lifetimeScore;
 		bestScore = sourceProfile.bestScore;
@@ -236,6 +273,8 @@ public class DeviceDatabase : MonoBehaviour {
 		grossestFoodEaten = sourceProfile.grossestFoodEaten;
 		tastiestFoodMissed = sourceProfile.tastiestFoodMissed;
 		grossestFoodMissed = sourceProfile.grossestFoodMissed;
+
+		this.pointRating = sourceProfile.pointRating;
 	}
 	
 }

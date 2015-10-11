@@ -32,6 +32,8 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 	}
 
+	const float TIME_LIMIT = 30F;
+
 	//FSM
 	private AppState _currentState = AppState.Uninitialized;
 	private Dictionary<AppState, GameObject> stateGoReference = new Dictionary<AppState, GameObject> ();
@@ -207,7 +209,7 @@ public class P2pInterfaceController : MonoBehaviour
 			List<GameResult> allGameResults = new List<GameResult> (P2pGameMaster.Instance.otherGameResults);
 			allGameResults.Add (P2pGameMaster.Instance.myGameResult);
 			//Sort by descending score
-			allGameResults = allGameResults.OrderByDescending (gameResult => gameResult.score).ToList ();
+			allGameResults = allGameResults.OrderByDescending (gameResult => gameResult.finalScore).ToList ();
 			string outputString = "";
 			WriteToConsole ("all game results: " + allGameResults.Count);
 			WriteToConsole ("active players: " + P2pGameMaster.Instance.ActiveProfiles.Count);
@@ -234,7 +236,7 @@ public class P2pInterfaceController : MonoBehaviour
 				WriteToConsole ("current game result id: " + currentGameResult.profileId);
 				OnlineProfile player = P2pGameMaster.Instance.ActiveProfiles.Single (onlineProfile => onlineProfile.profileId == currentGameResult.profileId);
 				string name = player.playerName;
-				outputString += place + " - " + name + " - " + currentGameResult.score;
+				outputString += place + " - " + name + " - " + currentGameResult.finalScore;
 				result_Result.text = outputString;
 			}
 		} catch (Exception e) {
@@ -285,19 +287,19 @@ public class P2pInterfaceController : MonoBehaviour
 		try {
 			switch (state) {
 			case AppState.LobbyScreen:
-				bool startButtonState = ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost &&
+				bool startButtonState = ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost &&
 					ConnectionController.Instance.AccessiblePlayers.Count >= 2;
 				P2pInterfaceController.Instance.WriteToConsole("setting start button to: " + startButtonState);
 				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive(startButtonState);
 				
 				//Set status
 				string status = "Initializing status";
-				if(ConnectionController.remoteStatus == ConnectionController.RemoteStatus.Advertising) { 
+				if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising) { 
 					status = userText_WaitingForClients;
-				} else if (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+				} else if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
 					status = userText_WaitingForHost;
 				} else {
-					P2pInterfaceController.Instance.WriteToConsole("Unexpected remote state: " + ConnectionController.remoteStatus);
+					P2pInterfaceController.Instance.WriteToConsole("Unexpected remote state: " + ConnectionController.Instance.remoteStatus);
 					status = "Initialization failed";
 				}
 				P2pInterfaceController.Instance.Lobby_Status = status;
@@ -315,7 +317,7 @@ public class P2pInterfaceController : MonoBehaviour
 				P2pInterfaceController.Instance.WriteToConsole ("completed game screen");
 				break;
 			case AppState.ResultScreen:
-				P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost);
+				P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost);
 				P2pInterfaceController.Instance.Results_Display ();
 				P2pInterfaceController.Instance.WriteToConsole ("completed result screen");
 				break;
@@ -330,18 +332,23 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 	}
 
-	# region local event handlers
-	
-	//Buttons
+	# region button handlers
+
+	public void Single_StartGame () {
+		WriteToConsole ("Starting single player game");
+		P2pGameMaster.Instance.LoadGameSettings (new GameSettings (TIME_LIMIT));
+		SetScreenState (AppState.GameScreen);
+	}
+
 	public void Host_CreateGame ()
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("Creating game");
 		try {
-			P2pInterfaceController.Instance.WriteToConsole ("Wrote " + DeviceDatabase.Instance.ActivePlayerName + " to active profile");
+//			P2pInterfaceController.Instance.WriteToConsole ("Wrote " + DeviceDatabase.Instance.ActivePlayerName + " to active profile");
 			ConnectionController.Instance.Host_BeginAdvertising ();
 			SetScreenState (AppState.LobbyScreen);
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole ("Exception: " + e.Message);
+			P2pInterfaceController.Instance.WriteToConsole ("Exception in Host_CreateGame: " + e.Message);
 		}
 	}
 	
@@ -349,7 +356,7 @@ public class P2pInterfaceController : MonoBehaviour
 	{
 		ConnectionController.Instance.Host_BeginSession (); //Stop advertising and update remote status
 		
-		GameSettings gameSettings = new GameSettings (StateController.TIME_LIMIT, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed, FoodLogic.NextUnityRandomSeed); //Bundle and send game settings to clients
+		GameSettings gameSettings = new GameSettings (TIME_LIMIT); //Bundle and send game settings to clients
 		P2pGameMaster.Instance.LoadGameSettings (gameSettings);
 		ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings));
 		//TODO Check if event is successful
@@ -367,8 +374,8 @@ public class P2pInterfaceController : MonoBehaviour
 	
 	public void DisplayResult ()
 	{
-		P2pInterfaceController.Instance.WriteToConsole ("Beginning display result, remote status: " + ConnectionController.remoteStatus);
-		if (ConnectionController.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
+		P2pInterfaceController.Instance.WriteToConsole ("Beginning display result, remote status: " + ConnectionController.Instance.remoteStatus);
+		if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
 			ConnectionController.Instance.BroadcastEvent (new DisplayResultsEvent ());
 		}
 		
@@ -390,9 +397,26 @@ public class P2pInterfaceController : MonoBehaviour
 	//Triggered
 	public void GameFinished (GameResult gameResult)
 	{
-		P2pInterfaceController.Instance.WriteToConsole ("Game finished");
-		SetScreenState (AppState.WaitingScreen);
-		ConnectionController.Instance.BroadcastEvent (new GameResultPayload (gameResult));
+		WriteToConsole ("Finishing game");
+		try {
+			if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost || 
+			    ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+				P2pInterfaceController.Instance.WriteToConsole ("Game finished");
+				SetScreenState (AppState.WaitingScreen);
+				ConnectionController.Instance.BroadcastEvent (new GameResultPayload (gameResult));
+			} else if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Idle) {
+				SetScreenState(AppState.ResultScreen);
+			} else {
+				WriteToConsole("Unhandled remote status in GameFinished: " + ConnectionController.Instance.remoteStatus);
+			}
+
+			//Save records
+			DeviceDatabase.Instance.RecordGameToActiveProfile(gameResult);
+
+		} catch (Exception e) {
+			WriteToConsole("Exception in GameFinished: " + e.Message);
+		}
+
 		
 	}
 	#endregion

@@ -176,9 +176,7 @@ public class Food
 	}
 	
 	//Used in get food functions in game controller
-	public Food ()
-	{
-	}
+	public Food () { }
 	
 	//Copy food
 	public Food (Food food)
@@ -197,6 +195,18 @@ public class Food
 	public List<FoodAttribute> attributes = new List<FoodAttribute> ();
 	public List<Tag> virtualTags = new List<Tag> ();
 	
+}
+
+[System.Serializable] public class FoodInfo {
+	string name;
+	List<string> attributeIds;
+	float quality;
+
+	public FoodInfo (string name, List<string> attributeIds, float quality) {
+		this.name = name;
+		this.attributeIds = attributeIds;
+		this.quality = quality;
+	}
 }
 
 [System.Serializable]
