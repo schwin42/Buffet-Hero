@@ -144,12 +144,14 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	public void HandleEatResponse() {
+		P2pInterfaceController.Instance.PlaySound(SoundEffect.Eat);
 		choices.Add (true);
 		currentScore += displayedFood.Quality.Value;
 		NextFood ();
 	}
 
 	public void HandlePassResponse() {
+		P2pInterfaceController.Instance.PlaySound(SoundEffect.Pass);
 		choices.Add (false);
 		NextFood ();
 	}

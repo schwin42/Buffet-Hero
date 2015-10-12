@@ -1,15 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum SoundEffect{
-	None = -1,
-	Click = 0,
-	OrderFood = 1,
-	Swoop = 2
-}
-
-
-
 public class AudioController : MonoBehaviour {
 
 	public static AudioController Instance;

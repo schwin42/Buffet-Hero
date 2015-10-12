@@ -304,7 +304,7 @@ public class Player : MonoBehaviour {
 
 		playerChoice = PlayerChoice.Eat;
 		plate.foods.Add (new Food(GameController.Instance.activeFood));
-		AudioController.Instance.PlaySound(SoundEffect.OrderFood);
+		AudioController.Instance.PlaySound(SoundEffect.Eat);
 //		Food food = GameController.Instance.activeFood;
 //		//float foodValue = GameController.Instance.activeFood.Value;
 //		float foodQuality = food.Quality;

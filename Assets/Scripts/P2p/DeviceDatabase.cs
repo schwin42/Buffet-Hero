@@ -78,14 +78,10 @@ public class DeviceDatabase : MonoBehaviour {
 		_activeProfile.foodsPassed += gameResult.choices.Where(boolean => boolean == false).Count ();
 		_activeProfile.lifetimeSecondsPlayed += gameSettings.timeLimit;
 		_activeProfile.lifetimeScore += gameResult.finalScore;
-		if (_activeProfile.bestScore.HasValue) {
-			if(_activeProfile.bestScore < gameResult.finalScore) _activeProfile.bestScore = gameResult.finalScore;
-		} else {
+		if (!_activeProfile.bestScore.HasValue || _activeProfile.bestScore < gameResult.finalScore) {
 			_activeProfile.bestScore = gameResult.finalScore;
-		}
-		if (_activeProfile.worstScore.HasValue) {
-			if(_activeProfile.worstScore < gameResult.finalScore) _activeProfile.worstScore = gameResult.finalScore;
-		} else {
+		} 
+		if (!_activeProfile.worstScore.HasValue || _activeProfile.worstScore > gameResult.finalScore) {
 			_activeProfile.worstScore = gameResult.finalScore;
 		}
 
@@ -273,7 +269,8 @@ public class DeviceDatabase : MonoBehaviour {
 	}
 	public float AverageChoicesPerSecond {
 		get {
-			return (foodsEaten + foodsPassed) / lifetimeSecondsPlayed;
+			if(lifetimeSecondsPlayed == 0) return 0;
+			return ((float)(foodsEaten + foodsPassed)) / lifetimeSecondsPlayed;
 		}
 	}
 
