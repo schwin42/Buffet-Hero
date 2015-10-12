@@ -333,6 +333,7 @@ public class ConnectionController : MonoBehaviour
 			P2pInterfaceController.Instance.PlayersInLobby = AccessiblePlayers;
 			if (host_ConnectedClients.Count == 0) {
 				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive (false);
+
 				P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (false); 
 				
 			}
@@ -481,7 +482,7 @@ public class ConnectionController : MonoBehaviour
 		{
 			if (listenerMode == ListenerMode.ListeningToHost) {
 				//TODO Throw error
-				P2pInterfaceController.Instance.ExitToTitle ();
+				P2pInterfaceController.Instance.ButtonHandler_DisconnectAndExit ();
 			} else if (listenerMode == ListenerMode.ListeningToClients) {
 				ConnectionController.Instance.Host_EchoMessageToOtherClients (remoteEndpointId, Utility.PayloadToByteArray (new PlayerLeftPayload (remoteEndpointId)), true);
 				connectionController.Host_PlayerLeft (remoteEndpointId);

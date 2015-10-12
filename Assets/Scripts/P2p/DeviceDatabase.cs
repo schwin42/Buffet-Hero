@@ -297,10 +297,11 @@ public class DeviceDatabase : MonoBehaviour {
 		profileId = sourceProfile.profileId;
 		playerName = sourceProfile.playerName;
 
-
 		gamesPlayed = sourceProfile.gamesPlayed; //TOOD Differentiate between different game modes
 		foodsEaten = sourceProfile.foodsEaten;
+		foodsPassed = sourceProfile.foodsPassed;
 		lifetimeScore = sourceProfile.lifetimeScore;
+		lifetimeSecondsPlayed = sourceProfile.lifetimeSecondsPlayed;
 		bestScore = sourceProfile.bestScore;
 		worstScore = sourceProfile.worstScore;
 		tastiestFoodEaten = sourceProfile.tastiestFoodEaten;

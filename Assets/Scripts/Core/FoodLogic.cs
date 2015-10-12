@@ -210,6 +210,11 @@ public class Food
 		this.attributeIds = attributeIds;
 		this.quality = quality;
 	}
+
+	public override string ToString ()
+	{
+		return name + " (" + quality.ToString() + ")";
+	}
 }
 
 [System.Serializable]
