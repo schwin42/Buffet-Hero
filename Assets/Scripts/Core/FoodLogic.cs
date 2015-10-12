@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 [System.Serializable]
 public class Food
@@ -198,11 +199,13 @@ public class Food
 }
 
 [System.Serializable] public class FoodInfo {
-	string name;
-	List<string> attributeIds;
-	float quality;
+	public bool isInitialized = false;
+	public string name;
+	public List<string> attributeIds;
+	public float quality;
 
 	public FoodInfo (string name, List<string> attributeIds, float quality) {
+		this.isInitialized = true;
 		this.name = name;
 		this.attributeIds = attributeIds;
 		this.quality = quality;
@@ -307,10 +310,11 @@ public class FoodLogic : MonoBehaviour {
 		return attributes;
 	}
 
-	public static List<FoodAttribute> GetShuffledAttributes (AttributeType type, int seed) {
+	public static ReadOnlyCollection<FoodAttribute> GetShuffledAttributes (AttributeType type, int seed) {
 		List <FoodAttribute> attributes = GameData.Instance.AttributeData.Where (a => a.attributeType == type).ToList();
 		ShuffleList (attributes, seed);
-		return attributes;
+		P2pInterfaceController.Instance.WriteToConsole("!!!GSA count: " + attributes.Count);
+		return attributes.AsReadOnly();
 	}
 	
 	private FoodAttribute GetRandomAttributeFromQueue (AttributeType attributeType)
@@ -371,5 +375,14 @@ public class FoodLogic : MonoBehaviour {
 			list [j] = list [i - 1];
 			list [i - 1] = tmp;
 		}
+	}
+
+	public static FoodInfo GetFoodInfo (Food food)
+	{
+		if (!food.Quality.HasValue) {
+			P2pInterfaceController.Instance.WriteToConsole ("Error in GetFoodInfo, food quality has no value");
+			return null;
+		}
+		return new FoodInfo (food.Name, food.attributes.Select (attribute => attribute.Id).ToList (), food.Quality.Value);
 	}
 }

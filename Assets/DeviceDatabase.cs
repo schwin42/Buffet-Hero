@@ -70,10 +70,13 @@ public class DeviceDatabase : MonoBehaviour {
 	}
 	#endregion
 
-	public void RecordGameToActiveProfile (GameResult gameResult)
+	public void RecordGameToActiveProfile (GameResult gameResult, GameSettings gameSettings)
 	{
+
 		_activeProfile.gamesPlayed ++;
-		_activeProfile.foodsEaten += gameResult.foodsEaten;
+		_activeProfile.foodsEaten += gameResult.choices.Where(boolean => boolean == true).Count();
+		_activeProfile.foodsPassed += gameResult.choices.Where(boolean => boolean == false).Count ();
+		_activeProfile.lifetimeSecondsPlayed += gameSettings.timeLimit;
 		_activeProfile.lifetimeScore += gameResult.finalScore;
 		if (_activeProfile.bestScore.HasValue) {
 			if(_activeProfile.bestScore < gameResult.finalScore) _activeProfile.bestScore = gameResult.finalScore;
@@ -86,17 +89,41 @@ public class DeviceDatabase : MonoBehaviour {
 			_activeProfile.worstScore = gameResult.finalScore;
 		}
 
+		Dictionary<Food, bool> foodChoiceLookup = new Dictionary<Food, bool> ();
+		for (int i = 0; i < gameResult.choices.Count; i++) {
+			foodChoiceLookup.Add(P2pGameMaster.Instance.GetFoodFromIndex(i + gameSettings.startFoodIndex), gameResult.choices[i]);
+		}
+
+		P2pInterfaceController.Instance.WriteToConsole("Starting update, lookup count: " + foodChoiceLookup.Count);
+		UpdateSuperlativeFood(ref _activeProfile.tastiestFoodEaten, true, true, foodChoiceLookup);
+		P2pInterfaceController.Instance.WriteToConsole("tastiest eaten, lookup count: " + foodChoiceLookup.Count);
+		UpdateSuperlativeFood(ref _activeProfile.tastiestFoodMissed, false, true, foodChoiceLookup);
+		P2pInterfaceController.Instance.WriteToConsole("tastiest passed" + foodChoiceLookup.Count);
+		UpdateSuperlativeFood(ref _activeProfile.grossestFoodEaten, true, false, foodChoiceLookup);
+		P2pInterfaceController.Instance.WriteToConsole("grossest eaten" + foodChoiceLookup.Count);
+		UpdateSuperlativeFood(ref _activeProfile.grossestFoodMissed, false, false, foodChoiceLookup);
+		P2pInterfaceController.Instance.WriteToConsole("grossest passed, count: " + foodChoiceLookup.Count);
+
 		SaveToBinaryFile(GetProfileFullName(_activeProfile.profileId), _activeProfile);
-
-		//TODO
-//		tastiestFoodEaten = sourceProfile.tastiestFoodEaten;
-//		grossestFoodEaten = sourceProfile.grossestFoodEaten;
-//		tastiestFoodMissed = sourceProfile.tastiestFoodMissed;
-//		grossestFoodMissed = sourceProfile.grossestFoodMissed;
-		
-//		this.pointRating = sourceProfile.pointRating;
-
 	}
+
+	private void UpdateSuperlativeFood(ref FoodInfo targetFood, bool criterionChoice, bool selectHighest, Dictionary<Food, bool> foodChoiceLookup) {
+		IEnumerable<Food> foodsMeetingChoiceCriterion = foodChoiceLookup.Where(keyPair => keyPair.Value == criterionChoice).Select(pair => pair.Key);
+		if(foodsMeetingChoiceCriterion.Count () == 0) return;
+		Food selectedFoodOfGame;
+		if(selectHighest) {
+			selectedFoodOfGame = foodsMeetingChoiceCriterion.OrderByDescending(keyPair => keyPair.Quality).First();
+		} else {
+			selectedFoodOfGame = foodsMeetingChoiceCriterion.OrderBy(keyPair => keyPair.Quality).First();
+		}
+		if ((targetFood == null || !targetFood.isInitialized) ||
+			(selectHighest && selectedFoodOfGame.Quality > targetFood.quality) || 
+			(!selectHighest && selectedFoodOfGame.Quality < targetFood.quality)) {
+			targetFood = FoodLogic.GetFoodInfo(selectedFoodOfGame);
+			P2pInterfaceController.Instance.WriteToConsole("New record, updated to: " + targetFood);
+		}
+	}
+
 
 	public event EventHandler<ProfileEventArgs> ProfileChanged;
 	private void OnProfileChanged(OnlineProfile profile) {
@@ -147,7 +174,7 @@ public class DeviceDatabase : MonoBehaviour {
 		_userProfiles = new List<OnlineProfile> ();
 		P2pInterfaceController.Instance.WriteToConsole ("Loading device data");
 		string deviceSettingsFullName = GetDeviceSettingsFullName ();
-		foreach (string filename in Directory.GetFiles(Application.persistentDataPath)) {
+		foreach (string filename in Directory.GetFiles(Application.persistentDataPath, "*.dat")) {
 			P2pInterfaceController.Instance.WriteToConsole("Looking for filename: " + filename);
 			if(filename == deviceSettingsFullName) { //Check for device settings
 				P2pInterfaceController.Instance.WriteToConsole("Found device settings");
@@ -212,11 +239,19 @@ public class DeviceDatabase : MonoBehaviour {
 {
 	public Guid profileId = Guid.Empty;
 	public string playerName = "";
-
-	//TODO
 	public int gamesPlayed = 0;
 	public int foodsEaten = 0;
+	public int foodsPassed = 0;
 	public float lifetimeScore = 0f;
+	public float lifetimeSecondsPlayed = 0f;
+	public float? bestScore = null;
+	public float? worstScore = null;
+	public FoodInfo tastiestFoodEaten = null; //Unity will create these objects for the inspector, cannot be trusted to be null
+	public FoodInfo grossestFoodEaten = null;
+	public FoodInfo tastiestFoodMissed = null;
+	public FoodInfo grossestFoodMissed = null;
+
+	//Derived
 	public float AverageGameScore
 	{
 		get
@@ -236,13 +271,12 @@ public class DeviceDatabase : MonoBehaviour {
 			return foodsEaten > 0 ? lifetimeScore / foodsEaten : 0;
 		}
 	}
-	public float? bestScore = null;
-	public float? worstScore = null;
-	//public float winPercentage = 0f;
-	public FoodInfo tastiestFoodEaten = null;
-	public FoodInfo grossestFoodEaten = null;
-	public FoodInfo tastiestFoodMissed = null;
-	public FoodInfo grossestFoodMissed = null;
+	public float AverageChoicesPerSecond {
+		get {
+			return (foodsEaten + foodsPassed) / lifetimeSecondsPlayed;
+		}
+	}
+
 
 	//TODO New
 	public int pointRating;

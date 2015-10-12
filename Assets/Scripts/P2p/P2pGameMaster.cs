@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 public class P2pGameMaster : MonoBehaviour {
 
@@ -25,17 +26,22 @@ public class P2pGameMaster : MonoBehaviour {
 
 	//Game instance info
 	public float timeLimit;
-	public List<FoodAttribute> qualifierPool;
-	public List<FoodAttribute> ingredientPool;
-	public List<FoodAttribute> formPool;
+	public ReadOnlyCollection <FoodAttribute> qualifierPool;
+	public ReadOnlyCollection <FoodAttribute> ingredientPool;
+	public ReadOnlyCollection <FoodAttribute> formPool;
 
 	//Game instance records
-	public List<Food> foods;
+	public List<bool> choices;
 	public Food displayedFood;
-	public List<Food> eatenFoods;
-	public List<Food> passedFoods;
 	public float currentScore;
+	public int nextFoodIndex;
+	public GameSettings currentSettings;
 
+	public List<GameResult> AllGameResults {
+		get {
+			return new List<GameResult> (otherGameResults.Union(new List<GameResult> { myGameResult }));
+		}
+	}
 	public List<GameResult> otherGameResults;
 	public GameResult myGameResult;
 
@@ -60,7 +66,9 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () { }
+	void Start () { 
+		P2pInterfaceController.Instance.WriteToConsole(Application.persistentDataPath);
+	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -80,18 +88,33 @@ public class P2pGameMaster : MonoBehaviour {
 
 	public void LoadGameSettings (GameSettings gameSettings)
 	{
+		//Validate game settings
+		if (qualifierPool == null || qualifierPool.Count == 0 && gameSettings.qualifierSeed == -1) {
+			P2pInterfaceController.Instance.WriteToConsole("Error in LoadGameSettings: Attribute pool is unassigned, but random seed was not provided");
+		}
+
+
+		P2pInterfaceController.Instance.WriteToConsole ("Beginning LoadGameSettings");
+		P2pInterfaceController.Instance.WriteToConsole ("game settings: " + gameSettings.timeLimit + ", " + gameSettings.qualifierSeed + ", " + gameSettings.startFoodIndex);
 		timeLimit = gameSettings.timeLimit;
 		
 		//Generate food lists from random seed
-		qualifierPool = FoodLogic.GetShuffledAttributes (AttributeType.Qualifier, gameSettings.qualifierSeed);
-		ingredientPool = FoodLogic.GetShuffledAttributes (AttributeType.Ingredient, gameSettings.ingredientSeed);
-		formPool = FoodLogic.GetShuffledAttributes (AttributeType.Form, gameSettings.formSeed);
+		if (gameSettings.qualifierSeed != -1) {
+			qualifierPool = FoodLogic.GetShuffledAttributes (AttributeType.Qualifier, gameSettings.qualifierSeed);
+			ingredientPool = FoodLogic.GetShuffledAttributes (AttributeType.Ingredient, gameSettings.ingredientSeed);
+			formPool = FoodLogic.GetShuffledAttributes (AttributeType.Form, gameSettings.formSeed);
+		}
+
+		this.nextFoodIndex = gameSettings.startFoodIndex;
+
+		this.currentSettings = gameSettings;
 	}
 
 	public void BeginNewGame() {
 		gameInProgress = true;
 		currentScore = 0;
 		myGameResult = null;
+		choices = new List<bool> ();
 		otherGameResults = new List<GameResult> ();
 		NextFood ();
 		StartTimer ();
@@ -99,7 +122,7 @@ public class P2pGameMaster : MonoBehaviour {
 
 	public void EndGame () {
 		gameInProgress = false;
-		myGameResult = new GameResult (currentScore, eatenFoods.Count, DeviceDatabase.Instance.ProfileId);
+		myGameResult = new GameResult (DeviceDatabase.Instance.ProfileId, choices, currentScore);
 		P2pInterfaceController.Instance.GameFinished (myGameResult);
 	}
 
@@ -114,66 +137,72 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	public void NextFood () {
-		displayedFood = GetNextFoodFromPool ();
-
-		foods.Add (displayedFood);
+		P2pInterfaceController.Instance.WriteToConsole ("Using current food index: " + nextFoodIndex);
+		displayedFood = GetFoodFromIndex (nextFoodIndex);
+		nextFoodIndex++;
+//		foods.Add (displayedFood);
 	}
 
 	public void HandleEatResponse() {
-		eatenFoods.Add (displayedFood);
+		choices.Add (true);
 		currentScore += displayedFood.Quality.Value;
 		NextFood ();
 	}
 
 	public void HandlePassResponse() {
-		passedFoods.Add (displayedFood);
+		choices.Add (false);
 		NextFood ();
 	}
 
-
-	Food GetNextFoodFromPool ()
+	public Food GetFoodFromIndex (int index)
 	{
 		Food food = new Food ();
 		
-		food.attributes.Add (PullAttributeAndAppend (formPool));
-		food.attributes.Add (PullAttributeAndAppend (ingredientPool));
-		food.attributes.Add (PullAttributeAndAppend (qualifierPool));
+		food.attributes.Add (GetAttributeFromIndex (index, formPool));
+		food.attributes.Add (GetAttributeFromIndex (index, ingredientPool));
+		food.attributes.Add (GetAttributeFromIndex (index, qualifierPool));
 		
 		food.Realize ();
 		return food;
 	}
 
-	FoodAttribute PullAttributeAndAppend(List<FoodAttribute> pool) {
-		FoodAttribute attribute = pool [0];
-		pool.RemoveAt (0);
-		pool.Add (attribute);
-		return attribute;
+	private FoodAttribute GetAttributeFromIndex (int index, ReadOnlyCollection<FoodAttribute> sourceList) {
+		P2pInterfaceController.Instance.WriteToConsole ("Getting attribute from index");
+		P2pInterfaceController.Instance.WriteToConsole ("GAFI index, source list count: " + index + ", " + (sourceList == null ? "null" : sourceList.Count.ToString()) );
+		int finalIndex = index % sourceList.Count;
+		return sourceList [finalIndex];
 	}
 }
 
 [System.Serializable] public class GameResult {
-	public int foodsEaten;
-	public float finalScore;
 	public Guid profileId;
+	public List<bool> choices = null;
+	public float finalScore = -1;
 
-	public GameResult(float score, int foodsEaten, Guid profileId) {
-		this.finalScore = score;
-		this.foodsEaten = foodsEaten;
+	public GameResult(Guid profileId, List<bool> choices, float finalScore) {
 		this.profileId = profileId;
+		this.choices = choices;
+		this.finalScore = finalScore;
 	}
 }
 
 [System.Serializable] public class GameSettings {
 	//Host sends game specifications to clients
-	public float timeLimit;
-	public int qualifierSeed;
-	public int ingredientSeed;
-	public int formSeed;
+	public float timeLimit = -1;
+	public int qualifierSeed = -1;
+	public int ingredientSeed = -1;
+	public int formSeed = -1;
+	public int startFoodIndex = -1;
 
-	public GameSettings (float timeLimit) {
+	public GameSettings (float timeLimit, int startFoodIndex, bool generateRandomSeed) {
 		this.timeLimit = timeLimit;
-		this.qualifierSeed = FoodLogic.NextUnityRandomSeed;
-		this.ingredientSeed = FoodLogic.NextUnityRandomSeed;
-		this.formSeed = FoodLogic.NextUnityRandomSeed;
+		this.startFoodIndex = startFoodIndex;
+
+		if (generateRandomSeed) {
+			this.qualifierSeed = FoodLogic.NextUnityRandomSeed;
+			this.ingredientSeed = FoodLogic.NextUnityRandomSeed;
+			this.formSeed = FoodLogic.NextUnityRandomSeed;
+		}
 	}
+
 }
