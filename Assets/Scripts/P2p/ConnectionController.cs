@@ -448,11 +448,9 @@ public class ConnectionController : MonoBehaviour
 				connectionController.Client_StartGame (((StartGamePayload)payload).gameStartInfo);
 			} else if (payload is GameResultPayload) {
 				P2pInterfaceController.Instance.WriteToConsole ("Received game result");
-				connectionController.ReceiveGameResult (((GameResultPayload)payload).gameResult);
 				//If host, echo result to all other clients
-				if (listenerMode == ListenerMode.ListeningToClients) {
-					ConnectionController.Instance.Host_EchoMessageToOtherClients (remoteEndpointId, data, isReliableMessage);
-				}
+				if (listenerMode == ListenerMode.ListeningToClients) ConnectionController.Instance.Host_EchoMessageToOtherClients (remoteEndpointId, data, isReliableMessage);
+				connectionController.ReceiveGameResult (((GameResultPayload)payload).gameResult);
 			} else if (payload is DisplayResultsEvent) {
 				P2pInterfaceController.Instance.WriteToConsole ("Received display result event");
 				P2pInterfaceController.Instance.DisplayResult ();
