@@ -25,16 +25,16 @@ public class P2pGameMaster : MonoBehaviour {
 	} 
 
 	//Game instance info
-	public float timeLimit;
-	public ReadOnlyCollection <FoodAttribute> qualifierPool;
-	public ReadOnlyCollection <FoodAttribute> ingredientPool;
-	public ReadOnlyCollection <FoodAttribute> formPool;
+	float timeLimit;
+	ReadOnlyCollection <FoodAttribute> qualifierPool;
+	ReadOnlyCollection <FoodAttribute> ingredientPool;
+	ReadOnlyCollection <FoodAttribute> formPool;
 
 	//Game instance records
-	public List<bool> choices;
-	public Food displayedFood;
-	public float currentScore;
-	public int nextFoodIndex;
+	List<bool> choices;
+	public Food displayedFood; //TODO Currently the interface controller requires this and
+	public float currentScore; //this to be public. Fix so that this is not the case.
+	int nextFoodIndex;
 	public GameSettings currentSettings;
 
 	public List<GameResult> AllGameResults {

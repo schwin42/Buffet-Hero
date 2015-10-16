@@ -41,7 +41,7 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 	}
 
-	const float TIME_LIMIT = 5F;
+	const float TIME_LIMIT = 30F; //TODO Player should be able to set this during game setup
 
 	//FSM
 	private AppState _currentState = AppState.Uninitialized;
