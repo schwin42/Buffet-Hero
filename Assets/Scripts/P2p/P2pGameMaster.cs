@@ -67,7 +67,23 @@ public class P2pGameMaster : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () { 
-		P2pInterfaceController.Instance.WriteToConsole(Application.persistentDataPath);
+
+
+
+		print ("Longest attribute string: " + GameData.Instance.AttributeData.OrderByDescending (attribute => 
+		                                                                                        
+		                                                                                         {
+
+			string[] stringArray = attribute.Id.Split(' ');
+			int longest = 0;
+			foreach(string s1 in stringArray) {
+				if(s1.Length > longest) {
+					longest = s1.Length;
+				}
+			}
+			return longest;
+
+		}).First().Id); 
 	}
 	
 	// Update is called once per frame

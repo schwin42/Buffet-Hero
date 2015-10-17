@@ -357,10 +357,10 @@ public class P2pInterfaceController : MonoBehaviour
 				statsString += "Lifetime seconds played: " + activeProfile.lifetimeSecondsPlayed + "\n";
 				statsString += "Best score: " + (activeProfile.bestScore.HasValue ? activeProfile.bestScore.ToString() : "None") + "\n";
 				statsString += "Worst score: " + (activeProfile.worstScore.HasValue ? activeProfile.worstScore.ToString() : "None") + "\n";
-				statsString += "Tastiest food eaten: " + (activeProfile.tastiestFoodEaten == null || !activeProfile.tastiestFoodEaten.isInitialized ? "None" : activeProfile.tastiestFoodEaten.ToString()) + "\n";
-				statsString += "Grossest food eaten: " + (activeProfile.grossestFoodEaten == null || !activeProfile.grossestFoodEaten.isInitialized ? "None" : activeProfile.grossestFoodEaten.ToString()) + "\n";
-				statsString += "Tastiest food passed: " + (activeProfile.tastiestFoodMissed == null || !activeProfile.tastiestFoodMissed.isInitialized ? "None" : activeProfile.tastiestFoodMissed.ToString()) + "\n";
-				statsString += "Grossest food passed: " + (activeProfile.grossestFoodMissed == null || !activeProfile.grossestFoodMissed.isInitialized ? "None" : activeProfile.grossestFoodMissed.ToString()) + "\n";
+				statsString += "Tastiest food eaten: \n" + (activeProfile.tastiestFoodEaten == null || !activeProfile.tastiestFoodEaten.isInitialized ? "None" : activeProfile.tastiestFoodEaten.ToString()) + "\n";
+				statsString += "Grossest food eaten: \n" + (activeProfile.grossestFoodEaten == null || !activeProfile.grossestFoodEaten.isInitialized ? "None" : activeProfile.grossestFoodEaten.ToString()) + "\n";
+				statsString += "Tastiest food passed: \n" + (activeProfile.tastiestFoodMissed == null || !activeProfile.tastiestFoodMissed.isInitialized ? "None" : activeProfile.tastiestFoodMissed.ToString()) + "\n";
+				statsString += "Grossest food passed: \n" + (activeProfile.grossestFoodMissed == null || !activeProfile.grossestFoodMissed.isInitialized ? "None" : activeProfile.grossestFoodMissed.ToString()) + "\n";
 
 				//average game, average food, average choices per second
 				statsString += "Average game score: " + activeProfile.AverageGameScore.ToString("F2") + "\n";

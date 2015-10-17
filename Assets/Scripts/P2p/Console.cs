@@ -7,7 +7,7 @@ public class Console : MonoBehaviour, IPointerClickHandler {
 
 	bool expanded = false;
 	float expandPosition = 0;
-	float collapsePosition = -725;
+	float collapsePosition = -755;
 
 	// Use this for initialization
 	void Start () {
