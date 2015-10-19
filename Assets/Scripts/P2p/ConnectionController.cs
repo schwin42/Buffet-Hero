@@ -37,8 +37,10 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 
 	//Players
 	public List<RemotePlayer> host_ConnectedClients;
-	[System.NonSerialized] public RemotePlayer client_ConnectedHost;
+	[System.NonSerialized]
+	public RemotePlayer client_ConnectedHost;
 	private List<RemotePlayer> _client_ConnectedClients;
+
 	public List<RemotePlayer> client_ConnectedClients {
 		get {
 			return _client_ConnectedClients;
@@ -47,6 +49,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 			_client_ConnectedClients = value;
 		}
 	}
+
 	public List<RemotePlayer> realtime_ConnectedClients;
 
 	public List<RemotePlayer> AccessiblePlayers { //Other players in this session
@@ -161,10 +164,13 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 	public void ReceiveGameResult (GameResult gameResult)
 	{
 		P2pGameMaster.Instance.otherGameResults.Add (gameResult);
-		
-		//Broadcast display result event if all games have been received
-		if (remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
+
+		if (remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) { //Broadcast display result event if all games have been received
 			if (P2pGameMaster.Instance.otherGameResults.Count == host_ConnectedClients.Count) {
+				P2pInterfaceController.Instance.DisplayResult ();
+			}
+		} else if (remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
+			if (P2pGameMaster.Instance.otherGameResults.Count == realtime_ConnectedClients.Count) {
 				P2pInterfaceController.Instance.DisplayResult ();
 			}
 		}
@@ -185,19 +191,12 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("Attempting to terminate connections...");
 		try {
-			P2pInterfaceController.Instance.WriteToConsole ("Attempt started");
 			PlayGamesPlatform.Nearby.StopAllConnections ();
-			P2pInterfaceController.Instance.WriteToConsole ("Call to GpgNearby completed");
 			remoteStatus = RemoteStatus.Idle;
-			P2pInterfaceController.Instance.WriteToConsole ("Remote status set to idle");
 			discoveryListener = null;
-			P2pInterfaceController.Instance.WriteToConsole ("Discovery listener set to null");
 			messageListener = null;
-			P2pInterfaceController.Instance.WriteToConsole ("Message listener set to null");
 			client_ConnectedHost = null;
-			P2pInterfaceController.Instance.WriteToConsole ("Connected host set to null");
 			host_ConnectedClients = null;
-			P2pInterfaceController.Instance.WriteToConsole ("Connected clients set to null");
 			client_ConnectedClients = null;
 			P2pInterfaceController.Instance.WriteToConsole ("TerminateAllConnections completed successfully");
 		} catch (Exception e) {
@@ -225,6 +224,9 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 				PlayGamesPlatform.Nearby.SendReliable (host_ConnectedClients.Select (p => p.gpgId).ToList (), 
 			                                      Utility.PayloadToByteArray (payload));
 				P2pInterfaceController.Instance.WriteToConsole ("Broadcast " + payload + " to " + host_ConnectedClients.Count + " clients");
+			} else if (remoteStatus == RemoteStatus.EstablishedRealTimeMultiplayer) {
+				P2pInterfaceController.Instance.WriteToConsole ("Sending payload to realtime peers");
+				PlayGamesPlatform.Instance.RealTime.SendMessageToAll (true, Utility.PayloadToByteArray (payload));
 			} else {
 				P2pInterfaceController.Instance.WriteToConsole ("Failed to send message while in " + remoteStatus);
 				return;
@@ -499,125 +501,132 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 		});
 	}
 
-	public void CreateQuickGame () {
+	public void CreateQuickGame ()
+	{
 		try {
-		if(remoteStatus != RemoteStatus.Idle) {
-			P2pInterfaceController.Instance.WriteToConsole("Error: Unable to create quick game from remote status: " + remoteStatus);
-			return;
-		}
+			if (remoteStatus != RemoteStatus.Idle) {
+				P2pInterfaceController.Instance.WriteToConsole ("Error: Unable to create quick game from remote status: " + remoteStatus);
+				return;
+			}
 //			P2pInterfaceController.Instance.WriteToConsole("connection controllers: " + this.ToString() + Instance.ToString());
 			uint minPlayers = 1;
 			uint maxPlayers = 1;
 			uint variant = 0;
 
 //			P2pInterfaceController.Instance.WriteToConsole("realtime check: "+ PlayGamesPlatform.Instance.RealTime.GetSelf().DisplayName);
-		PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minPlayers, maxPlayers, variant, this);
-			P2pInterfaceController.Instance.WriteToConsole("Created quick game successfully");
-		remoteStatus = RemoteStatus.StartingRoom;
-			realtime_ConnectedClients = new List<RemotePlayer>();
+			PlayGamesPlatform.Instance.RealTime.CreateQuickGame (minPlayers, maxPlayers, variant, this);
+			P2pInterfaceController.Instance.WriteToConsole ("Created quick game successfully");
+			remoteStatus = RemoteStatus.StartingRoom;
+			realtime_ConnectedClients = new List<RemotePlayer> ();
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole("Exception in CreateQuickGame: " + e.Message);
+			P2pInterfaceController.Instance.WriteToConsole ("Exception in CreateQuickGame: " + e.Message);
 		}
 	}
 
 	public void Realtime_StartGame (GameSettings gameSettings)
 	{
-		P2pInterfaceController.Instance.WriteToConsole("Sending start game payload to " + PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants().Count + " clients");
-		PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, Utility.PayloadToByteArray(new StartGamePayload(gameSettings)));
-		P2pInterfaceController.Instance.WriteToConsole("Start game payload sent");
+		P2pInterfaceController.Instance.WriteToConsole ("Sending start game payload to " + PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants ().Count + " clients");
+		PlayGamesPlatform.Instance.RealTime.SendMessageToAll (true, Utility.PayloadToByteArray (new StartGamePayload (gameSettings)));
+		P2pInterfaceController.Instance.WriteToConsole ("Start game payload sent");
 	}
 
 	#region RealTimeMultiplayerListener implementation
 
 	public void OnRoomSetupProgress (float percent)
 	{
-		P2pInterfaceController.Instance.WriteToConsole("Received room setup progress: " + percent);
-		P2pInterfaceController.Instance.Join_ReceivedRoomProgress(percent);
+		P2pInterfaceController.Instance.WriteToConsole ("Received room setup progress: " + percent);
+		P2pInterfaceController.Instance.Join_ReceivedRoomProgress (percent);
 	}
 
 	public void OnRoomConnected (bool success)
 	{
-		if(success) {
+		if (success) {
 			P2pInterfaceController.Instance.WriteToConsole ("Room connected!");
 			remoteStatus = RemoteStatus.EstablishedRealTimeMultiplayer;
-			List<Participant> participants = PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants();
-			foreach(Participant participant in participants) {
-				realtime_ConnectedClients.Add(new RemotePlayer(participant.ParticipantId));
+			List<Participant> participants = PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants ();
+			foreach (Participant participant in participants) {
+				realtime_ConnectedClients.Add (new RemotePlayer (participant.ParticipantId));
 			}
-			PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, Utility.PayloadToByteArray( 
-			                                                           new RemotePlayerPayload(new RemotePlayer(PlayGamesPlatform.Instance.RealTime.GetSelf().ParticipantId,
+			PlayGamesPlatform.Instance.RealTime.SendMessageToAll (true, Utility.PayloadToByteArray (
+			                                                           new RemotePlayerPayload (new RemotePlayer (PlayGamesPlatform.Instance.RealTime.GetSelf ().ParticipantId,
 			                                                            DeviceDatabase.Instance.ActiveProfile, true))));
-			P2pInterfaceController.Instance.SetScreenState(AppState.LobbyScreen);
+			P2pInterfaceController.Instance.PlayersInLobby = AccessiblePlayers;
+			P2pInterfaceController.Instance.SetScreenState (AppState.LobbyScreen);
 		} else {
 			P2pInterfaceController.Instance.WriteToConsole ("Room setup failed, boo"); //TODO Proper error dialogs
-			P2pInterfaceController.Instance.SetScreenState(AppState.TitleScreen);
+			P2pInterfaceController.Instance.SetScreenState (AppState.TitleScreen);
 		}
 
 	}
 
 	public void OnLeftRoom ()
 	{
-		P2pInterfaceController.Instance.WriteToConsole("Leaving room");
+		P2pInterfaceController.Instance.WriteToConsole ("Leaving room");
 		remoteStatus = RemoteStatus.Idle;
 
 	}
 
 	public void OnParticipantLeft (Participant participant) //TODO Abandon empty rooms?
 	{
-		P2pInterfaceController.Instance.WriteToConsole("Participant left: " + participant.ParticipantId);
+		P2pInterfaceController.Instance.WriteToConsole ("Participant left: " + participant.ParticipantId);
 		try {
-		RemotePlayer player = realtime_ConnectedClients.Where(remotePlayer => remotePlayer.gpgId == participant.ParticipantId).Single();
-		realtime_ConnectedClients.Remove (player);
+			RemotePlayer player = realtime_ConnectedClients.Where (remotePlayer => remotePlayer.gpgId == participant.ParticipantId).Single ();
+			realtime_ConnectedClients.Remove (player);
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole("Exception in OnParticipantLeft: " + e.Message);
+			P2pInterfaceController.Instance.WriteToConsole ("Exception in OnParticipantLeft: " + e.Message);
 		}
 	}
 
 	public void OnPeersConnected (string[] participantIds)
 	{
-		P2pInterfaceController.Instance.WriteToConsole("Peers connected: " + participantIds.Length);
-		foreach(string participantId in participantIds) {
-			realtime_ConnectedClients.Add(new RemotePlayer(participantId));
+		P2pInterfaceController.Instance.WriteToConsole ("Peers connected: " + participantIds.Length);
+		foreach (string participantId in participantIds) {
+			realtime_ConnectedClients.Add (new RemotePlayer (participantId));
+			BroadcastEvent(new RemotePlayerPayload(new RemotePlayer(PlayGamesPlatform.Instance.RealTime.GetSelf().ParticipantId, DeviceDatabase.Instance.ActiveProfile, true)));
+			P2pInterfaceController.Instance.PlayersInLobby = AccessiblePlayers;
 		}
 	}
 
 	public void OnPeersDisconnected (string[] participantIds) //TODO Leave empty room?
 	{
-		P2pInterfaceController.Instance.WriteToConsole("Peers disconnected: " + participantIds.Length);
+		P2pInterfaceController.Instance.WriteToConsole ("Peers disconnected: " + participantIds.Length);
 		try {
-		foreach(string participantId in participantIds) {
-			for(int i = 0; i < realtime_ConnectedClients.Count; i++) {
-				if(realtime_ConnectedClients[i].gpgId == participantId) {
-					realtime_ConnectedClients.RemoveAt(i);
-					P2pInterfaceController.Instance.WriteToConsole("Removed participant: " + participantId);
-					break;
+			foreach (string participantId in participantIds) {
+				for (int i = 0; i < realtime_ConnectedClients.Count; i++) {
+					if (realtime_ConnectedClients [i].gpgId == participantId) {
+						realtime_ConnectedClients.RemoveAt (i);
+						P2pInterfaceController.Instance.WriteToConsole ("Removed participant: " + participantId);
+						break;
+					}
 				}
 			}
-		}
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole("Exception in OnPeersConnected: " + e.Message);
+			P2pInterfaceController.Instance.WriteToConsole ("Exception in OnPeersConnected: " + e.Message);
 		}
 	}
 
 	public void OnRealTimeMessageReceived (bool isReliable, string senderId, byte[] data)
 	{
 		try {
-		P2pInterfaceController.Instance.WriteToConsole("Realtime message received");
-		Payload payload = Utility.ByteArrayToPayload(data);
-		if(payload is RemotePlayerPayload) {
-			P2pInterfaceController.Instance.WriteToConsole("payload is remote player");
-			RemotePlayer playerToUpdate =	realtime_ConnectedClients.Single(remotePlayer => remotePlayer.gpgId == senderId);
+			P2pInterfaceController.Instance.WriteToConsole ("Realtime message received");
+			Payload payload = Utility.ByteArrayToPayload (data);
+			if (payload is RemotePlayerPayload) {
+				P2pInterfaceController.Instance.WriteToConsole ("payload is remote player");
+				RemotePlayer playerToUpdate = realtime_ConnectedClients.Single (remotePlayer => remotePlayer.gpgId == senderId);
 				playerToUpdate.profile = ((RemotePlayerPayload)payload).remotePlayer.profile;
-				P2pInterfaceController.Instance.WriteToConsole("Participant assigned online profile: " + senderId + ", " + playerToUpdate.profile.profileId);
-		} else if(payload is StartGamePayload) {
-				P2pGameMaster.Instance.LoadGameSettings(((StartGamePayload)payload).gameStartInfo);
-				P2pInterfaceController.Instance.SetScreenState(AppState.GameScreen);
-				P2pInterfaceController.Instance.WriteToConsole("Start game message handled successfully");
+				P2pInterfaceController.Instance.PlayersInLobby = AccessiblePlayers;
+				P2pInterfaceController.Instance.WriteToConsole ("Participant assigned online profile: " + senderId + ", " + playerToUpdate.profile.profileId);
+			} else if (payload is StartGamePayload) {
+				P2pGameMaster.Instance.LoadGameSettings (((StartGamePayload)payload).gameStartInfo);
+				P2pInterfaceController.Instance.SetScreenState (AppState.GameScreen);
+				P2pInterfaceController.Instance.WriteToConsole ("Start game message handled successfully");
+			} else if (payload is GameResultPayload) {
+				ReceiveGameResult(((GameResultPayload)payload).gameResult);
 			} else {
-				P2pInterfaceController.Instance.WriteToConsole("Unhandled payload type in OnRealTimeMessageReceived: " + payload);
+				P2pInterfaceController.Instance.WriteToConsole ("Unhandled payload type in OnRealTimeMessageReceived: " + payload);
 			}
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole("Exception in OnRealTimeMessageReceived: " + e.Message);
+			P2pInterfaceController.Instance.WriteToConsole ("Exception in OnRealTimeMessageReceived: " + e.Message);
 		}
 	}
 

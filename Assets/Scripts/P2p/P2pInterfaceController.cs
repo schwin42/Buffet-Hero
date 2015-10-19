@@ -95,7 +95,11 @@ public class P2pInterfaceController : MonoBehaviour
 				if (i != 0) {
 					output += "\n";
 				}
+				if(value[i].profile != null) {
 				output += value [i].profile.playerName;
+				} else {
+					output += value[i].gpgId.ToString();
+				}
 			}
 			lobby_PlayerList.text = output;
 			WriteToConsole ("Completed set joined players");
@@ -346,7 +350,8 @@ public class P2pInterfaceController : MonoBehaviour
 				break;
 			case AppState.ResultScreen:
 				P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost || 
-				                                                                 ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Idle);
+				                                                                 ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Idle || //TODO Better way of checking for single player
+				                                                                 ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer);
 				P2pInterfaceController.Instance.Results_Display ();
 				P2pInterfaceController.Instance.WriteToConsole ("completed result screen");
 				break;
@@ -482,7 +487,8 @@ public class P2pInterfaceController : MonoBehaviour
 		WriteToConsole ("Finishing game");
 		try {
 			if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost || 
-			    ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+			    ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient ||
+			    ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
 				P2pInterfaceController.Instance.WriteToConsole ("Game finished");
 				SetScreenState (AppState.WaitingScreen);
 				ConnectionController.Instance.BroadcastEvent (new GameResultPayload (gameResult));
@@ -507,10 +513,6 @@ public class P2pInterfaceController : MonoBehaviour
 		join_Progress.text = progress.ToString("F1") + "%";
 	}
 
-	#endregion
-
-	#region State Navigation
-
 	public void DisplayResult ()
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("Beginning display result, remote status: " + ConnectionController.Instance.remoteStatus);
@@ -520,6 +522,10 @@ public class P2pInterfaceController : MonoBehaviour
 		P2pInterfaceController.Instance.WriteToConsole ("Displaying result");
 		SetScreenState (AppState.ResultScreen);
 	}
+
+	#endregion
+
+	#region State Navigation
 
 	private void SinglePlayerStartGame (bool firstGame) {
 		WriteToConsole ("Starting single player game, first? " + firstGame);
