@@ -30,6 +30,7 @@ public class P2pInterfaceController : MonoBehaviour
 {
 	string userText_WaitingForClients = "Waiting for clients...";
 	string userText_WaitingForHost = "Waiting for host...";
+	string userText_RealtimeLobbyStatus = "Multiplayer joined";
 
 	private static P2pInterfaceController _instance;
 
@@ -314,15 +315,20 @@ public class P2pInterfaceController : MonoBehaviour
 				
 				//Set status
 				string status = "Initializing status";
-				if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising) { 
+				switch(ConnectionController.Instance.remoteStatus) {
+				case ConnectionController.RemoteStatus.Advertising:
 					status = userText_WaitingForClients;
-				} else if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+					break;
+				case ConnectionController.RemoteStatus.EstablishedClient:
 					status = userText_WaitingForHost;
-				} else  if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
-					status = userText_WaitingForClients;
-				} else {
+					break;
+				case ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer:
+					status = userText_RealtimeLobbyStatus;
+					break;
+				default:
 					P2pInterfaceController.Instance.WriteToConsole("Unexpected remote state: " + ConnectionController.Instance.remoteStatus);
 					status = "Initialization failed";
+					break;
 				}
 				P2pInterfaceController.Instance.Lobby_Status = status;
 				
@@ -407,7 +413,14 @@ public class P2pInterfaceController : MonoBehaviour
 	public void ButtonHandler_Lobby_StartGame ()
 	{
 		PlaySound(SoundEffect.Click);
-		Host_StartGame (true);
+		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost ||
+		   ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
+			StartMultiplayerGame(true);
+		} else {
+			P2pInterfaceController.Instance.WriteToConsole("Error: Unable to start game from remote status: " + ConnectionController.Instance.remoteStatus);
+		}
+			
+			
 	}
 	
 	public void ButtonHandler_Title_JoinGame () //Nearby Join Game as Client
@@ -433,7 +446,7 @@ public class P2pInterfaceController : MonoBehaviour
 		WriteToConsole ("Starting PlayAgain");
 		switch(ConnectionController.Instance.remoteStatus) {
 		case ConnectionController.RemoteStatus.EstablishedHost:
-			Host_StartGame(false);
+			StartMultiplayerGame(false);
 			break;
 		case ConnectionController.RemoteStatus.Idle:
 			SinglePlayerStartGame(false);
@@ -520,10 +533,11 @@ public class P2pInterfaceController : MonoBehaviour
 		SetScreenState (AppState.GameScreen);
 	}
 
-	private void Host_StartGame (bool firstGame) {
+	private void StartMultiplayerGame (bool firstGame) {
+
+		//Generate game settings
 		GameSettings gameSettings;
 		if (firstGame) {
-			ConnectionController.Instance.Host_BeginSession (); //Stop advertising and update remote status
 			gameSettings = new GameSettings (TIME_LIMIT, 0, true); 
 		} else {
 			gameSettings = new GameSettings (TIME_LIMIT, 
@@ -531,8 +545,17 @@ public class P2pInterfaceController : MonoBehaviour
 			                                 P2pGameMaster.Instance.AllGameResults.OrderByDescending(gameResult => gameResult.choices.Count).First().choices.Count + 1, //Increment by 1 to make sure no one has even seen the first food
 			                                 false);
 		}
+		P2pInterfaceController.Instance.WriteToConsole("Generated game settings: " + gameSettings.qualifierSeed);
+		//send game settings to clients
+		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
+			ConnectionController.Instance.Host_BeginSession (); //Stop advertising and update remote status
+			ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings)); 
+		} else if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
+			ConnectionController.Instance.Realtime_StartGame(gameSettings);
+		}
+
+
 		P2pGameMaster.Instance.LoadGameSettings (gameSettings);
-		ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings)); //Bundle and send game settings to clients
 		//TODO Check if event is successful
 		SetScreenState (AppState.GameScreen);
 	}

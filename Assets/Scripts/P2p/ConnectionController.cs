@@ -520,6 +520,12 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 		}
 	}
 
+	public void Realtime_StartGame (GameSettings gameSettings)
+	{
+		P2pInterfaceController.Instance.WriteToConsole("Sending start game payload to " + PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants().Count + " clients");
+		PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, Utility.PayloadToByteArray(new StartGamePayload(gameSettings)));
+		P2pInterfaceController.Instance.WriteToConsole("Start game payload sent");
+	}
 
 	#region RealTimeMultiplayerListener implementation
 
@@ -556,7 +562,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 
 	}
 
-	public void OnParticipantLeft (Participant participant)
+	public void OnParticipantLeft (Participant participant) //TODO Abandon empty rooms?
 	{
 		P2pInterfaceController.Instance.WriteToConsole("Participant left: " + participant.ParticipantId);
 		try {
@@ -575,7 +581,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 		}
 	}
 
-	public void OnPeersDisconnected (string[] participantIds)
+	public void OnPeersDisconnected (string[] participantIds) //TODO Leave empty room?
 	{
 		P2pInterfaceController.Instance.WriteToConsole("Peers disconnected: " + participantIds.Length);
 		try {
@@ -603,7 +609,13 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 			RemotePlayer playerToUpdate =	realtime_ConnectedClients.Single(remotePlayer => remotePlayer.gpgId == senderId);
 				playerToUpdate.profile = ((RemotePlayerPayload)payload).remotePlayer.profile;
 				P2pInterfaceController.Instance.WriteToConsole("Participant assigned online profile: " + senderId + ", " + playerToUpdate.profile.profileId);
-		}
+		} else if(payload is StartGamePayload) {
+				P2pGameMaster.Instance.LoadGameSettings(((StartGamePayload)payload).gameStartInfo);
+				P2pInterfaceController.Instance.SetScreenState(AppState.GameScreen);
+				P2pInterfaceController.Instance.WriteToConsole("Start game message handled successfully");
+			} else {
+				P2pInterfaceController.Instance.WriteToConsole("Unhandled payload type in OnRealTimeMessageReceived: " + payload);
+			}
 		} catch (Exception e) {
 			P2pInterfaceController.Instance.WriteToConsole("Exception in OnRealTimeMessageReceived: " + e.Message);
 		}
