@@ -23,6 +23,7 @@ public enum AppState
 	ResultScreen = 4,
 	LobbyScreen = 5,
 	StatsScreen = 6,
+	OnlineScreen = 7,
 }
 
 public class P2pInterfaceController : MonoBehaviour
@@ -82,6 +83,9 @@ public class P2pInterfaceController : MonoBehaviour
 
 	//Stats Screen
 	private Text stats_Stats;
+
+	//Join Screen
+	private Text join_Progress;
 
 	public List<RemotePlayer> PlayersInLobby {
 		set {
@@ -155,19 +159,20 @@ public class P2pInterfaceController : MonoBehaviour
 			result_PlayButton = inspector_UiRoot.transform.Find ("ResultScreen/PlayButton").GetComponent<Button> ();
 			//Stats
 			stats_Stats = inspector_UiRoot.transform.Find ("StatsScreen/Stats").GetComponent<Text> ();
+			//Join
+			join_Progress = inspector_UiRoot.transform.Find("JoinScreen/Progress").GetComponent<Text>();
 		} catch (Exception e) {
 			WriteToConsole ("Ui start failed: " + e.Message);
 		}
 
-		ValidateUi ();
-
 		InitializeUi ();
 
 		//Display first screen
-		SetScreenState (AppState.TitleScreen);
+//		SetScreenState (AppState.TitleScreen);
+		SetScreenState(AppState.OnlineScreen);
 	}
 
-	private void ValidateUi ()
+	private void InitializeUi ()
 	{
 		try {
 //		_console.text = "";
@@ -193,15 +198,14 @@ public class P2pInterfaceController : MonoBehaviour
 			//Stats
 			stats_Stats.text = "";
 
+			//Join
+			join_Progress.text = "";
+
+			lobby_StartButton.interactable = false;
+
 		} catch (Exception e) {
 			WriteToConsole ("ValidateUI failed: " + e.Message + ", " + e.TargetSite);
 		}
-	}
-
-	private void InitializeUi ()
-	{
-		lobby_PlayerList.text = "";
-		lobby_StartButton.interactable = false;
 	}
 
 	// Update is called once per frame
@@ -277,7 +281,7 @@ public class P2pInterfaceController : MonoBehaviour
 
 	public void SetScreenState (AppState targetState)
 	{
-		P2pInterfaceController.Instance.WriteToConsole ("Setting screen state to " + targetState + " from " + _currentState);
+//		P2pInterfaceController.Instance.WriteToConsole ("Setting screen state to " + targetState + " from " + _currentState);
 		try {
 			if (_currentState != AppState.Uninitialized) {
 				//Disable last state and clean up
@@ -298,11 +302,12 @@ public class P2pInterfaceController : MonoBehaviour
 
 	private void InitializeState (AppState state)
 	{
-		P2pInterfaceController.Instance.WriteToConsole ("initializing " + state);
+//		P2pInterfaceController.Instance.WriteToConsole ("initializing " + state);
 		try {
 			switch (state) {
 			case AppState.LobbyScreen:
-				bool startButtonState = ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost &&
+				bool startButtonState = (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost || 
+				                         ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) &&
 					ConnectionController.Instance.AccessiblePlayers.Count >= 2;
 				P2pInterfaceController.Instance.WriteToConsole("setting start button to: " + startButtonState);
 				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive(startButtonState);
@@ -313,6 +318,8 @@ public class P2pInterfaceController : MonoBehaviour
 					status = userText_WaitingForClients;
 				} else if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
 					status = userText_WaitingForHost;
+				} else  if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient) {
+					status = userText_WaitingForClients;
 				} else {
 					P2pInterfaceController.Instance.WriteToConsole("Unexpected remote state: " + ConnectionController.Instance.remoteStatus);
 					status = "Initialization failed";
@@ -323,7 +330,7 @@ public class P2pInterfaceController : MonoBehaviour
 				P2pInterfaceController.Instance.WriteToConsole ("completed lobby screen");
 				break;
 			case AppState.JoinScreen:
-				ConnectionController.Instance.Client_BeginDiscovery ();
+
 				P2pInterfaceController.Instance.WriteToConsole ("completed join screen");
 				break;
 			case AppState.GameScreen:
@@ -403,9 +410,10 @@ public class P2pInterfaceController : MonoBehaviour
 		Host_StartGame (true);
 	}
 	
-	public void ButtonHandler_Title_JoinGame ()
+	public void ButtonHandler_Title_JoinGame () //Nearby Join Game as Client
 	{
 		PlaySound(SoundEffect.Click);
+		ConnectionController.Instance.Client_BeginDiscovery ();
 		SetScreenState (AppState.JoinScreen);
 	}
 	
@@ -441,6 +449,18 @@ public class P2pInterfaceController : MonoBehaviour
 		SetScreenState(AppState.StatsScreen);
 	}
 
+	public void ButtonHandler_SignIn () {
+		PlaySound(SoundEffect.Click);
+		ConnectionController.Instance.SignIn();
+	}
+
+	public void ButtonHandler_QuickGame() { //RealTimeMultiplayer 
+		PlaySound(SoundEffect.Click);
+		WriteToConsole("Creating quick game");
+		ConnectionController.Instance.CreateQuickGame();
+		SetScreenState(AppState.JoinScreen);
+	}
+
 	#endregion
 
 	#region local triggered events
@@ -468,7 +488,13 @@ public class P2pInterfaceController : MonoBehaviour
 	}
 	#endregion
 
+	#region remote triggered events
 
+	public void Join_ReceivedRoomProgress(float progress) {
+		join_Progress.text = progress.ToString("F1") + "%";
+	}
+
+	#endregion
 
 	#region State Navigation
 
@@ -527,8 +553,8 @@ public class P2pInterfaceController : MonoBehaviour
 	#region audio
 
 	public void PlaySound(SoundEffect soundEffect) {
-		WriteToConsole("Playing sound: "+ soundEffect);
-		WriteToConsole("Sound found: " + inspector_AudioClips[(int)soundEffect].name);
+//		WriteToConsole("Playing sound: "+ soundEffect);
+//		WriteToConsole("Sound found: " + inspector_AudioClips[(int)soundEffect].name);
 		AudioSource.PlayClipAtPoint(inspector_AudioClips[(int)soundEffect], Vector3.zero);
 //		AudioSource.PlayClipAtPoint(audioClips[(int)soundEffect], transform.position, volume);
 	}

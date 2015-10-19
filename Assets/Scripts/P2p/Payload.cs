@@ -13,9 +13,9 @@ using System.Collections.Generic;
 		this.fellowClients = remotePlayers;
 	}
 }
-[System.Serializable] public class PlayerJoinedPayload : Payload {
+[System.Serializable] public class RemotePlayerPayload : Payload {
 	public RemotePlayer remotePlayer; //Should never be empty
-	public PlayerJoinedPayload (RemotePlayer remotePlayer) {
+	public RemotePlayerPayload (RemotePlayer remotePlayer) {
 		this.remotePlayer = remotePlayer;
 	}
 }
