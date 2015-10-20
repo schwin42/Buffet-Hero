@@ -173,8 +173,7 @@ public class P2pInterfaceController : MonoBehaviour
 		InitializeUi ();
 
 		//Display first screen
-//		SetScreenState (AppState.TitleScreen);
-		SetScreenState(AppState.OnlineScreen);
+		SetScreenState (AppState.TitleScreen);
 	}
 
 	private void InitializeUi ()
@@ -477,6 +476,11 @@ public class P2pInterfaceController : MonoBehaviour
 		WriteToConsole("Creating quick game");
 		ConnectionController.Instance.CreateQuickGame();
 		SetScreenState(AppState.JoinScreen);
+	}
+
+	public void ButtonHandler_MultiplayerScreen() {
+		PlaySound(SoundEffect.Click);
+		SetScreenState(AppState.OnlineScreen);
 	}
 
 	#endregion
