@@ -202,7 +202,9 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("Attempting to terminate connections...");
 		try {
-			PlayGamesPlatform.Instance.RealTime.LeaveRoom();
+//			if(PlayGamesPlatform.Instance != null) { //TODO Discover way to clean up Realtime that can be safely used in Nearby
+//				PlayGamesPlatform.Instance.RealTime.LeaveRoom();
+//			}
 			PlayGamesPlatform.Nearby.StopAllConnections ();
 			remoteStatus = RemoteStatus.Idle;
 			discoveryListener = null;
