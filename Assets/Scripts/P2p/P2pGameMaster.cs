@@ -167,10 +167,15 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	private FoodAttribute GetAttributeFromIndex (int index, ReadOnlyCollection<FoodAttribute> sourceList) {
-		P2pInterfaceController.Instance.WriteToConsole ("Getting attribute from index");
-		P2pInterfaceController.Instance.WriteToConsole ("GAFI index, source list count: " + index + ", " + (sourceList == null ? "null" : sourceList.Count.ToString()) );
+		try {
+//		P2pInterfaceController.Instance.WriteToConsole ("Getting attribute from index");
+//		P2pInterfaceController.Instance.WriteToConsole ("GAFI index, source list count: " + index + ", " + (sourceList == null ? "null" : sourceList.Count.ToString()) );
 		int finalIndex = index % sourceList.Count;
 		return sourceList [finalIndex];
+		} catch (Exception e) {
+			P2pInterfaceController.Instance.WriteToConsole("Exception in GetAttributeFromIndex: " + e.Message);
+			return null;
+		}
 	}
 }
 

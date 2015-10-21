@@ -86,7 +86,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 	public static string serviceId;
 	public RemoteStatus remoteStatus = RemoteStatus.Uninitialized;
 	DiscoveryListener discoveryListener;
-	public MessageListener messageListener;
+	public Nearby_MessageListener messageListener;
 	public static string localEndpointId;
 
 	public void Awake ()
@@ -202,6 +202,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 	{
 		P2pInterfaceController.Instance.WriteToConsole ("Attempting to terminate connections...");
 		try {
+			PlayGamesPlatform.Instance.RealTime.LeaveRoom();
 			PlayGamesPlatform.Nearby.StopAllConnections ();
 			remoteStatus = RemoteStatus.Idle;
 			discoveryListener = null;
@@ -275,7 +276,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 			request.RemoteEndpoint.EndpointId + " " +
 			request.RemoteEndpoint.Name);
 
-		messageListener = new MessageListener (this, MessageListener.ListenerMode.ListeningToClients);
+		messageListener = new Nearby_MessageListener (this, Nearby_MessageListener.ListenerMode.ListeningToClients);
 
 		try {
 			PlayGamesPlatform.Nearby.AcceptConnectionRequest (
@@ -356,7 +357,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 		public void Client_SendConnectionRequest (EndpointDetails discoveredEndpoint)
 		{
 			try {
-				ConnectionController.Instance.messageListener = new MessageListener (connectionController, MessageListener.ListenerMode.ListeningToHost);
+				ConnectionController.Instance.messageListener = new Nearby_MessageListener (connectionController, Nearby_MessageListener.ListenerMode.ListeningToHost);
 				PlayGamesPlatform.Nearby.SendConnectionRequest (
 				"Marco Polo",
 				discoveredEndpoint.EndpointId,
@@ -398,7 +399,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 		}
 	}
 	
-	public class MessageListener : IMessageListener
+	public class Nearby_MessageListener : IMessageListener
 	{
 		private ConnectionController connectionController;
 
@@ -411,7 +412,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 
 		public ListenerMode listenerMode = ListenerMode.Inactive;
 
-		public MessageListener (ConnectionController connectionController, ListenerMode listenerMode)
+		public Nearby_MessageListener (ConnectionController connectionController, ListenerMode listenerMode)
 		{
 			this.listenerMode = listenerMode;
 			this.connectionController = connectionController;
@@ -523,6 +524,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 	public void CreateQuickGame ()
 	{
 		try {
+			P2pInterfaceController.Instance.WriteToConsole("Beginning CreateQuickGame");
 			if (remoteStatus != RemoteStatus.Idle) {
 				P2pInterfaceController.Instance.WriteToConsole ("Error: Unable to create quick game from remote status: " + remoteStatus);
 				return;
@@ -531,6 +533,8 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 			uint minPlayers = 1;
 			uint maxPlayers = 1;
 			uint variant = 0;
+			P2pInterfaceController.Instance.WriteToConsole("Variables set");
+
 
 //			P2pInterfaceController.Instance.WriteToConsole("realtime check: "+ PlayGamesPlatform.Instance.RealTime.GetSelf().DisplayName);
 			PlayGamesPlatform.Instance.RealTime.CreateQuickGame (minPlayers, maxPlayers, variant, this);

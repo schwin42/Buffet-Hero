@@ -98,7 +98,7 @@ public class P2pInterfaceController : MonoBehaviour
 				if(value[i].profile != null) {
 				output += value [i].profile.playerName;
 				} else {
-					output += value[i].gpgId.ToString();
+					//Do not add profile-less participant to user text
 				}
 			}
 			lobby_PlayerList.text = output;
@@ -339,7 +339,7 @@ public class P2pInterfaceController : MonoBehaviour
 				P2pInterfaceController.Instance.WriteToConsole ("completed lobby screen");
 				break;
 			case AppState.JoinScreen:
-
+				join_Progress.text = "";
 				P2pInterfaceController.Instance.WriteToConsole ("completed join screen");
 				break;
 			case AppState.GameScreen:
@@ -417,7 +417,7 @@ public class P2pInterfaceController : MonoBehaviour
 	public void ButtonHandler_Lobby_StartGame ()
 	{
 		PlaySound(SoundEffect.Click);
-		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost ||
+		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising || //Not established host yet
 		   ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
 			StartMultiplayerGame(true);
 		} else {
@@ -450,6 +450,7 @@ public class P2pInterfaceController : MonoBehaviour
 		WriteToConsole ("Starting PlayAgain");
 		switch(ConnectionController.Instance.remoteStatus) {
 		case ConnectionController.RemoteStatus.EstablishedHost:
+		case ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer:
 			StartMultiplayerGame(false);
 			break;
 		case ConnectionController.RemoteStatus.Idle:
@@ -557,8 +558,8 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 		P2pInterfaceController.Instance.WriteToConsole("Generated game settings: " + gameSettings.qualifierSeed);
 		//send game settings to clients
-		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
-			ConnectionController.Instance.Host_BeginSession (); //Stop advertising and update remote status
+		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising || ConnectionController.Instance.remoteStatus ==  ConnectionController.RemoteStatus.EstablishedHost) {
+			ConnectionController.Instance.Host_BeginSession (); //Stop advertising and establish host
 			ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings)); 
 		} else if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
 			ConnectionController.Instance.Realtime_StartGame(gameSettings);
