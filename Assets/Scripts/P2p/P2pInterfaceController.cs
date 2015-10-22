@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -558,13 +558,14 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 		P2pInterfaceController.Instance.WriteToConsole("Generated game settings: " + gameSettings.qualifierSeed);
 		//send game settings to clients
-		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising || ConnectionController.Instance.remoteStatus ==  ConnectionController.RemoteStatus.EstablishedHost) {
+		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising) {
 			ConnectionController.Instance.Host_BeginSession (); //Stop advertising and establish host
+			ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings)); 
+		} else if (ConnectionController.Instance.remoteStatus ==  ConnectionController.RemoteStatus.EstablishedHost) {
 			ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings)); 
 		} else if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
 			ConnectionController.Instance.Realtime_StartGame(gameSettings);
 		}
-
 
 		P2pGameMaster.Instance.LoadGameSettings (gameSettings);
 		//TODO Check if event is successful

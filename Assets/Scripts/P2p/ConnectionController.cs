@@ -532,14 +532,14 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 				return;
 			}
 //			P2pInterfaceController.Instance.WriteToConsole("connection controllers: " + this.ToString() + Instance.ToString());
-			uint minPlayers = 1;
-			uint maxPlayers = 1;
+			uint minOpponents = 1;
+			uint maxOpponents = 3;
 			uint variant = 0;
 			P2pInterfaceController.Instance.WriteToConsole("Variables set");
 
 
 //			P2pInterfaceController.Instance.WriteToConsole("realtime check: "+ PlayGamesPlatform.Instance.RealTime.GetSelf().DisplayName);
-			PlayGamesPlatform.Instance.RealTime.CreateQuickGame (minPlayers, maxPlayers, variant, this);
+			PlayGamesPlatform.Instance.RealTime.CreateQuickGame (minOpponents, maxOpponents, variant, this);
 			P2pInterfaceController.Instance.WriteToConsole ("Created quick game successfully");
 			remoteStatus = RemoteStatus.StartingRoom;
 			realtime_Participants = new List<RemotePlayer> ();
@@ -550,7 +550,7 @@ public class ConnectionController : MonoBehaviour, RealTimeMultiplayerListener
 
 	public void Realtime_StartGame (GameSettings gameSettings)
 	{
-		P2pInterfaceController.Instance.WriteToConsole ("Sending start game payload to " + PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants ().Count + " clients");
+		P2pInterfaceController.Instance.WriteToConsole ("Sending start game payload to " + (PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants ().Count - 1).ToString() + " clients");
 		PlayGamesPlatform.Instance.RealTime.SendMessageToAll (true, Utility.PayloadToByteArray (new StartGamePayload (gameSettings)));
 		P2pInterfaceController.Instance.WriteToConsole ("Start game payload sent");
 	}
