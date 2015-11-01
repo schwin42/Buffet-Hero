@@ -138,19 +138,18 @@ public class P2pGameMaster : MonoBehaviour {
 		P2pInterfaceController.Instance.WriteToConsole ("Using current food index: " + nextFoodIndex);
 		displayedFood = GetFoodFromIndex (nextFoodIndex);
 		nextFoodIndex++;
-//		foods.Add (displayedFood);
 	}
 
-	public void HandleEatResponse() {
-		P2pInterfaceController.Instance.PlaySound(SoundEffect.Eat);
+	public void Player_Eat () {
 		choices.Add (true);
 		currentScore += displayedFood.Quality.Value;
+
 		NextFood ();
 	}
 
-	public void HandlePassResponse() {
-		P2pInterfaceController.Instance.PlaySound(SoundEffect.Pass);
+	public void Player_Pass () {
 		choices.Add (false);
+
 		NextFood ();
 	}
 

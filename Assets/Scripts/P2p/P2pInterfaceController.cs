@@ -77,6 +77,9 @@ public class P2pInterfaceController : MonoBehaviour
 	private Text game_Food;
 	private Text game_Score;
 	private Text game_PlayerName;
+	private Text game_DeltaScore;
+	private Transform game_OffScreenTransform;
+	private Vector3 game_DeltaScoreStartLocation;
 
 	//Result Screen
 	private Text result_Result;
@@ -87,6 +90,13 @@ public class P2pInterfaceController : MonoBehaviour
 
 	//Join Screen
 	private Text join_Progress;
+
+	//Animation
+	private const float SLERP_DURATION = 0.5F;
+	private bool slerpInProgress = false;
+	private float slerpProgress;
+	private Transform slerpElement = null;
+	private Vector3 slerpOrigin, slerpDestination;
 
 	public List<RemotePlayer> PlayersInLobby {
 		set {
@@ -159,6 +169,8 @@ public class P2pInterfaceController : MonoBehaviour
 			game_Food = inspector_UiRoot.transform.Find ("GameScreen/FoodLine0").GetComponent<Text> ();
 			game_Score = inspector_UiRoot.transform.Find ("GameScreen/Score").GetComponent<Text> ();
 			game_PlayerName = inspector_UiRoot.transform.Find ("GameScreen/PlayerName").GetComponent<Text> ();
+			game_DeltaScore = inspector_UiRoot.transform.Find ("GameScreen/DeltaScore").GetComponent<Text> ();
+			game_OffScreenTransform = inspector_UiRoot.transform.Find ("GameScreen/OffScreenTransform");
 			//Result
 			result_Result = inspector_UiRoot.transform.Find ("ResultScreen/Result").GetComponent<Text> ();
 			result_PlayButton = inspector_UiRoot.transform.Find ("ResultScreen/PlayButton").GetComponent<Button> ();
@@ -193,6 +205,7 @@ public class P2pInterfaceController : MonoBehaviour
 			game_Food.text = "";
 			game_Score.text = "";
 			game_PlayerName.text = "";
+			game_DeltaScoreStartLocation = game_DeltaScore.transform.position;
 		
 			//Result
 			result_Result.text = "";
@@ -223,6 +236,15 @@ public class P2pInterfaceController : MonoBehaviour
 				game_Food.text = gameMaster.displayedFood.Name;
 			}
 			game_Score.text = gameMaster.currentScore.ToString ();
+		}
+		if(slerpInProgress) {
+			if(slerpProgress >= 1) {
+				slerpElement.gameObject.SetActive(false);
+				slerpElement.position = game_DeltaScoreStartLocation;
+			} else {
+				slerpProgress += Time.deltaTime / SLERP_DURATION;
+				slerpElement.transform.position = Vector3.Slerp(slerpOrigin, slerpDestination, slerpProgress);
+			}
 		}
 	}
 
@@ -344,6 +366,7 @@ public class P2pInterfaceController : MonoBehaviour
 				break;
 			case AppState.GameScreen:
 				game_PlayerName.text = DeviceDatabase.Instance.ActivePlayerName;
+				game_DeltaScore.gameObject.SetActive(false);
 				P2pGameMaster.Instance.BeginNewGame ();
 				P2pInterfaceController.Instance.WriteToConsole ("completed game screen");
 				break;
@@ -394,7 +417,46 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 	}
 
+	private void BeginUiSlerp(Transform element, Vector3 destination) {
+				slerpElement = element;
+				slerpOrigin = element.transform.position;
+				slerpDestination = destination;
+		slerpProgress = 0;
+				slerpInProgress = true;
+	}
+
 	# region button handlers
+
+	public void ButtonHandler_Game_Eat() {
+		P2pInterfaceController.Instance.PlaySound(SoundEffect.Eat);
+		P2pGameMaster.Instance.Player_Eat();
+		//Delta score
+		//Set delta value
+		float currentFoodQuality = P2pGameMaster.Instance.displayedFood.Quality.Value;
+		game_DeltaScore.text = currentFoodQuality >= 0 ? "+" + currentFoodQuality.ToString() : currentFoodQuality.ToString();
+		//Set color to red or green
+		game_DeltaScore.color = currentFoodQuality >= 0 ? Color.green : Color.red;
+		//Enable gameobject
+		game_DeltaScore.gameObject.SetActive(true);
+		//Begin delta score animate to net score
+		BeginUiSlerp(game_DeltaScore.transform, game_Score.transform.position);
+		
+	}
+	
+	public void ButtonHandler_Game_Pass() {
+		P2pInterfaceController.Instance.PlaySound(SoundEffect.Pass);
+		P2pGameMaster.Instance.Player_Pass();
+		//Delta score
+		//Set delta value
+		float currentFoodQuality = P2pGameMaster.Instance.displayedFood.Quality.Value;
+		game_DeltaScore.text = currentFoodQuality >= 0 ? "+" + currentFoodQuality.ToString() : currentFoodQuality.ToString();
+		//Set color to red or green
+		game_DeltaScore.color = Color.grey;
+		//Enable gameobject
+		game_DeltaScore.gameObject.SetActive(true);
+		//Begin delta score animate to net score
+		BeginUiSlerp(game_DeltaScore.transform, game_OffScreenTransform.position);
+	}
 
 	public void ButtonHandler_Title_OnePlayerGame () {
 		PlaySound(SoundEffect.Click);
