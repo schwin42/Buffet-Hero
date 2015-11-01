@@ -24,11 +24,12 @@
 
 public static class ConnectionManager
 {
-        public const string achievement_dumb3 = "CgkIzIfsnoMREAIQBQ"; // <GPGSID>
-        public const string achievement_dumb4 = "CgkIzIfsnoMREAIQBg"; // <GPGSID>
-        public const string achievement_dumb0 = "CgkIzIfsnoMREAIQAg"; // <GPGSID>
-        public const string achievement_dumb1 = "CgkIzIfsnoMREAIQAw"; // <GPGSID>
-        public const string achievement_dumb2 = "CgkIzIfsnoMREAIQBA"; // <GPGSID>
+        public const string achievement_4 = "CgkIzIfsnoMREAIQBA"; // <GPGSID>
+        public const string achievement_5 = "CgkIzIfsnoMREAIQBQ"; // <GPGSID>
+        public const string package_name = "com.PersonalSingularity.BuffetLegend"; // <GPGSID>
+        public const string achievement_1 = "CgkIzIfsnoMREAIQAQ"; // <GPGSID>
+        public const string achievement_2 = "CgkIzIfsnoMREAIQAg"; // <GPGSID>
+        public const string achievement_3 = "CgkIzIfsnoMREAIQAw"; // <GPGSID>
 
 }
 

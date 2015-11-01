@@ -66,25 +66,7 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () { 
-
-
-
-		print ("Longest attribute string: " + GameData.Instance.AttributeData.OrderByDescending (attribute => 
-		                                                                                        
-		                                                                                         {
-
-			string[] stringArray = attribute.Id.Split(' ');
-			int longest = 0;
-			foreach(string s1 in stringArray) {
-				if(s1.Length > longest) {
-					longest = s1.Length;
-				}
-			}
-			return longest;
-
-		}).First().Id); 
-	}
+	void Start () { }
 	
 	// Update is called once per frame
 	void Update () {
@@ -156,19 +138,18 @@ public class P2pGameMaster : MonoBehaviour {
 		P2pInterfaceController.Instance.WriteToConsole ("Using current food index: " + nextFoodIndex);
 		displayedFood = GetFoodFromIndex (nextFoodIndex);
 		nextFoodIndex++;
-//		foods.Add (displayedFood);
 	}
 
-	public void HandleEatResponse() {
-		P2pInterfaceController.Instance.PlaySound(SoundEffect.Eat);
+	public void Player_Eat () {
 		choices.Add (true);
 		currentScore += displayedFood.Quality.Value;
+
 		NextFood ();
 	}
 
-	public void HandlePassResponse() {
-		P2pInterfaceController.Instance.PlaySound(SoundEffect.Pass);
+	public void Player_Pass () {
 		choices.Add (false);
+
 		NextFood ();
 	}
 
@@ -185,10 +166,15 @@ public class P2pGameMaster : MonoBehaviour {
 	}
 
 	private FoodAttribute GetAttributeFromIndex (int index, ReadOnlyCollection<FoodAttribute> sourceList) {
-		P2pInterfaceController.Instance.WriteToConsole ("Getting attribute from index");
-		P2pInterfaceController.Instance.WriteToConsole ("GAFI index, source list count: " + index + ", " + (sourceList == null ? "null" : sourceList.Count.ToString()) );
+		try {
+//		P2pInterfaceController.Instance.WriteToConsole ("Getting attribute from index");
+//		P2pInterfaceController.Instance.WriteToConsole ("GAFI index, source list count: " + index + ", " + (sourceList == null ? "null" : sourceList.Count.ToString()) );
 		int finalIndex = index % sourceList.Count;
 		return sourceList [finalIndex];
+		} catch (Exception e) {
+			P2pInterfaceController.Instance.WriteToConsole("Exception in GetAttributeFromIndex: " + e.Message);
+			return null;
+		}
 	}
 }
 
