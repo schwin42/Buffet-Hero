@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public enum SoundEffect{
+public enum SoundEffect
+{
 	None = -1,
 	Click = 0,
 	Eat = 1,
@@ -31,7 +32,6 @@ public class P2pInterfaceController : MonoBehaviour
 	string userText_WaitingForClients = "Waiting for clients...";
 	string userText_WaitingForHost = "Waiting for host...";
 	string userText_RealtimeLobbyStatus = "Multiplayer joined";
-
 	private static P2pInterfaceController _instance;
 
 	public static P2pInterfaceController Instance {
@@ -49,7 +49,6 @@ public class P2pInterfaceController : MonoBehaviour
 	private AppState _currentState = AppState.Uninitialized;
 	private Dictionary<AppState, GameObject> stateGoReference = new Dictionary<AppState, GameObject> ();
 	public Transform inspector_ScreenContainer;
-	
 	private P2pGameMaster gameMaster;
 	public Transform inspector_UiRoot;
 
@@ -63,6 +62,7 @@ public class P2pInterfaceController : MonoBehaviour
 	private Text lobby_PlayerList;
 	private Button lobby_StartButton;
 	private Text lobby_Status;
+
 	public string Lobby_Status {
 		set {
 			lobby_Status.text = value;
@@ -105,8 +105,8 @@ public class P2pInterfaceController : MonoBehaviour
 				if (i != 0) {
 					output += "\n";
 				}
-				if(value[i].profile != null) {
-				output += value [i].profile.playerName;
+				if (value [i].profile != null) {
+					output += value [i].profile.playerName;
 				} else {
 					//Do not add profile-less participant to user text
 				}
@@ -177,7 +177,7 @@ public class P2pInterfaceController : MonoBehaviour
 			//Stats
 			stats_Stats = inspector_UiRoot.transform.Find ("StatsScreen/Stats").GetComponent<Text> ();
 			//Join
-			join_Progress = inspector_UiRoot.transform.Find("JoinScreen/Progress").GetComponent<Text>();
+			join_Progress = inspector_UiRoot.transform.Find ("JoinScreen/Progress").GetComponent<Text> ();
 		} catch (Exception e) {
 			WriteToConsole ("Ui start failed: " + e.Message);
 		}
@@ -237,13 +237,13 @@ public class P2pInterfaceController : MonoBehaviour
 			}
 			game_Score.text = gameMaster.currentScore.ToString ();
 		}
-		if(slerpInProgress) {
-			if(slerpProgress >= 1) {
-				slerpElement.gameObject.SetActive(false);
+		if (slerpInProgress) {
+			if (slerpProgress >= 1) {
+				slerpElement.gameObject.SetActive (false);
 				slerpElement.position = game_DeltaScoreStartLocation;
 			} else {
 				slerpProgress += Time.deltaTime / SLERP_DURATION;
-				slerpElement.transform.position = Vector3.Slerp(slerpOrigin, slerpDestination, slerpProgress);
+				slerpElement.transform.position = Vector3.Slerp (slerpOrigin, slerpDestination, slerpProgress);
 			}
 		}
 	}
@@ -333,14 +333,14 @@ public class P2pInterfaceController : MonoBehaviour
 			switch (state) {
 			case AppState.LobbyScreen:
 				bool startButtonState = (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost || 
-				                         ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) &&
+					ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) &&
 					ConnectionController.Instance.AccessiblePlayers.Count >= 2;
-				P2pInterfaceController.Instance.WriteToConsole("setting start button to: " + startButtonState);
-				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive(startButtonState);
+				P2pInterfaceController.Instance.WriteToConsole ("setting start button to: " + startButtonState);
+				P2pInterfaceController.Instance.Lobby_SetStartButtonInteractive (startButtonState);
 				
 				//Set status
 				string status = "Initializing status";
-				switch(ConnectionController.Instance.remoteStatus) {
+				switch (ConnectionController.Instance.remoteStatus) {
 				case ConnectionController.RemoteStatus.Advertising:
 					status = userText_WaitingForClients;
 					break;
@@ -351,7 +351,7 @@ public class P2pInterfaceController : MonoBehaviour
 					status = userText_RealtimeLobbyStatus;
 					break;
 				default:
-					P2pInterfaceController.Instance.WriteToConsole("Unexpected remote state: " + ConnectionController.Instance.remoteStatus);
+					P2pInterfaceController.Instance.WriteToConsole ("Unexpected remote state: " + ConnectionController.Instance.remoteStatus);
 					status = "Initialization failed";
 					break;
 				}
@@ -366,20 +366,20 @@ public class P2pInterfaceController : MonoBehaviour
 				break;
 			case AppState.GameScreen:
 				game_PlayerName.text = DeviceDatabase.Instance.ActivePlayerName;
-				game_DeltaScore.gameObject.SetActive(false);
+				game_DeltaScore.gameObject.SetActive (false);
 				P2pGameMaster.Instance.BeginNewGame ();
 				P2pInterfaceController.Instance.WriteToConsole ("completed game screen");
 				break;
 			case AppState.ResultScreen:
 				P2pInterfaceController.Instance.Result_SetPlayButtonInteractive (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost || 
-				                                                                 ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Idle || //TODO Better way of checking for single player
-				                                                                 ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer);
+					ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Idle || //TODO Better way of checking for single player
+					ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer);
 				P2pInterfaceController.Instance.Results_Display ();
 				P2pInterfaceController.Instance.WriteToConsole ("completed result screen");
 				break;
 			case AppState.TitleScreen:
-				P2pInterfaceController.Instance.WriteToConsole("IS, active player name: " + DeviceDatabase.Instance.ActivePlayerName);
-				P2pInterfaceController.Instance.WriteToConsole("IS, name input: " + title_NameInput);
+				P2pInterfaceController.Instance.WriteToConsole ("IS, active player name: " + DeviceDatabase.Instance.ActivePlayerName);
+				P2pInterfaceController.Instance.WriteToConsole ("IS, name input: " + title_NameInput);
 				title_NameInput.text = DeviceDatabase.Instance.ActivePlayerName;
 				break;
 			case AppState.StatsScreen:
@@ -388,27 +388,27 @@ public class P2pInterfaceController : MonoBehaviour
 				//TODO Player name in big text
 				OnlineProfile activeProfile = DeviceDatabase.Instance.ActiveProfile;
 
-				WriteToConsole("ISSS, active profile: " + activeProfile.profileId);
+				WriteToConsole ("ISSS, active profile: " + activeProfile.profileId);
 
 				statsString += "Games played: " + activeProfile.gamesPlayed + "\n";
 				statsString += "Foods eaten: " + activeProfile.foodsEaten + "\n";
 				statsString += "Foods passed: " + activeProfile.foodsPassed + "\n";
 				statsString += "Lifetime score: " + activeProfile.lifetimeScore + "\n";
 				statsString += "Lifetime seconds played: " + activeProfile.lifetimeSecondsPlayed + "\n";
-				statsString += "Best score: " + (activeProfile.bestScore.HasValue ? activeProfile.bestScore.ToString() : "None") + "\n";
-				statsString += "Worst score: " + (activeProfile.worstScore.HasValue ? activeProfile.worstScore.ToString() : "None") + "\n";
-				statsString += "Tastiest food eaten: \n" + (activeProfile.tastiestFoodEaten == null || !activeProfile.tastiestFoodEaten.isInitialized ? "None" : activeProfile.tastiestFoodEaten.ToString()) + "\n";
-				statsString += "Grossest food eaten: \n" + (activeProfile.grossestFoodEaten == null || !activeProfile.grossestFoodEaten.isInitialized ? "None" : activeProfile.grossestFoodEaten.ToString()) + "\n";
-				statsString += "Tastiest food passed: \n" + (activeProfile.tastiestFoodMissed == null || !activeProfile.tastiestFoodMissed.isInitialized ? "None" : activeProfile.tastiestFoodMissed.ToString()) + "\n";
-				statsString += "Grossest food passed: \n" + (activeProfile.grossestFoodMissed == null || !activeProfile.grossestFoodMissed.isInitialized ? "None" : activeProfile.grossestFoodMissed.ToString()) + "\n";
+				statsString += "Best score: " + (activeProfile.bestScore.HasValue ? activeProfile.bestScore.ToString () : "None") + "\n";
+				statsString += "Worst score: " + (activeProfile.worstScore.HasValue ? activeProfile.worstScore.ToString () : "None") + "\n";
+				statsString += "Tastiest food eaten: \n" + (activeProfile.tastiestFoodEaten == null || !activeProfile.tastiestFoodEaten.isInitialized ? "None" : activeProfile.tastiestFoodEaten.ToString ()) + "\n";
+				statsString += "Grossest food eaten: \n" + (activeProfile.grossestFoodEaten == null || !activeProfile.grossestFoodEaten.isInitialized ? "None" : activeProfile.grossestFoodEaten.ToString ()) + "\n";
+				statsString += "Tastiest food passed: \n" + (activeProfile.tastiestFoodMissed == null || !activeProfile.tastiestFoodMissed.isInitialized ? "None" : activeProfile.tastiestFoodMissed.ToString ()) + "\n";
+				statsString += "Grossest food passed: \n" + (activeProfile.grossestFoodMissed == null || !activeProfile.grossestFoodMissed.isInitialized ? "None" : activeProfile.grossestFoodMissed.ToString ()) + "\n";
 
 				//average game, average food, average choices per second
-				statsString += "Average game score: " + activeProfile.AverageGameScore.ToString("F2") + "\n";
-				statsString += "Average food score: " + activeProfile.AverageFoodScore.ToString("F2") + "\n";
-				statsString += "Average choices per second: " + activeProfile.AverageChoicesPerSecond.ToString("F2");
+				statsString += "Average game score: " + activeProfile.AverageGameScore.ToString ("F2") + "\n";
+				statsString += "Average food score: " + activeProfile.AverageFoodScore.ToString ("F2") + "\n";
+				statsString += "Average choices per second: " + activeProfile.AverageChoicesPerSecond.ToString ("F2");
 
 
-				P2pInterfaceController.Instance.WriteToConsole("Stats text = " + (stats_Stats == null? "null" : "not null"));
+				P2pInterfaceController.Instance.WriteToConsole ("Stats text = " + (stats_Stats == null ? "null" : "not null"));
 				stats_Stats.text = statsString;
 				break;
 			}
@@ -417,55 +417,60 @@ public class P2pInterfaceController : MonoBehaviour
 		}
 	}
 
-	private void BeginUiSlerp(Transform element, Vector3 destination) {
-				slerpElement = element;
-				slerpOrigin = element.transform.position;
-				slerpDestination = destination;
+	private void BeginUiSlerp (Transform element, Vector3 destination)
+	{
+		slerpElement = element;
+		slerpOrigin = element.transform.position;
+		slerpDestination = destination;
 		slerpProgress = 0;
-				slerpInProgress = true;
+		slerpInProgress = true;
 	}
 
 	# region button handlers
 
-	public void ButtonHandler_Game_Eat() {
-		P2pInterfaceController.Instance.PlaySound(SoundEffect.Eat);
-		P2pGameMaster.Instance.Player_Eat();
+	public void ButtonHandler_Game_Eat ()
+	{
+		P2pInterfaceController.Instance.PlaySound (SoundEffect.Eat);
+
 		//Delta score
-		//Set delta value
 		float currentFoodQuality = P2pGameMaster.Instance.displayedFood.Quality.Value;
-		game_DeltaScore.text = currentFoodQuality >= 0 ? "+" + currentFoodQuality.ToString() : currentFoodQuality.ToString();
+		game_DeltaScore.text = currentFoodQuality >= 0 ? "+" + currentFoodQuality.ToString () : currentFoodQuality.ToString ();
 		//Set color to red or green
 		game_DeltaScore.color = currentFoodQuality >= 0 ? Color.green : Color.red;
 		//Enable gameobject
-		game_DeltaScore.gameObject.SetActive(true);
+		game_DeltaScore.gameObject.SetActive (true);
 		//Begin delta score animate to net score
-		BeginUiSlerp(game_DeltaScore.transform, game_Score.transform.position);
-		
+		BeginUiSlerp (game_DeltaScore.transform, game_Score.transform.position);
+
+		P2pGameMaster.Instance.Player_Eat ();
 	}
 	
-	public void ButtonHandler_Game_Pass() {
-		P2pInterfaceController.Instance.PlaySound(SoundEffect.Pass);
-		P2pGameMaster.Instance.Player_Pass();
+	public void ButtonHandler_Game_Pass ()
+	{
+		P2pInterfaceController.Instance.PlaySound (SoundEffect.Pass);
+
 		//Delta score
-		//Set delta value
 		float currentFoodQuality = P2pGameMaster.Instance.displayedFood.Quality.Value;
-		game_DeltaScore.text = currentFoodQuality >= 0 ? "+" + currentFoodQuality.ToString() : currentFoodQuality.ToString();
+		game_DeltaScore.text = currentFoodQuality >= 0 ? "+" + currentFoodQuality.ToString () : currentFoodQuality.ToString ();
 		//Set color to red or green
 		game_DeltaScore.color = Color.grey;
 		//Enable gameobject
-		game_DeltaScore.gameObject.SetActive(true);
+		game_DeltaScore.gameObject.SetActive (true);
 		//Begin delta score animate to net score
-		BeginUiSlerp(game_DeltaScore.transform, game_OffScreenTransform.position);
+		BeginUiSlerp (game_DeltaScore.transform, game_OffScreenTransform.position);
+
+		P2pGameMaster.Instance.Player_Pass ();
 	}
 
-	public void ButtonHandler_Title_OnePlayerGame () {
-		PlaySound(SoundEffect.Click);
+	public void ButtonHandler_Title_OnePlayerGame ()
+	{
+		PlaySound (SoundEffect.Click);
 		SinglePlayerStartGame (true);
 	}
 
 	public void ButtonHandler_Title_HostGame ()
 	{
-		PlaySound(SoundEffect.Click);
+		PlaySound (SoundEffect.Click);
 		P2pInterfaceController.Instance.WriteToConsole ("Creating game");
 		try {
 //			P2pInterfaceController.Instance.WriteToConsole ("Wrote " + DeviceDatabase.Instance.ActivePlayerName + " to active profile");
@@ -478,12 +483,12 @@ public class P2pInterfaceController : MonoBehaviour
 	
 	public void ButtonHandler_Lobby_StartGame ()
 	{
-		PlaySound(SoundEffect.Click);
-		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising || //Not established host yet
-		   ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
-			StartMultiplayerGame(true);
+		PlaySound (SoundEffect.Click);
+		if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising || //Not established host yet
+			ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
+			StartMultiplayerGame (true);
 		} else {
-			P2pInterfaceController.Instance.WriteToConsole("Error: Unable to start game from remote status: " + ConnectionController.Instance.remoteStatus);
+			P2pInterfaceController.Instance.WriteToConsole ("Error: Unable to start game from remote status: " + ConnectionController.Instance.remoteStatus);
 		}
 			
 			
@@ -491,59 +496,65 @@ public class P2pInterfaceController : MonoBehaviour
 	
 	public void ButtonHandler_Title_JoinGame () //Nearby Join Game as Client
 	{
-		PlaySound(SoundEffect.Click);
+		PlaySound (SoundEffect.Click);
 		ConnectionController.Instance.Client_BeginDiscovery ();
 		SetScreenState (AppState.JoinScreen);
 	}
 	
 	public void ButtonHandler_DisconnectAndExit ()
 	{
-		PlaySound(SoundEffect.Click);
-		ReturnToTitle(true);
+		PlaySound (SoundEffect.Click);
+		ReturnToTitle (true);
 	}
 
-	public void ButtonHandler_ReturnToTitle() {
-		PlaySound(SoundEffect.Click);
-		ReturnToTitle(false);
+	public void ButtonHandler_ReturnToTitle ()
+	{
+		PlaySound (SoundEffect.Click);
+		ReturnToTitle (false);
 	}
 
-	public void PlayAgain () {
-		PlaySound(SoundEffect.Click);
+	public void PlayAgain ()
+	{
+		PlaySound (SoundEffect.Click);
 		WriteToConsole ("Starting PlayAgain");
-		switch(ConnectionController.Instance.remoteStatus) {
+		switch (ConnectionController.Instance.remoteStatus) {
 		case ConnectionController.RemoteStatus.EstablishedHost:
 		case ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer:
-			StartMultiplayerGame(false);
+			StartMultiplayerGame (false);
 			break;
 		case ConnectionController.RemoteStatus.Idle:
-			SinglePlayerStartGame(false);
+			SinglePlayerStartGame (false);
 			break;
 		default:
-			WriteToConsole("Unhandled remote status in PlayAgain: " + ConnectionController.Instance.remoteStatus);
+			WriteToConsole ("Unhandled remote status in PlayAgain: " + ConnectionController.Instance.remoteStatus);
 			break;
 		}
 	}
 
-	public void ButtonHandler_Stats () {
-		PlaySound(SoundEffect.Click);
-		SetScreenState(AppState.StatsScreen);
+	public void ButtonHandler_Stats ()
+	{
+		PlaySound (SoundEffect.Click);
+		SetScreenState (AppState.StatsScreen);
 	}
 
-	public void ButtonHandler_SignIn () {
-		PlaySound(SoundEffect.Click);
-		ConnectionController.Instance.SignIn();
+	public void ButtonHandler_SignIn ()
+	{
+		PlaySound (SoundEffect.Click);
+		ConnectionController.Instance.SignIn ();
 	}
 
-	public void ButtonHandler_QuickGame() { //RealTimeMultiplayer 
-		PlaySound(SoundEffect.Click);
-		WriteToConsole("Creating quick game");
-		ConnectionController.Instance.CreateQuickGame();
-		SetScreenState(AppState.JoinScreen);
+	public void ButtonHandler_QuickGame ()
+	{ //RealTimeMultiplayer 
+		PlaySound (SoundEffect.Click);
+		WriteToConsole ("Creating quick game");
+		ConnectionController.Instance.CreateQuickGame ();
+		SetScreenState (AppState.JoinScreen);
 	}
 
-	public void ButtonHandler_MultiplayerScreen() {
-		PlaySound(SoundEffect.Click);
-		SetScreenState(AppState.OnlineScreen);
+	public void ButtonHandler_MultiplayerScreen ()
+	{
+		PlaySound (SoundEffect.Click);
+		SetScreenState (AppState.OnlineScreen);
 	}
 
 	#endregion
@@ -554,30 +565,31 @@ public class P2pInterfaceController : MonoBehaviour
 		WriteToConsole ("Finishing game");
 		try {
 			if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost || 
-			    ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient ||
-			    ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
+				ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedClient ||
+				ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
 				P2pInterfaceController.Instance.WriteToConsole ("Game finished");
 				SetScreenState (AppState.WaitingScreen);
 				ConnectionController.Instance.BroadcastEvent (new GameResultPayload (gameResult));
 			} else if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Idle) {
-				SetScreenState(AppState.ResultScreen);
+				SetScreenState (AppState.ResultScreen);
 			} else {
-				WriteToConsole("Unhandled remote status in GameFinished: " + ConnectionController.Instance.remoteStatus);
+				WriteToConsole ("Unhandled remote status in GameFinished: " + ConnectionController.Instance.remoteStatus);
 			}
 			
 			//Save records
-			DeviceDatabase.Instance.RecordGameToActiveProfile(gameResult, P2pGameMaster.Instance.currentSettings);
+			DeviceDatabase.Instance.RecordGameToActiveProfile (gameResult, P2pGameMaster.Instance.currentSettings);
 			
 		} catch (Exception e) {
-			WriteToConsole("Exception in GameFinished: " + e.Message + ", " + e.StackTrace);
+			WriteToConsole ("Exception in GameFinished: " + e.Message + ", " + e.StackTrace);
 		}
 	}
 	#endregion
 
 	#region remote triggered events
 
-	public void Join_ReceivedRoomProgress(float progress) {
-		join_Progress.text = progress.ToString("F1") + "%";
+	public void Join_ReceivedRoomProgress (float progress)
+	{
+		join_Progress.text = progress.ToString ("F1") + "%";
 	}
 
 	public void DisplayResult ()
@@ -594,7 +606,8 @@ public class P2pInterfaceController : MonoBehaviour
 
 	#region State Navigation
 
-	private void SinglePlayerStartGame (bool firstGame) {
+	private void SinglePlayerStartGame (bool firstGame)
+	{
 		WriteToConsole ("Starting single player game, first? " + firstGame);
 		if (firstGame) {
 			P2pGameMaster.Instance.LoadGameSettings (new GameSettings (TIME_LIMIT, 0, true));
@@ -606,7 +619,8 @@ public class P2pInterfaceController : MonoBehaviour
 		SetScreenState (AppState.GameScreen);
 	}
 
-	private void StartMultiplayerGame (bool firstGame) {
+	private void StartMultiplayerGame (bool firstGame)
+	{
 
 		//Generate game settings
 		GameSettings gameSettings;
@@ -615,18 +629,18 @@ public class P2pInterfaceController : MonoBehaviour
 		} else {
 			gameSettings = new GameSettings (TIME_LIMIT, 
 			                                 P2pGameMaster.Instance.currentSettings.startFoodIndex + 
-			                                 P2pGameMaster.Instance.AllGameResults.OrderByDescending(gameResult => gameResult.choices.Count).First().choices.Count + 1, //Increment by 1 to make sure no one has even seen the first food
+				P2pGameMaster.Instance.AllGameResults.OrderByDescending (gameResult => gameResult.choices.Count).First ().choices.Count + 1, //Increment by 1 to make sure no one has even seen the first food
 			                                 false);
 		}
-		P2pInterfaceController.Instance.WriteToConsole("Generated game settings: " + gameSettings.qualifierSeed);
+		P2pInterfaceController.Instance.WriteToConsole ("Generated game settings: " + gameSettings.qualifierSeed);
 		//send game settings to clients
-		if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising) {
+		if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.Advertising) {
 			ConnectionController.Instance.Host_BeginSession (); //Stop advertising and establish host
 			ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings)); 
-		} else if (ConnectionController.Instance.remoteStatus ==  ConnectionController.RemoteStatus.EstablishedHost) {
+		} else if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedHost) {
 			ConnectionController.Instance.BroadcastEvent (new StartGamePayload (gameSettings)); 
-		} else if(ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
-			ConnectionController.Instance.Realtime_StartGame(gameSettings);
+		} else if (ConnectionController.Instance.remoteStatus == ConnectionController.RemoteStatus.EstablishedRealTimeMultiplayer) {
+			ConnectionController.Instance.Realtime_StartGame (gameSettings);
 		}
 
 		P2pGameMaster.Instance.LoadGameSettings (gameSettings);
@@ -634,25 +648,27 @@ public class P2pInterfaceController : MonoBehaviour
 		SetScreenState (AppState.GameScreen);
 	}
 
-	public void ReturnToTitle(bool resetRemoteStatus) {
+	public void ReturnToTitle (bool resetRemoteStatus)
+	{
 		P2pInterfaceController.Instance.WriteToConsole ("Exiting to title");
 		try {
-			if(resetRemoteStatus) {
+			if (resetRemoteStatus) {
 				ConnectionController.Instance.TerminateAllConnections ();
 			}
 			SetScreenState (AppState.TitleScreen);
 		} catch (Exception e) {
-			P2pInterfaceController.Instance.WriteToConsole("Exception in ExitToTitle: " + e.Message);
+			P2pInterfaceController.Instance.WriteToConsole ("Exception in ExitToTitle: " + e.Message);
 		}
 	}
 	#endregion
 
 	#region audio
 
-	public void PlaySound(SoundEffect soundEffect) {
+	public void PlaySound (SoundEffect soundEffect)
+	{
 //		WriteToConsole("Playing sound: "+ soundEffect);
 //		WriteToConsole("Sound found: " + inspector_AudioClips[(int)soundEffect].name);
-		AudioSource.PlayClipAtPoint(inspector_AudioClips[(int)soundEffect], Vector3.zero);
+		AudioSource.PlayClipAtPoint (inspector_AudioClips [(int)soundEffect], Vector3.zero);
 //		AudioSource.PlayClipAtPoint(audioClips[(int)soundEffect], transform.position, volume);
 	}
 
