@@ -81,7 +81,6 @@ public class ButtonHandler : MonoBehaviour {
 			}
 			break;
 		case ButtonAction.JoinGame:
-			print (_player.Id);
 			InterfaceController.SetPlayerUiState(_player, PlayerUiState.Entry);
 			break;
 		case ButtonAction.CloseTray:

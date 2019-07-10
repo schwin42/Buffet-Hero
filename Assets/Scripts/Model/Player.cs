@@ -37,7 +37,14 @@ public class Player : MonoBehaviour {
 
 	public static Player Instance;
 
-	public int Id;
+    public int Id
+    {
+        get
+        {
+            return _id;
+        }
+    }
+    [SerializeField] private int _id;
 
 	private Profile _profileInstance;
 	public Profile ProfileInstance
@@ -393,13 +400,13 @@ public class Player : MonoBehaviour {
 		entryNameField = uiPanel.transform.Find ("EntryWidget/BackerName/Label").GetComponent<UILabel>();
 
 		//Game
-		eatButton = uiPanel.transform.FindChild("GameWidget/Eat").GetComponent<ButtonHandler>();
-		passButtton = uiPanel.transform.FindChild("GameWidget/Pass").GetComponent<ButtonHandler>();
-		hpLabel = uiPanel.transform.FindChild("GameWidget/FieldBacker/LabelHPDisplay").GetComponent<UILabel>();
-		rankingLabel = uiPanel.transform.FindChild("GameWidget/FieldBacker/Ranking").GetComponent<UILabel>();
-		scoreLabel = uiPanel.transform.FindChild("GameWidget/FieldBacker/LabelScoreDisplay").GetComponent<UILabel>();
-		updateHpLabel = uiPanel.transform.FindChild("GameWidget/AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
-		updateScoreLabel = uiPanel.transform.FindChild("GameWidget/AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
+		eatButton = uiPanel.transform.Find("GameWidget/Eat").GetComponent<ButtonHandler>();
+		passButtton = uiPanel.transform.Find("GameWidget/Pass").GetComponent<ButtonHandler>();
+		hpLabel = uiPanel.transform.Find("GameWidget/FieldBacker/LabelHPDisplay").GetComponent<UILabel>();
+		rankingLabel = uiPanel.transform.Find("GameWidget/FieldBacker/Ranking").GetComponent<UILabel>();
+		scoreLabel = uiPanel.transform.Find("GameWidget/FieldBacker/LabelScoreDisplay").GetComponent<UILabel>();
+		updateHpLabel = uiPanel.transform.Find("GameWidget/AreaUpdate/LabelHPUpdate").GetComponent<UILabel>();
+		updateScoreLabel = uiPanel.transform.Find("GameWidget/AreaUpdate/LabelScoreUpdate").GetComponent<UILabel>();
 		playerNameLabelGame = uiPanel.transform.Find ("GameWidget/LabelPlayer").GetComponent<UILabel>();
 
 		//Acquire state widgets

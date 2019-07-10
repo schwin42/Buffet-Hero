@@ -83,11 +83,11 @@ public class GameData : MonoBehaviour
 	}
 
 	public void Start () {
-		P2pInterfaceController.Instance.WriteToConsole (AttributeData.Count + " attributes loaded.");
+        BuffetLogger.Log (AttributeData.Count + " attributes loaded.");
 		int possibleFoods = AttributeData.Where (attribute => attribute.attributeType == AttributeType.Qualifier).Count () * 
 			AttributeData.Where (attribute => attribute.attributeType == AttributeType.Ingredient).Count () *
 			AttributeData.Where (attribute => attribute.attributeType == AttributeType.Form).Count ();
-		P2pInterfaceController.Instance.WriteToConsole (possibleFoods.ToString () + " possible foods available");
+		BuffetLogger.Log (possibleFoods.ToString () + " possible foods available");
 	}
 
 	public void LoadAttributes ()
@@ -174,7 +174,7 @@ public class GameData : MonoBehaviour
 		string[] dataLines = File.ReadAllLines (filePath);
 		Dictionary<int, string> fieldLookup = new Dictionary<int, string> ();
 
-		TagData.Clear ();
+        TagData = new List<Tag>();
 		for (int i = 0; i < dataLines.Length; i++) {
 			if (i == 0) {
 				string [] fieldStrings = dataLines [0].Split (',');

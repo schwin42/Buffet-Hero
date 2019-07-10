@@ -121,8 +121,8 @@ public class InterfaceController : MonoBehaviour {
     [SerializeField] private UIPanel foregroundPanel;
     [SerializeField] private UIPanel popupPanel;
 
-	public UILabel[] roundLabels;
-	public UIButton[] nextButtons;
+	[SerializeField] private UILabel[] roundLabels;
+    [SerializeField] private UIButton[] nextButtons;
 
 	public List<UIPanel> uiPanelsByPlayerId;
 
@@ -256,8 +256,6 @@ public class InterfaceController : MonoBehaviour {
 //		print(player.Id);
 //		print (Instance.playerUiStates);
 		PlayerUiState oldState = Instance.playerUiStates[player.Id];
-
-		print ("Player " + player.Id + " change from " + oldState + " to " + targetState + " @" + Time.frameCount);
 
 		//Disable old elements
 		if((int)oldState != -1)

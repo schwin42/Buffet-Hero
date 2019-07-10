@@ -233,7 +233,6 @@ public class GameController : MonoBehaviour
 
 	public void NextFood ()
 	{
-		//Debug.Log ("Next food for: " + currentRound);	
 		if (activeFood != null) {
 			previousFood = activeFood;
 		}

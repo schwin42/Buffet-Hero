@@ -14,7 +14,7 @@ public class PlayerPanel : MonoBehaviour {
 			Debug.LogError("Player mismatch");
 		}
 
-		backer = gameObject.transform.FindChild("Backer").GetComponent<UISprite>();
+		backer = gameObject.transform.Find("Backer").GetComponent<UISprite>();
 		//this.Player = player;
 		//print("player = " + player.Id);
 		SetPanelColor(InterfaceController.Instance.PlayerSchemesPool[player.Id]);
