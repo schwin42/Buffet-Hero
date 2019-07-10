@@ -50,7 +50,7 @@ namespace GooglePlayGames
                 return;
             }
 #else
-            if (target != BuildTarget.iPhone)
+            if (target != BuildTarget.iOS)
             {
                 return;
             }

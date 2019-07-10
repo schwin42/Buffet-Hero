@@ -27,6 +27,7 @@ namespace GooglePlayGames
     using GooglePlayGames.BasicApi.Quests;
     using GooglePlayGames.BasicApi.Events;
     using GooglePlayGames.BasicApi.Nearby;
+    using Logger = OurUtils.Logger;
 
     /// <summary>
     /// Provides access to the Google Play Games platform. This is an implementation of
@@ -1103,6 +1104,11 @@ namespace GooglePlayGames
         public string GetToken()
         {
             return mClient.GetToken();
+        }
+
+        public void Authenticate(ILocalUser user, Action<bool, string> callback)
+        {
+            throw new NotImplementedException();
         }
     }
 }

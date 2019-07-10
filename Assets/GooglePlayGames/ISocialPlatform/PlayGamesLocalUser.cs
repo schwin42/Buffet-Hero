@@ -61,6 +61,11 @@ namespace GooglePlayGames
             mPlatform.LoadFriends(this, callback);
         }
 
+        public void Authenticate(Action<bool, string> callback)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Not implemented. Returns an empty list.
         /// </summary>

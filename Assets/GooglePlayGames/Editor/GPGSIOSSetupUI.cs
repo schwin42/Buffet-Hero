@@ -48,7 +48,7 @@ namespace GooglePlayGames
 
             if (mBundleId.Trim().Length == 0)
             {
-                mBundleId = PlayerSettings.bundleIdentifier;
+                mBundleId = PlayerSettings.applicationIdentifier;
             }
         }
 

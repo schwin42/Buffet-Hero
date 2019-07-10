@@ -19,6 +19,7 @@ namespace GooglePlayGames
     using UnityEngine;
     using GooglePlayGames.BasicApi;
     using GooglePlayGames.OurUtils;
+    using Logger = OurUtils.Logger;
 
     internal class PlayGamesClientFactory
     {
