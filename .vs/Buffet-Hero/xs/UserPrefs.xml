@@ -1,14 +1,20 @@
 ﻿<Properties StartupConfiguration="{F0E92AF2-9468-221C-7A90-4B3A00291640}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/GooglePlayGames/Editor/GPGSIOSSetupUI.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Editor/ToolsEditor.cs">
     <Files>
-      <File FileName="Assets/GooglePlayGames/Editor/GPGSIOSSetupUI.cs" Line="50" Column="14" />
+      <File FileName="Assets/GooglePlayGames/Editor/GPGSIOSSetupUI.cs" Line="51" Column="65" />
+      <File FileName="Assets/Scripts/SplitScreen/InterfaceController.cs" Line="122" Column="30" />
+      <File FileName="Assets/Scripts/SplitScreen/GameController.cs" Line="478" Column="41" />
+      <File FileName="Assets/Scripts/Core/FoodMetadata.cs" Line="9" Column="28" />
+      <File FileName="Assets/Editor/ToolsEditor.cs" Line="27" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/schwin42/Documents/Development/Buffet-Hero/Assets/Scripts/SplitScreen/InterfaceController.cs" relfile="Assets/Scripts/SplitScreen/InterfaceController.cs" line="322" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
 </Properties>

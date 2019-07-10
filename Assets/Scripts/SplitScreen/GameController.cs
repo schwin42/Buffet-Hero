@@ -475,7 +475,7 @@ public class GameController : MonoBehaviour
 	
 	public LetterRank GetFoodRank (Food food)
 	{
-		List<float> percentiles = Tools.Instance.percentiles;
+		List<float> percentiles = FoodMetadata.Instance.percentiles;
 		for (int i = 0; i < percentiles.Count; i++) {
 			if (food.Quality > percentiles [i]) {
 				return (LetterRank)i;

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public class Tools : MonoBehaviour {
+public class FoodMetadata : MonoBehaviour {
 
-	public static Tools Instance;
+	public static FoodMetadata Instance;
 
 	public int numberOfTrials = 10000;
 	//public List<Food> trials = new List<Food>();

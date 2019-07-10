@@ -12,11 +12,11 @@ public class ToolsEditor : Editor {
 	public GUIContent displayFoodButton = new GUIContent("Display Food");
 	public GUIContent runTrialsButton = new GUIContent("Run Trials");
 
-	public Tools tools;
+	public FoodMetadata tools;
 
 	void OnEnable()
 	{
-		tools = (Tools) target;
+		tools = (FoodMetadata) target;
 	}
 
 	public override void OnInspectorGUI()

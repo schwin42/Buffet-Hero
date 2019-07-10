@@ -117,9 +117,9 @@ public class InterfaceController : MonoBehaviour {
 	public string winString = "";
 	public List<GameObject> activeWinnerGos = new List<GameObject>();
 
-	public UIPanel[] mirrorPanels;
-	public UIPanel foregroundPanel;
-	public UIPanel popupPanel;
+	[SerializeField] private UIPanel[] mirrorPanels;
+    [SerializeField] private UIPanel foregroundPanel;
+    [SerializeField] private UIPanel popupPanel;
 
 	public UILabel[] roundLabels;
 	public UIButton[] nextButtons;
