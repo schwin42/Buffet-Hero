@@ -1,13 +1,15 @@
 ﻿<Properties StartupConfiguration="{F0E92AF2-9468-221C-7A90-4B3A00291640}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Core/GameData.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/GooglePlayGames/Platforms/Native/NativeClient.cs">
     <Files>
       <File FileName="Assets/Scripts/Model/Player.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/SplitScreen/PlayerPanel.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SplitScreen/InterfaceController.cs" Line="205" Column="1" />
+      <File FileName="Assets/Scripts/SplitScreen/InterfaceController.cs" Line="772" Column="8" />
       <File FileName="Assets/Scripts/SplitScreen/GameController.cs" Line="239" Column="1" />
       <File FileName="Assets/Scripts/Core/FoodLogic.cs" Line="313" Column="1" />
       <File FileName="Assets/Scripts/Core/GameData.cs" Line="177" Column="6" />
       <File FileName="Assets/Scripts/Core/BuffetLogger.cs" Line="9" Column="25" />
+      <File FileName="Assets/Scripts/SplitScreen/ColorSelect.cs" Line="1" Column="1" />
+      <File FileName="Assets/GooglePlayGames/Platforms/Native/NativeClient.cs" Line="155" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

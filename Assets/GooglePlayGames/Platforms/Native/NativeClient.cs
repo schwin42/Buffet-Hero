@@ -33,6 +33,7 @@ namespace GooglePlayGames.Native
     using Status = GooglePlayGames.Native.Cwrapper.CommonErrorStatus;
     using UnityEngine;
     using UnityEngine.SocialPlatforms;
+    using Logger = OurUtils.Logger;
 
     public class NativeClient : IPlayGamesClient
     {
