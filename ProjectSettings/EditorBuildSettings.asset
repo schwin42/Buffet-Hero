@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/P2p.unity
-    guid: 00000000000000000000000000000000
+    guid: 98131969f52ff4ed3b103d72625ae286
+  - enabled: 1
+    path: Assets/Scenes/Splitscreen.unity
+    guid: 6a13e365f83ba4f90a30c9116660457e
   m_configObjects: {}

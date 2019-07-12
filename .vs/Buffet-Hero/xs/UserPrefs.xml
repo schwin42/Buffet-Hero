@@ -9,7 +9,7 @@
       <File FileName="Assets/Scripts/Core/GameData.cs" Line="177" Column="6" />
       <File FileName="Assets/Scripts/Core/BuffetLogger.cs" Line="9" Column="25" />
       <File FileName="Assets/Scripts/SplitScreen/ColorSelect.cs" Line="1" Column="1" />
-      <File FileName="Assets/GooglePlayGames/Platforms/Native/NativeClient.cs" Line="155" Column="23" />
+      <File FileName="Assets/GooglePlayGames/Platforms/Native/NativeClient.cs" Line="156" Column="24" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
